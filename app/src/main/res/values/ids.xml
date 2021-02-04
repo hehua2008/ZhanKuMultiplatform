@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="image_view_uri_key" type="id"></item>
+    <item name="image_view_listener_key" type="id"></item>
+    <item name="image_view_loaded_key" type="id"></item>
+</resources>

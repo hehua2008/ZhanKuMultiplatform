@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="previewItem"
+            type="com.hym.zhankukotlin.network.PreviewItem" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/img_card"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/author"
+            app:layout_constraintDimensionRatio="4:3"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintVertical_chainStyle="packed">
+
+            <ImageView
+                android:id="@+id/preview_img"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@{previewItem.imageUrl, default=`loading...`}"
+                android:scaleType="centerCrop" />
+        </androidx.cardview.widget.CardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/author"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:maxLines="1"
+            android:minWidth="10dp"
+            android:minHeight="10dp"
+            android:paddingHorizontal="@dimen/button_padding_horizontal"
+            android:paddingVertical="0dp"
+            android:text="@{previewItem.author, default=`author`}"
+            android:textAllCaps="false"
+            android:textSize="@dimen/common_text_size"
+            app:layout_constraintBottom_toTopOf="@id/description"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/img_card" />
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:selectAllOnFocus="true"
+            android:text="@{previewItem.title, default=`description`}"
+            android:textIsSelectable="true"
+            android:textSize="@dimen/common_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/time"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/author" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{previewItem.time, default=`time`}"
+            android:textSize="@dimen/common_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/view_count" />
+
+        <TextView
+            android:id="@+id/view_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{previewItem.views, default=`views`}"
+            android:textSize="@dimen/common_text_size"
+            app:layout_constraintBottom_toBottomOf="@id/time"
+            app:layout_constraintLeft_toRightOf="@id/time"
+            app:layout_constraintRight_toLeftOf="@id/comments"
+            app:layout_constraintTop_toTopOf="@id/time" />
+
+        <TextView
+            android:id="@+id/comments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{previewItem.comments, default=`comments`}"
+            android:textSize="@dimen/common_text_size"
+            app:layout_constraintBottom_toBottomOf="@id/time"
+            app:layout_constraintLeft_toRightOf="@id/view_count"
+            app:layout_constraintRight_toLeftOf="@id/favorites"
+            app:layout_constraintTop_toTopOf="@id/time" />
+
+        <TextView
+            android:id="@+id/favorites"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{previewItem.favorites, default=`favorites`}"
+            android:textSize="@dimen/common_text_size"
+            app:layout_constraintBottom_toBottomOf="@id/time"
+            app:layout_constraintLeft_toRightOf="@id/comments"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/time" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
