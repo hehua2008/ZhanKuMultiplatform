@@ -25,8 +25,10 @@ import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.FragmentMainBinding
 import com.hym.zhankukotlin.network.CategoryItem
 import com.hym.zhankukotlin.network.Order
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filter
 
 class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
     private lateinit var mPageViewModel: PageViewModel
@@ -193,12 +195,20 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
             binding.categoryLink.text = url
         })
         mPageViewModel.pagingFlow.observe(viewLifecycleOwner, Observer {
-            viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launchWhenCreated {
                 mPagingPreviewItemAdapter.loadStateFlow.collectLatest { loadStates ->
                     binding.swipeRefresh.isRefreshing = loadStates.refresh is LoadState.Loading
                 }
             }
-            viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+                mPagingPreviewItemAdapter.loadStateFlow
+                    // Only emit when REFRESH LoadState changes.
+                    .distinctUntilChangedBy { it.refresh }
+                    // Only react to cases where REFRESH completes i.e., NotLoading.
+                    .filter { it.refresh is LoadState.NotLoading }
+                    .collect { binding.previewRecycler.scrollToPosition(0) }
+            }
+            viewLifecycleOwner.lifecycleScope.launchWhenCreated {
                 mPageViewModel.pagingFlow.value?.collectLatest { pagingData ->
                     mPagingPreviewItemAdapter.submitData(pagingData)
                 }
