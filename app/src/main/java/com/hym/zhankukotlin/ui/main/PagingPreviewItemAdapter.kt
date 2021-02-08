@@ -82,6 +82,7 @@ class PagingPreviewItemAdapter() :
     }
 
     override fun onViewRecycled(holder: BindingViewHolder<PreviewItemBinding>) {
+        holder.binding.previewImg.setOnClickListener(null)
         mRequestManager?.clear(holder.binding.previewImg)
     }
 

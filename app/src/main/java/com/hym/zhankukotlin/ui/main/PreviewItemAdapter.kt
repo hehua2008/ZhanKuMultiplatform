@@ -63,6 +63,7 @@ class PreviewItemAdapter : RecyclerView.Adapter<BindingViewHolder<PreviewItemBin
     }
 
     override fun onViewRecycled(holder: BindingViewHolder<PreviewItemBinding>) {
+        holder.binding.previewImg.setOnClickListener(null)
         mRequestManager?.clear(holder.binding.previewImg)
     }
 
