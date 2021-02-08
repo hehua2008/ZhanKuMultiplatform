@@ -45,11 +45,8 @@ object PictureUtils {
                     .submit()
 
                 val deferred = async(Dispatchers.IO) {
-                    val start = url.lastIndexOf('/') + 1
-                    val end = url.lastIndexOf('?').let {
-                        if (it < 0) url.length else it
-                    }
-                    val name = url.substring(start, end)
+                    val uri = Uri.parse(url)
+                    val name = uri.lastPathSegment ?: StringUtils.generateMD5(url)
 
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                         var dir = Environment.getExternalStoragePublicDirectory(

@@ -11,11 +11,13 @@ import java.util.*
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 object PermissionUtils {
+    @JvmField
     val RUNTIME_PERMISSIONS = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
 
+    @JvmStatic
     fun checkSelfPermission(context: Context, permission: String): Boolean {
         if (context == null || TextUtils.isEmpty(permission)) {
             return false
@@ -24,6 +26,7 @@ object PermissionUtils {
         return result == PackageManager.PERMISSION_GRANTED
     }
 
+    @JvmStatic
     fun checkSelfPermissions(context: Context, permissions: List<String>): List<String> {
         if (context == null || permissions == null || permissions.isEmpty()) {
             return emptyList<String>()
@@ -37,12 +40,14 @@ object PermissionUtils {
         return notGrantedPermissions
     }
 
+    @JvmStatic
     fun checkSelfPermissions(context: Context, vararg permissions: String): List<String> {
         return if (context == null || permissions == null || permissions.isEmpty()) {
             emptyList<String>()
         } else checkSelfPermissions(context, listOf(*permissions))
     }
 
+    @JvmStatic
     fun requestPermissions(activity: Activity, vararg permissions: String) {
         if (activity == null || permissions == null || permissions.isEmpty()) {
             return
@@ -50,6 +55,7 @@ object PermissionUtils {
         activity.requestPermissions(permissions, 0)
     }
 
+    @JvmStatic
     fun requestPermissions(activity: Activity, permissions: List<String>) {
         if (activity == null || permissions == null || permissions.isEmpty()) {
             return
@@ -57,6 +63,7 @@ object PermissionUtils {
         requestPermissions(activity, *permissions.toTypedArray())
     }
 
+    @JvmStatic
     fun checkAndRequestPermissions(activity: Activity, permissions: List<String>) {
         if (activity == null || permissions == null || permissions.isEmpty()) {
             return
@@ -67,6 +74,7 @@ object PermissionUtils {
         }
     }
 
+    @JvmStatic
     fun checkAndRequestPermissions(activity: Activity, vararg permissions: String) {
         if (activity == null || permissions == null || permissions.isEmpty()) {
             return

@@ -1,8 +1,10 @@
 package com.hym.zhankukotlin.util
 
+import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
 
 object StringUtils {
     private const val REPLACEMENT_CHAR = 0xfffd.toChar()
@@ -19,6 +21,7 @@ object StringUtils {
     }
 
     @JvmOverloads
+    @JvmStatic
     fun newStringFromBytes(
         data: ByteArray, offset: Int = 0, byteCount: Int = data.size,
         charset: Charset = StandardCharsets.UTF_8
@@ -179,5 +182,13 @@ object StringUtils {
         tmpSb!!.setLength(0)
         tmpSb.append(value, 0, length)
         return tmpSb.toString()
+    }
+
+    @JvmStatic
+    fun generateMD5(input: String): String {
+        val md5Digest: MessageDigest = MessageDigest.getInstance("MD5")
+        val hash: ByteArray = md5Digest.digest(input.toByteArray())
+        val numValue = BigInteger(1, hash)
+        return numValue.toString(16)
     }
 }

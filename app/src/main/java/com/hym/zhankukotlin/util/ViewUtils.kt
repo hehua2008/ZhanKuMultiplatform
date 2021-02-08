@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.View
 
 object ViewUtils {
+    @JvmStatic
     fun View.getActivityContext(): Context? {
         var view = this
         while (true) {
