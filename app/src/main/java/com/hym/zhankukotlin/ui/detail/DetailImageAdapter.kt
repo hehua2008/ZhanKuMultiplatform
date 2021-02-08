@@ -4,13 +4,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.hym.zhankukotlin.MyApplication
+import com.hym.zhankukotlin.GlideApp
+import com.hym.zhankukotlin.GlideAppExtension
+import com.hym.zhankukotlin.GlideRequests
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ImageItemBinding
 import com.hym.zhankukotlin.ui.BindingViewHolder
-import com.hym.zhankukotlin.ui.ImageViewLoadingListener
+
 
 class DetailImageAdapter : RecyclerView.Adapter<BindingViewHolder<ImageItemBinding>>() {
+    private var mRequestManager: GlideRequests? = null
     private var mImgUrls: List<String> = emptyList()
 
     override fun onCreateViewHolder(
@@ -27,25 +30,29 @@ class DetailImageAdapter : RecyclerView.Adapter<BindingViewHolder<ImageItemBindi
     ) {
         val url = mImgUrls[position]
         val imageView = holder.binding.imageView
-        if (!ImageViewLoadingListener.shouldReLoadImage(imageView, url)) {
-            return
-        }
-        imageView.setImageDrawable(MyApplication.transparentDrawable)
-        val listener = ImageViewLoadingListener.createListener(imageView, url)
-        MyApplication.imageLoader.displayImage(url, listener.imageAware, listener)
+        mRequestManager!!
+            .load(url)
+            .transparentPlaceHolder()
+            .transition(GlideAppExtension.DRAWABLE_CROSS_FADE)
+            //.originalSize()
+            .into(imageView)
+            .waitForLayout()
+    }
+
+    override fun onViewRecycled(holder: BindingViewHolder<ImageItemBinding>) {
+        mRequestManager?.clear(holder.binding.imageView)
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        mRequestManager = GlideApp.with(recyclerView)
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        mRequestManager = null
     }
 
     override fun getItemCount(): Int {
         return mImgUrls.size
-    }
-
-    override fun onViewRecycled(holder: BindingViewHolder<ImageItemBinding>) {
-        val imageView = holder.binding.imageView
-        ImageViewLoadingListener.resetImageViewTags(imageView)
-        val listener = ImageViewLoadingListener.getListener(imageView)
-        if (listener != null) {
-            MyApplication.imageLoader.cancelDisplayTask(listener.imageAware)
-        }
     }
 
     fun setImgUrls(imgUrls: List<String>) {

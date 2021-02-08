@@ -10,12 +10,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
-import com.hym.zhankukotlin.MyApplication
+import com.hym.zhankukotlin.GlideApp
+import com.hym.zhankukotlin.GlideRequests
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.PreviewItemBinding
 import com.hym.zhankukotlin.network.PreviewItem
 import com.hym.zhankukotlin.ui.BindingViewHolder
-import com.hym.zhankukotlin.ui.ImageViewLoadingListener
 import com.hym.zhankukotlin.ui.detail.DetailActivity
 
 class PagingPreviewItemAdapter() :
@@ -42,6 +42,8 @@ class PagingPreviewItemAdapter() :
             previewRecyclerPool.setMaxRecycledViews(BUTTON_ITEM_TYPE, 20)
         }
     }
+
+    private var mRequestManager: GlideRequests? = null
 
     override fun getItemViewType(position: Int): Int {
         return BUTTON_ITEM_TYPE
@@ -74,21 +76,13 @@ class PagingPreviewItemAdapter() :
                 .putExtra(DetailActivity.KEY_URL, previewItem.targetUrl)
             context.startActivity(intent)
         }
-        if (!ImageViewLoadingListener.shouldReLoadImage(binding.previewImg, imageUrl)) {
-            return
-        }
-        binding.previewImg.setImageDrawable(null)
-        val listener = ImageViewLoadingListener.createListener(binding.previewImg, imageUrl)
-        MyApplication.imageLoader.displayImage(previewItem.imageUrl, listener.imageAware, listener)
+        mRequestManager!!
+            .load(imageUrl)
+            .into(binding.previewImg)
     }
 
     override fun onViewRecycled(holder: BindingViewHolder<PreviewItemBinding>) {
-        val imageView = holder.binding.previewImg
-        ImageViewLoadingListener.resetImageViewTags(imageView)
-        val listener = ImageViewLoadingListener.getListener(imageView)
-        if (listener != null) {
-            MyApplication.imageLoader.cancelDisplayTask(listener.imageAware)
-        }
+        mRequestManager?.clear(holder.binding.previewImg)
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -97,9 +91,11 @@ class PagingPreviewItemAdapter() :
             is LinearLayoutManager -> layoutManager.recycleChildrenOnDetach = true
             is FlexboxLayoutManager -> layoutManager.recycleChildrenOnDetach = true
         }
+        mRequestManager = GlideApp.with(recyclerView)
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         recyclerView.setRecycledViewPool(null)
+        mRequestManager = null
     }
 }

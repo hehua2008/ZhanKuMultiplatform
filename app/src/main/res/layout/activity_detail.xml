@@ -40,13 +40,33 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
-                app:layout_constraintBottom_toTopOf="@id/detail_link"
+                app:layout_constraintBottom_toTopOf="@id/download_all"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/detail_title"
                 app:selectionRequired="false"
                 app:singleSelection="true"
                 app:spanCount="4" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/download_all"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:maxLines="1"
+                android:minWidth="10dp"
+                android:minHeight="10dp"
+                android:paddingHorizontal="@dimen/button_padding_horizontal"
+                android:paddingVertical="0dp"
+                android:text="一键下载"
+                android:textAllCaps="false"
+                android:textSize="@dimen/common_text_size"
+                app:backgroundTint="@color/btn_color"
+                app:layout_constraintBottom_toTopOf="@id/detail_link"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tag_item_recycler" />
 
             <TextView
                 android:id="@+id/detail_link"
@@ -61,7 +81,7 @@
                 app:layout_constraintBottom_toTopOf="@id/detail_time"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tag_item_recycler" />
+                app:layout_constraintTop_toBottomOf="@id/download_all" />
 
             <TextView
                 android:id="@+id/detail_time"

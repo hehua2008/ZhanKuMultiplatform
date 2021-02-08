@@ -3,26 +3,21 @@ package com.hym.zhankukotlin.ui.main
 import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.os.Bundle
-import android.os.Handler
-import android.view.ViewConfiguration
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.tabs.TabLayoutMediator.TabConfigurationStrategy
-import com.hym.zhankukotlin.MyApplication
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityMain2Binding
 
 class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
     private val mTitles: MutableList<String> = mutableListOf()
 
-    private lateinit var mMainHandler: Handler
     private lateinit var mBinding: ActivityMain2Binding
     private lateinit var mSectionsPagerViewModel: SectionsPagerViewModel
     private lateinit var mMediator: TabLayoutMediator
@@ -30,24 +25,11 @@ class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mMainHandler = Handler()
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main2)
         val sectionsPagerAdapter = SectionsPager2Adapter(this)
         mBinding.viewPager.adapter = sectionsPagerAdapter
         mBinding.viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
-            private var mSelectedPosition = 0
-            private val mResume = Runnable { MyApplication.imageLoader.resume() }
-
-            override fun onPageScrolled(
-                position: Int, positionOffset: Float, positionOffsetPixels: Int
-            ) {
-                if (position != mSelectedPosition) {
-                    // TODO
-                }
-            }
-
             override fun onPageSelected(position: Int) {
-                mSelectedPosition = position
                 val tabCount = mBinding.tabs.tabCount
                 if (tabCount == 0) {
                     return
@@ -62,17 +44,6 @@ class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
                         tabView.textSize = 16f
                         tabView.typeface = Typeface.DEFAULT
                     }
-                }
-            }
-
-            override fun onPageScrollStateChanged(state: Int) {
-                if (state != ViewPager2.SCROLL_STATE_IDLE) {
-                    mMainHandler.removeCallbacks(mResume)
-                    MyApplication.imageLoader.pause()
-                } else {
-                    mMainHandler.postDelayed(
-                        mResume, ViewConfiguration.getDoubleTapTimeout().toLong()
-                    )
                 }
             }
         })

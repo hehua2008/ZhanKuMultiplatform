@@ -7,14 +7,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
+import com.bumptech.glide.RequestManager
 import com.google.android.flexbox.FlexboxLayoutManager
-import com.hym.zhankukotlin.MyApplication
+import com.hym.zhankukotlin.GlideApp
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.PreviewItemBinding
 import com.hym.zhankukotlin.network.PreviewItem
 import com.hym.zhankukotlin.network.PreviewResult
 import com.hym.zhankukotlin.ui.BindingViewHolder
-import com.hym.zhankukotlin.ui.ImageViewLoadingListener
 import com.hym.zhankukotlin.ui.detail.DetailActivity
 
 class PreviewItemAdapter : RecyclerView.Adapter<BindingViewHolder<PreviewItemBinding>>() {
@@ -28,8 +28,10 @@ class PreviewItemAdapter : RecyclerView.Adapter<BindingViewHolder<PreviewItemBin
         }
     }
 
+    private var mRequestManager: RequestManager? = null
     private var mPreviewItems: List<PreviewItem> = emptyList()
     private var mItemIds = LongArray(0)
+
     override fun getItemViewType(position: Int): Int {
         return BUTTON_ITEM_TYPE
     }
@@ -55,12 +57,13 @@ class PreviewItemAdapter : RecyclerView.Adapter<BindingViewHolder<PreviewItemBin
                 .putExtra(DetailActivity.KEY_URL, previewItem.targetUrl)
             context.startActivity(intent)
         }
-        if (!ImageViewLoadingListener.shouldReLoadImage(binding.previewImg, imageUrl)) {
-            return
-        }
-        binding.previewImg.setImageDrawable(null)
-        val listener = ImageViewLoadingListener.createListener(binding.previewImg, imageUrl)
-        MyApplication.imageLoader.displayImage(previewItem.imageUrl, listener.imageAware, listener)
+        mRequestManager!!
+            .load(imageUrl)
+            .into(binding.previewImg)
+    }
+
+    override fun onViewRecycled(holder: BindingViewHolder<PreviewItemBinding>) {
+        mRequestManager?.clear(holder.binding.previewImg)
     }
 
     override fun getItemCount(): Int {
@@ -71,25 +74,18 @@ class PreviewItemAdapter : RecyclerView.Adapter<BindingViewHolder<PreviewItemBin
         return mItemIds[position]
     }
 
-    override fun onViewRecycled(holder: BindingViewHolder<PreviewItemBinding>) {
-        val imageView = holder.binding.previewImg
-        ImageViewLoadingListener.resetImageViewTags(imageView)
-        val listener = ImageViewLoadingListener.getListener(imageView)
-        if (listener != null) {
-            MyApplication.imageLoader.cancelDisplayTask(listener.imageAware)
-        }
-    }
-
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         recyclerView.setRecycledViewPool(previewRecyclerPool)
         when (val layoutManager = recyclerView.layoutManager) {
             is LinearLayoutManager -> layoutManager.recycleChildrenOnDetach = true
             is FlexboxLayoutManager -> layoutManager.recycleChildrenOnDetach = true
         }
+        mRequestManager = GlideApp.with(recyclerView)
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         recyclerView.setRecycledViewPool(null)
+        mRequestManager = null
     }
 
     fun setPreviewItems(previewResult: PreviewResult) {

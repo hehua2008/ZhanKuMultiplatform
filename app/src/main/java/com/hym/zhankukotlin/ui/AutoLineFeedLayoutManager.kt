@@ -10,12 +10,12 @@ import androidx.recyclerview.widget.RecyclerView.Recycler
 
 class AutoLineFeedLayoutManager : LinearLayoutManager {
     constructor(context: Context?) : super(context) {
-        //setOrientation(RecyclerView.HORIZONTAL);
+        //setOrientation(RecyclerView.HORIZONTAL)
     }
 
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int)
             : super(context, attrs, defStyleAttr, defStyleRes) {
-        //setOrientation(RecyclerView.HORIZONTAL);
+        //setOrientation(RecyclerView.HORIZONTAL)
     }
 
     override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams {

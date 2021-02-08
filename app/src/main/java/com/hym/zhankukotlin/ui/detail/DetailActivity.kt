@@ -1,9 +1,12 @@
 package com.hym.zhankukotlin.ui.detail
 
+import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
+import android.os.Environment
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -14,8 +17,11 @@ import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
+import com.hym.zhankukotlin.GlideApp
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityDetailBinding
+import kotlinx.coroutines.*
+import java.io.File
 
 class DetailActivity : AppCompatActivity() {
     private lateinit var mTitle: String
@@ -84,9 +90,52 @@ class DetailActivity : AppCompatActivity() {
             mBinding.detailItem = detailItem ?: return@Observer
             mTagUrlItemAdapter.setTagItems(detailItem.categorys)
             mDetailImageAdapter.setImgUrls(detailItem.imgUrls)
+            mBinding.downloadAll.setOnClickListener(OnClickListener(detailItem.imgUrls))
         })
 
         mDetailViewModel.setDetailUrl(mUrl)
+    }
+
+    class OnClickListener(private val imgUrls: List<String>) : View.OnClickListener {
+        override fun onClick(v: View?) {
+            if (v != null) {
+                downloadAll(v.context.applicationContext)
+            }
+        }
+
+        private fun downloadAll(context: Context) {
+            GlobalScope.launch(Dispatchers.Main) {
+                val deferreds = mutableListOf<Deferred<File>>()
+                imgUrls.forEach { url ->
+                    val futureTarget = GlideApp.with(context)
+                        .downloadOnly()
+                        .load(url)
+                        .submit()
+                    val deferred = async(Dispatchers.IO) {
+                        val src = futureTarget.get()
+                        val start = url.lastIndexOf('/') + 1
+                        val end = url.lastIndexOf('?').let {
+                            if (it < 0) url.length else it
+                        }
+                        val name = url.substring(start, end)
+                        val dst =
+                            File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), name)
+                        try {
+                            src.copyTo(dst, true)
+                        } catch (e: FileAlreadyExistsException) {
+                            dst
+                        }
+                    }
+                    deferreds.add(deferred)
+                }
+                awaitAll(*deferreds.toTypedArray())
+                Toast.makeText(
+                    context,
+                    "Saved ${deferreds[0]?.await().name} etc. ${deferreds.size} files",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
