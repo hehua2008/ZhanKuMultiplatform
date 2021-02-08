@@ -12,11 +12,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.hym.zhankukotlin.GlideApp
 import com.hym.zhankukotlin.GlideRequests
+import com.hym.zhankukotlin.MyApplication
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.PreviewItemBinding
 import com.hym.zhankukotlin.network.PreviewItem
 import com.hym.zhankukotlin.ui.BindingViewHolder
 import com.hym.zhankukotlin.ui.detail.DetailActivity
+import com.hym.zhankukotlin.util.ViewUtils.getActivityContext
 
 class PagingPreviewItemAdapter() :
     PagingDataAdapter<PreviewItem, BindingViewHolder<PreviewItemBinding>>(
@@ -53,7 +55,7 @@ class PagingPreviewItemAdapter() :
         parent: ViewGroup, viewType: Int
     ): BindingViewHolder<PreviewItemBinding> {
         val binding: PreviewItemBinding = DataBindingUtil.inflate(
-            LayoutInflater.from(parent.context), R.layout.preview_item, parent, false
+            LayoutInflater.from(MyApplication.INSTANCE), R.layout.preview_item, parent, false
         )
         return BindingViewHolder(binding)
     }
@@ -70,7 +72,7 @@ class PagingPreviewItemAdapter() :
         val binding = holder.binding
         binding.previewItem = previewItem
         binding.previewImg.setOnClickListener { v ->
-            val context = v.context
+            val context = v.getActivityContext() ?: return@setOnClickListener
             val intent = Intent(context, DetailActivity::class.java)
                 .putExtra(DetailActivity.KEY_TITLE, previewItem.title)
                 .putExtra(DetailActivity.KEY_URL, previewItem.targetUrl)

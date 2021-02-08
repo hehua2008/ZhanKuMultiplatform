@@ -1,6 +1,5 @@
 package com.hym.zhankukotlin.ui.detail
 
-import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Environment
@@ -18,6 +17,7 @@ import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.hym.zhankukotlin.GlideApp
+import com.hym.zhankukotlin.MyApplication
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityDetailBinding
 import kotlinx.coroutines.*
@@ -99,12 +99,13 @@ class DetailActivity : AppCompatActivity() {
     class OnClickListener(private val imgUrls: List<String>) : View.OnClickListener {
         override fun onClick(v: View?) {
             if (v != null) {
-                downloadAll(v.context.applicationContext)
+                downloadAll()
             }
         }
 
-        private fun downloadAll(context: Context) {
+        private fun downloadAll() {
             GlobalScope.launch(Dispatchers.Main) {
+                val context = MyApplication.INSTANCE
                 val deferreds = mutableListOf<Deferred<File>>()
                 imgUrls.forEach { url ->
                     val futureTarget = GlideApp.with(context)
@@ -131,7 +132,7 @@ class DetailActivity : AppCompatActivity() {
                 awaitAll(*deferreds.toTypedArray())
                 Toast.makeText(
                     context,
-                    "Saved ${deferreds[0]?.await().name} etc. ${deferreds.size} files",
+                    "Saved ${deferreds[0].await().name} etc. ${deferreds.size} files",
                     Toast.LENGTH_SHORT
                 ).show()
             }

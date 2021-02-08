@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="detailItem"
             type="com.hym.zhankukotlin.network.DetailItem" />
@@ -62,6 +64,7 @@
                 android:text="一键下载"
                 android:textAllCaps="false"
                 android:textSize="@dimen/common_text_size"
+                android:visibility="@{detailItem.imgUrls.empty ? View.GONE : View.VISIBLE}"
                 app:backgroundTint="@color/btn_color"
                 app:layout_constraintBottom_toTopOf="@id/detail_link"
                 app:layout_constraintLeft_toLeftOf="parent"

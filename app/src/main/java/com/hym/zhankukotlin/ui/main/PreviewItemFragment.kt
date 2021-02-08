@@ -171,8 +171,11 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        mBinding!!.catRecrcler.layoutManager = null
+        val binding = mBinding!!
         mBinding = null
+        binding.previewRecycler.adapter = null
+        binding.catRecrcler.layoutManager = null
+        binding.catRecrcler.adapter = null
     }
 
     override fun onChanged(viewLifecycleOwner: LifecycleOwner) {

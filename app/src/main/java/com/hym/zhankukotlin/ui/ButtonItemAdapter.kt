@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import com.google.android.flexbox.FlexboxLayoutManager
+import com.hym.zhankukotlin.MyApplication
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ButtonItemBinding
 import com.hym.zhankukotlin.ui.ButtonGroupRecyclerView.ButtonCheckedAdapter
@@ -32,7 +33,7 @@ abstract class ButtonItemAdapter : ButtonCheckedAdapter<BindingViewHolder<Button
         parent: ViewGroup, viewType: Int
     ): BindingViewHolder<ButtonItemBinding> {
         val binding: ButtonItemBinding = DataBindingUtil.inflate(
-            LayoutInflater.from(parent.context), R.layout.button_item, parent, false
+            LayoutInflater.from(MyApplication.INSTANCE), R.layout.button_item, parent, false
         )
         return BindingViewHolder(binding)
     }

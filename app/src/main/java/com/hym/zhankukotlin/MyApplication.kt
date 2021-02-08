@@ -20,6 +20,9 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        setTheme(R.style.Theme_ZhanKuKotlin)
+        INSTANCE = this
+
         /*
         mainLooper.setMessageLogging(object : Printer {
             private val TIME_OUT = 30
@@ -68,6 +71,8 @@ class MyApplication : Application() {
     companion object {
         private val TAG = MyApplication::class.java.simpleName
         private const val CLIENT_CACHE_DIR_NAME = "retrofit"
+
+        lateinit var INSTANCE: MyApplication
 
         @JvmStatic
         private lateinit var sClient: OkHttpClient

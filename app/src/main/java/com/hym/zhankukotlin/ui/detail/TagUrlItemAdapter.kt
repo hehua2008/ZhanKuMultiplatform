@@ -8,6 +8,7 @@ import com.hym.zhankukotlin.ui.BindingViewHolder
 import com.hym.zhankukotlin.ui.NameValueAdapter
 import com.hym.zhankukotlin.ui.main.PreviewItemFragment
 import com.hym.zhankukotlin.ui.tag.TagActivity
+import com.hym.zhankukotlin.util.ViewUtils.getActivityContext
 
 class TagUrlItemAdapter : NameValueAdapter<String, String>() {
     override fun getOnCheckedChangeListener(
@@ -24,8 +25,8 @@ class TagUrlItemAdapter : NameValueAdapter<String, String>() {
         binding.buttonView.isCheckable = false
         binding.buttonView.text = mNameValues[position].key
         binding.buttonView.setOnClickListener { v ->
+            val context = v.getActivityContext() ?: return@setOnClickListener
             val tagUrl = mNameValues[position].value
-            val context = v.context
             val intent = Intent(context, TagActivity::class.java)
             val categoryItem: CategoryItem = CategoryItem.getCategoryItem(tagUrl)
                 ?: return@setOnClickListener
