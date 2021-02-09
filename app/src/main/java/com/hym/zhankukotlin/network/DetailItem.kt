@@ -1,25 +1,25 @@
 package com.hym.zhankukotlin.network
 
-class DetailItem private constructor() {
+class DetailItem private constructor(
     @JvmField
-    var title: String? = null
-
-    @JvmField
-    var time: String? = null
+    val title: String? = null,
 
     @JvmField
-    var views: String? = null
+    val time: String? = null,
 
     @JvmField
-    var comments: String? = null
+    val views: String? = null,
 
     @JvmField
-    var favorites: String? = null
+    val comments: String? = null,
 
-    lateinit var categorys: List<CategoryItem>
+    @JvmField
+    val favorites: String? = null,
 
-    lateinit var imgUrls: List<String>
+    val categorys: List<CategoryItem> = emptyList(),
 
+    val imgUrls: List<String> = emptyList()
+) {
     override fun toString(): String {
         val sb = StringBuilder()
         sb.append(title).append('\n')
@@ -77,24 +77,7 @@ class DetailItem private constructor() {
         }
 
         fun build(): DetailItem {
-            val ret = DetailItem()
-            ret.title = title
-            ret.time = time
-            ret.views = views
-            ret.comments = comments
-            ret.favorites = favorites
-            ret.categorys = categorys
-            ret.imgUrls = imgUrls
-
-            title = null
-            time = null
-            views = null
-            comments = null
-            favorites = null
-            categorys = mutableListOf()
-            imgUrls = mutableListOf()
-
-            return ret
+            return DetailItem(title, time, views, comments, favorites, categorys, imgUrls)
         }
     }
 }

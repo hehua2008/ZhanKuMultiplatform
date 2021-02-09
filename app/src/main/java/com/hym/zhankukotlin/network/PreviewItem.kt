@@ -2,34 +2,34 @@ package com.hym.zhankukotlin.network
 
 import java.util.*
 
-class PreviewItem private constructor() {
+class PreviewItem private constructor(
     @JvmField
-    var imageUrl: String? = null
+    val imageUrl: String? = null,
 
     @JvmField
-    var targetUrl: String? = null
+    val targetUrl: String? = null,
 
     @JvmField
-    var title: String? = null
+    val title: String? = null,
 
     @JvmField
-    var views: String? = null
+    val views: String? = null,
 
     @JvmField
-    var comments: String? = null
+    val comments: String? = null,
 
     @JvmField
-    var favorites: String? = null
+    val favorites: String? = null,
 
     @JvmField
-    var author: String? = null
+    val author: String? = null,
 
     @JvmField
-    var time: String? = null
+    val time: String? = null,
 
     @JvmField
-    var category: CategoryItem? = null
-
+    val category: CategoryItem? = null
+) {
     override fun hashCode(): Int {
         return Objects.hash(targetUrl ?: imageUrl)
     }
@@ -117,28 +117,17 @@ class PreviewItem private constructor() {
         }
 
         fun build(): PreviewItem {
-            val ret = PreviewItem()
-            ret.imageUrl = imageUrl
-            ret.targetUrl = targetUrl
-            ret.title = title
-            ret.views = views
-            ret.comments = comments
-            ret.favorites = favorites
-            ret.author = author
-            ret.time = time
-            ret.category = category
-
-            imageUrl = null
-            targetUrl = null
-            title = null
-            views = null
-            comments = null
-            favorites = null
-            author = null
-            time = null
-            category = null
-
-            return ret
+            return PreviewItem(
+                imageUrl,
+                targetUrl,
+                title,
+                views,
+                comments,
+                favorites,
+                author,
+                time,
+                category
+            )
         }
     }
 }
