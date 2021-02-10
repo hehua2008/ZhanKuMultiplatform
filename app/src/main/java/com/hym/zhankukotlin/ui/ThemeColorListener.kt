@@ -7,6 +7,7 @@ import androidx.core.app.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.target.ViewTarget
@@ -28,13 +29,18 @@ object ThemeColorListener : RequestListener<Drawable> {
             resource: Drawable?, model: Any?, target: Target<Drawable>?,
             dataSource: DataSource?, isFirstResource: Boolean
     ): Boolean {
-        if (resource is BitmapDrawable && target is ViewTarget<*, *>) {
-            val activity = target.view.getActivityContext() as? ComponentActivity
-            activity?.lifecycleScope?.launch(Dispatchers.Main) {
-                val toolbar = activity.findViewById(R.id.action_bar) as? Toolbar ?: return@launch
+        if (target is ViewTarget<*, *>) {
+            val bitmap = when (resource) {
+                is BitmapDrawable -> resource.bitmap
+                is GifDrawable -> resource.firstFrame
+                else -> null
+            } ?: return false
+            val activity = target.view.getActivityContext() as? ComponentActivity ?: return false
+            val toolbar = activity.findViewById(R.id.action_bar) as? Toolbar ?: return false
+            activity.lifecycleScope.launch(Dispatchers.Main) {
                 val themeColors: List<MMCQ.ThemeColor>
                 withContext(Dispatchers.Default) {
-                    val mmcq = MMCQ(resource.bitmap, 3)
+                    val mmcq = MMCQ(bitmap, 3)
                     themeColors = mmcq.quantize()
                 }
                 if (themeColors.isEmpty()) return@launch
