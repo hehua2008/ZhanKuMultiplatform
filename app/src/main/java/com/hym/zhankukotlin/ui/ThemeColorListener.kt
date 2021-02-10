@@ -34,7 +34,7 @@ object ThemeColorListener : RequestListener<Drawable> {
                 val toolbar = activity.findViewById(R.id.action_bar) as? Toolbar ?: return@launch
                 val themeColors: List<MMCQ.ThemeColor>
                 withContext(Dispatchers.Default) {
-                    val mmcq = MMCQ(resource.bitmap, 2)
+                    val mmcq = MMCQ(resource.bitmap, 3)
                     themeColors = mmcq.quantize()
                 }
                 if (themeColors.isEmpty()) return@launch

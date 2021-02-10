@@ -476,8 +476,8 @@ public class MMCQ {
             Log.d(TAG, "proportion:" + mProportion + " RGB:"
                     + Color.red(mColor) + " " + Color.green(mColor) + " " + Color.blue(mColor));
             // (...) / 3d * (3 / 2d)
-            double distance = distanceToBGW(mColor) * Math.sqrt(3 / 2d);
-            mPriority = mProportion * (distance + 0.2d);
+            double distance = colorDistance(mColor, Color.WHITE);
+            mPriority = mProportion * distance;
         }
 
         @Override
