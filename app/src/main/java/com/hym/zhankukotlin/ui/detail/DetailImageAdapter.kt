@@ -10,11 +10,13 @@ import com.hym.zhankukotlin.GlideRequests
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ImageItemBinding
 import com.hym.zhankukotlin.ui.BindingViewHolder
+import com.hym.zhankukotlin.ui.ThemeColorListener
 
 
 class DetailImageAdapter : RecyclerView.Adapter<BindingViewHolder<ImageItemBinding>>() {
     private var mRequestManager: GlideRequests? = null
     private var mImgUrls: List<String> = emptyList()
+    private var mFirstBind = true
 
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
@@ -35,6 +37,12 @@ class DetailImageAdapter : RecyclerView.Adapter<BindingViewHolder<ImageItemBindi
             .transparentPlaceHolder()
             .transition(GlideAppExtension.DRAWABLE_CROSS_FADE)
             //.originalSize()
+            .apply {
+                if (mFirstBind && position == 0) {
+                    mFirstBind = false
+                    addListener(ThemeColorListener)
+                }
+            }
             .into(imageView)
             .waitForLayout()
     }
