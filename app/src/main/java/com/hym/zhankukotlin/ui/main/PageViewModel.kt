@@ -125,14 +125,14 @@ class PageViewModel : ViewModel() {
 
     private fun updatePager(url: String) {
         val newFlow = Pager(
-            // Configure how data is loaded by passing additional properties to
-            // PagingConfig, such as prefetchDistance.
-            config = PagingConfig(pageSize = 25),
-            initialKey = url,
-            pagingSourceFactory = { PreviewPagingSource(MyApplication.networkService) }
+                // Configure how data is loaded by passing additional properties to
+                // PagingConfig, such as prefetchDistance.
+                config = PagingConfig(pageSize = 25),
+                initialKey = url,
+                pagingSourceFactory = { PreviewPagingSource(MyApplication.networkService) }
         )
-            .flow
-            .cachedIn(viewModelScope)
+                .flow
+                .cachedIn(viewModelScope)
 
         pagingFlow.value = newFlow
     }

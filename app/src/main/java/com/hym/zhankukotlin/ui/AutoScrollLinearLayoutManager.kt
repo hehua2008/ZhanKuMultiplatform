@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Recycler
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import kotlin.math.min
 
 class AutoScrollLinearLayoutManager : LinearLayoutManager, View.OnLayoutChangeListener {
     protected var mRecyclerView: RecyclerView? = null
@@ -51,7 +52,7 @@ class AutoScrollLinearLayoutManager : LinearLayoutManager, View.OnLayoutChangeLi
             return 0
         }
         val parentView = getParentNestedScrollView(mRecyclerView)
-            ?: return super.scrollVerticallyBy(dy, recycler, state)
+                ?: return super.scrollVerticallyBy(dy, recycler, state)
         val parentVisibleRect = Rect()
         parentView.getGlobalVisibleRect(parentVisibleRect)
         val recyclerVisibleRect = Rect()
@@ -83,8 +84,8 @@ class AutoScrollLinearLayoutManager : LinearLayoutManager, View.OnLayoutChangeLi
 
     @CallSuper
     override fun onLayoutChange(
-        v: View, left: Int, top: Int, right: Int, bottom: Int,
-        oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int
+            v: View, left: Int, top: Int, right: Int, bottom: Int,
+            oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int
     ) {
         mForceScrolling = false
         val parentView = getParentNestedScrollView(mRecyclerView) ?: return
@@ -103,7 +104,7 @@ class AutoScrollLinearLayoutManager : LinearLayoutManager, View.OnLayoutChangeLi
         if (bottomCovered > 0) {
             mForceScrolling = true
             mRecyclerView!!.startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL)
-            mRecyclerView!!.scrollBy(0, -Math.min(bottomRemain, bottomCovered))
+            mRecyclerView!!.scrollBy(0, -min(bottomRemain, bottomCovered))
         }
     }
 
@@ -118,7 +119,7 @@ class AutoScrollLinearLayoutManager : LinearLayoutManager, View.OnLayoutChangeLi
             var child: View? = recyclerView
             while (p != null) {
                 if (p !is SwipeRefreshLayout
-                    && ViewParentCompat.onStartNestedScroll(p, child, recyclerView, axes)
+                        && ViewParentCompat.onStartNestedScroll(p, child, recyclerView, axes)
                 ) {
                     return if (p is ViewGroup) p else null
                 }

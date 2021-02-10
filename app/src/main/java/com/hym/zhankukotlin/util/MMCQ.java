@@ -18,7 +18,7 @@ import java.util.PriorityQueue;
 /**
  * Created by hehua2008 on 9/20/18.
  * Blog: https://blog.csdn.net/hegan2010/article/details/84308152
- *
+ * <p>
  * Modified Median Cut Quantization(MMCQ)
  * Leptonica: http://tpgit.github.io/UnOfficialLeptDocs/leptonica/color-quantization.html
  */

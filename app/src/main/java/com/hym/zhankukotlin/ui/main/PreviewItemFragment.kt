@@ -66,15 +66,15 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
 
         mButtonItemDecoration = object : RecyclerView.ItemDecoration() {
             private val mOffset = resources.getDimensionPixelSize(
-                R.dimen.button_item_horizontal_offset
+                    R.dimen.button_item_horizontal_offset
             ) and 1.inv()
             private val mHalfOffset = mOffset shr 1
 
             override fun getItemOffsets(
-                outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
+                    outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
             ) {
                 val itemPosition =
-                    (view.layoutParams as RecyclerView.LayoutParams).viewLayoutPosition
+                        (view.layoutParams as RecyclerView.LayoutParams).viewLayoutPosition
                 val itemCount = state.itemCount
                 val left = if (itemPosition == 0) mOffset else mHalfOffset
                 val right = if (itemPosition == itemCount - 1) mOffset else mHalfOffset
@@ -83,15 +83,15 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
         }
         mPreviewItemDecoration = object : RecyclerView.ItemDecoration() {
             private val mOffset = resources.getDimensionPixelSize(
-                R.dimen.preview_item_offset
+                    R.dimen.preview_item_offset
             ) and 1.inv()
             private val mHalfOffset = mOffset shr 1
 
             override fun getItemOffsets(
-                outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
+                    outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
             ) {
                 val itemPosition =
-                    (view.layoutParams as RecyclerView.LayoutParams).viewLayoutPosition
+                        (view.layoutParams as RecyclerView.LayoutParams).viewLayoutPosition
                 if (itemPosition and 1 == 0) {
                     outRect.set(mOffset, 0, mHalfOffset, mOffset)
                 } else {
@@ -102,8 +102,8 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false)
         val binding = mBinding!!
 
@@ -186,11 +186,11 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
             mCategoryItemAdapter.setTitleSubcatMap(previewResult.categoryItem)
             binding.pagedLayout.pageArr = previewResult.pagedArr
         })
-        mPageViewModel.previewUrl.observe(viewLifecycleOwner, Observer { url ->
+        mPageViewModel.previewUrl.observe(viewLifecycleOwner, { url ->
             mUrl = url
             binding.categoryLink.text = url
         })
-        mPageViewModel.pagingFlow.observe(viewLifecycleOwner, Observer {
+        mPageViewModel.pagingFlow.observe(viewLifecycleOwner, {
             viewLifecycleOwner.lifecycleScope.launchWhenCreated {
                 mPagingPreviewItemAdapter.loadStateFlow.collectLatest { loadStates ->
                     binding.swipeRefresh.isRefreshing = loadStates.refresh is LoadState.Loading
@@ -198,11 +198,11 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
             }
             viewLifecycleOwner.lifecycleScope.launchWhenCreated {
                 mPagingPreviewItemAdapter.loadStateFlow
-                    // Only emit when REFRESH LoadState changes.
-                    .distinctUntilChangedBy { it.refresh }
-                    // Only react to cases where REFRESH completes i.e., NotLoading.
-                    .filter { it.refresh is LoadState.NotLoading }
-                    .collect { binding.previewRecycler.scrollToPosition(0) }
+                        // Only emit when REFRESH LoadState changes.
+                        .distinctUntilChangedBy { it.refresh }
+                        // Only react to cases where REFRESH completes i.e., NotLoading.
+                        .filter { it.refresh is LoadState.NotLoading }
+                        .collect { binding.previewRecycler.scrollToPosition(0) }
             }
             viewLifecycleOwner.lifecycleScope.launchWhenCreated {
                 mPageViewModel.pagingFlow.value?.collectLatest { pagingData ->

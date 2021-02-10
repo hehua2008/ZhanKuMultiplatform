@@ -30,10 +30,10 @@ abstract class ButtonItemAdapter : ButtonCheckedAdapter<BindingViewHolder<Button
 
     @CallSuper
     override fun onCreateViewHolder(
-        parent: ViewGroup, viewType: Int
+            parent: ViewGroup, viewType: Int
     ): BindingViewHolder<ButtonItemBinding> {
         val binding: ButtonItemBinding = DataBindingUtil.inflate(
-            LayoutInflater.from(MyApplication.INSTANCE), R.layout.button_item, parent, false
+                LayoutInflater.from(MyApplication.INSTANCE), R.layout.button_item, parent, false
         )
         return BindingViewHolder(binding)
     }

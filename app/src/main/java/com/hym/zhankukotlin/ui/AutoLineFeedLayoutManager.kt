@@ -20,7 +20,7 @@ class AutoLineFeedLayoutManager : LinearLayoutManager {
 
     override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams {
         return RecyclerView.LayoutParams(
-            RecyclerView.LayoutParams.WRAP_CONTENT, RecyclerView.LayoutParams.WRAP_CONTENT
+                RecyclerView.LayoutParams.WRAP_CONTENT, RecyclerView.LayoutParams.WRAP_CONTENT
         )
     }
 
@@ -48,8 +48,8 @@ class AutoLineFeedLayoutManager : LinearLayoutManager {
 
             if (curLineWidthSum <= parentWidth) {
                 layoutDecorated(
-                    view,
-                    curLineWidthSum - width, curLineTop, curLineWidthSum, curLineTop + height
+                        view,
+                        curLineWidthSum - width, curLineTop, curLineWidthSum, curLineTop + height
                 )
                 if (lastLineMaxHeight < height) {
                     lastLineMaxHeight = height
@@ -99,8 +99,8 @@ class AutoLineFeedLayoutManager : LinearLayoutManager {
                     for ((idxView, idxSize) in lastLineMap) {
                         val idxRight = idxLeft + idxSize.width
                         layoutDecorated(
-                            idxView,
-                            idxLeft, curLineTop, idxRight, curLineTop + idxSize.height
+                                idxView,
+                                idxLeft, curLineTop, idxRight, curLineTop + idxSize.height
                         )
                         idxLeft = idxRight + widthOffset
                     }
@@ -125,8 +125,8 @@ class AutoLineFeedLayoutManager : LinearLayoutManager {
             for ((idxView, idxSize) in lastLineMap) {
                 val idxRight = idxLeft + idxSize.width
                 layoutDecorated(
-                    idxView,
-                    idxLeft, curLineTop, idxRight, curLineTop + idxSize.height
+                        idxView,
+                        idxLeft, curLineTop, idxRight, curLineTop + idxSize.height
                 )
                 idxLeft = idxRight + widthOffset
             }

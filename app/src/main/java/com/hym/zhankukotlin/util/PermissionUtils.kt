@@ -13,8 +13,8 @@ import java.util.*
 object PermissionUtils {
     @JvmField
     val RUNTIME_PERMISSIONS = arrayOf(
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
 
     @JvmStatic
@@ -22,14 +22,14 @@ object PermissionUtils {
         if (context == null || TextUtils.isEmpty(permission)) {
             return false
         }
-        val result = context.checkSelfPermission(permission!!)
+        val result = context.checkSelfPermission(permission)
         return result == PackageManager.PERMISSION_GRANTED
     }
 
     @JvmStatic
     fun checkSelfPermissions(context: Context, permissions: List<String>): List<String> {
         if (context == null || permissions == null || permissions.isEmpty()) {
-            return emptyList<String>()
+            return emptyList()
         }
         val notGrantedPermissions: MutableList<String> = LinkedList()
         for (permission in permissions) {
@@ -43,7 +43,7 @@ object PermissionUtils {
     @JvmStatic
     fun checkSelfPermissions(context: Context, vararg permissions: String): List<String> {
         return if (context == null || permissions == null || permissions.isEmpty()) {
-            emptyList<String>()
+            emptyList()
         } else checkSelfPermissions(context, listOf(*permissions))
     }
 

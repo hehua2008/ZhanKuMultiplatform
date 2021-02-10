@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.google.android.material.tabs.TabLayout
@@ -50,7 +49,7 @@ class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
 
         mMediator = TabLayoutMediator(mBinding.tabs, mBinding.viewPager, this)
         mSectionsPagerViewModel = ViewModelProvider(this).get(SectionsPagerViewModel::class.java)
-        mSectionsPagerViewModel.categoryItems.observe(this, Observer { categoryItems ->
+        mSectionsPagerViewModel.categoryItems.observe(this, { categoryItems ->
             mBinding.viewPager.offscreenPageLimit = categoryItems.size
             sectionsPagerAdapter.setCategoryItems(categoryItems)
             mTitles.clear()

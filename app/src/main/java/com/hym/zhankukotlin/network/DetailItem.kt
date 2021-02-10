@@ -1,34 +1,34 @@
 package com.hym.zhankukotlin.network
 
 class DetailItem private constructor(
-    @JvmField
-    val title: String? = null,
+        @JvmField
+        val title: String? = null,
 
-    @JvmField
-    val time: String? = null,
+        @JvmField
+        val time: String? = null,
 
-    @JvmField
-    val views: String? = null,
+        @JvmField
+        val views: String? = null,
 
-    @JvmField
-    val comments: String? = null,
+        @JvmField
+        val comments: String? = null,
 
-    @JvmField
-    val favorites: String? = null,
+        @JvmField
+        val favorites: String? = null,
 
-    val categorys: List<CategoryItem> = emptyList(),
+        val categorys: List<CategoryItem> = emptyList(),
 
-    val imgUrls: List<String> = emptyList()
+        val imgUrls: List<String> = emptyList()
 ) {
     override fun toString(): String {
         val sb = StringBuilder()
         sb.append(title).append('\n')
-            .append(time).append('\n')
-            .append(views).append('\n')
-            .append(comments).append('\n')
-            .append(favorites).append('\n')
-            .append(categorys).append('\n')
-            .append(imgUrls).append('\n')
+                .append(time).append('\n')
+                .append(views).append('\n')
+                .append(comments).append('\n')
+                .append(favorites).append('\n')
+                .append(categorys).append('\n')
+                .append(imgUrls).append('\n')
         return sb.toString()
     }
 

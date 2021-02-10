@@ -7,10 +7,10 @@ import com.hym.zhankukotlin.ui.BindingViewHolder
 import com.hym.zhankukotlin.ui.NameValueAdapter
 
 class CategoryItemAdapter(private val mPageViewModel: PageViewModel) :
-    NameValueAdapter<String, String>() {
+        NameValueAdapter<String, String>() {
     override fun getOnCheckedChangeListener(
-        holder: BindingViewHolder<ButtonItemBinding>, position: Int
-    ): MaterialButton.OnCheckedChangeListener? {
+            holder: BindingViewHolder<ButtonItemBinding>, position: Int
+    ): MaterialButton.OnCheckedChangeListener {
         return MaterialButton.OnCheckedChangeListener { button, isChecked ->
             if (isChecked) {
                 mPageViewModel.setSubcat(mNameValues[position].value)

@@ -10,9 +10,9 @@ class ItemConverterFactory private constructor() : Converter.Factory() {
     private val mConverterMap: MutableMap<Type, ItemConverter<*>> = ConcurrentHashMap()
 
     override fun responseBodyConverter(
-        type: Type,
-        annotations: Array<Annotation>,
-        retrofit: Retrofit
+            type: Type,
+            annotations: Array<Annotation>,
+            retrofit: Retrofit
     ): Converter<ResponseBody, *> {
         var converter = mConverterMap[type]
         if (converter === null) {

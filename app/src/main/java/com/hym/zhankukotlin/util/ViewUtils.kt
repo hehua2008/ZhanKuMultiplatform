@@ -9,7 +9,7 @@ object ViewUtils {
     fun View.getActivityContext(): Context? {
         var view = this
         while (true) {
-            var ctx = view.context
+            val ctx = view.context
             if (ctx is Activity) {
                 return ctx
             }

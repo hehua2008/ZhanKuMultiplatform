@@ -20,10 +20,10 @@ import com.hym.zhankukotlin.ui.BindingViewHolder
 import com.hym.zhankukotlin.ui.detail.DetailActivity
 import com.hym.zhankukotlin.util.ViewUtils.getActivityContext
 
-class PagingPreviewItemAdapter() :
-    PagingDataAdapter<PreviewItem, BindingViewHolder<PreviewItemBinding>>(
-        PreviewItemCallback
-    ) {
+class PagingPreviewItemAdapter :
+        PagingDataAdapter<PreviewItem, BindingViewHolder<PreviewItemBinding>>(
+                PreviewItemCallback
+        ) {
     object PreviewItemCallback : DiffUtil.ItemCallback<PreviewItem>() {
         override fun areItemsTheSame(oldItem: PreviewItem, newItem: PreviewItem): Boolean {
             return oldItem == newItem
@@ -52,16 +52,16 @@ class PagingPreviewItemAdapter() :
     }
 
     override fun onCreateViewHolder(
-        parent: ViewGroup, viewType: Int
+            parent: ViewGroup, viewType: Int
     ): BindingViewHolder<PreviewItemBinding> {
         val binding: PreviewItemBinding = DataBindingUtil.inflate(
-            LayoutInflater.from(MyApplication.INSTANCE), R.layout.preview_item, parent, false
+                LayoutInflater.from(MyApplication.INSTANCE), R.layout.preview_item, parent, false
         )
         return BindingViewHolder(binding)
     }
 
     override fun onBindViewHolder(
-        holder: BindingViewHolder<PreviewItemBinding>, position: Int
+            holder: BindingViewHolder<PreviewItemBinding>, position: Int
     ) {
         val previewItem = getItem(position) // Note that item may be null.
         val imageUrl = previewItem?.imageUrl
@@ -74,13 +74,13 @@ class PagingPreviewItemAdapter() :
         binding.previewImg.setOnClickListener { v ->
             val context = v.getActivityContext() ?: return@setOnClickListener
             val intent = Intent(context, DetailActivity::class.java)
-                .putExtra(DetailActivity.KEY_TITLE, previewItem.title)
-                .putExtra(DetailActivity.KEY_URL, previewItem.targetUrl)
+                    .putExtra(DetailActivity.KEY_TITLE, previewItem.title)
+                    .putExtra(DetailActivity.KEY_URL, previewItem.targetUrl)
             context.startActivity(intent)
         }
         mRequestManager!!
-            .load(imageUrl)
-            .into(binding.previewImg)
+                .load(imageUrl)
+                .into(binding.previewImg)
     }
 
     override fun onViewRecycled(holder: BindingViewHolder<PreviewItemBinding>) {

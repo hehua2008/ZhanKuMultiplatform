@@ -3,32 +3,32 @@ package com.hym.zhankukotlin.network
 import java.util.*
 
 class PreviewItem private constructor(
-    @JvmField
-    val imageUrl: String? = null,
+        @JvmField
+        val imageUrl: String? = null,
 
-    @JvmField
-    val targetUrl: String? = null,
+        @JvmField
+        val targetUrl: String? = null,
 
-    @JvmField
-    val title: String? = null,
+        @JvmField
+        val title: String? = null,
 
-    @JvmField
-    val views: String? = null,
+        @JvmField
+        val views: String? = null,
 
-    @JvmField
-    val comments: String? = null,
+        @JvmField
+        val comments: String? = null,
 
-    @JvmField
-    val favorites: String? = null,
+        @JvmField
+        val favorites: String? = null,
 
-    @JvmField
-    val author: String? = null,
+        @JvmField
+        val author: String? = null,
 
-    @JvmField
-    val time: String? = null,
+        @JvmField
+        val time: String? = null,
 
-    @JvmField
-    val category: CategoryItem? = null
+        @JvmField
+        val category: CategoryItem? = null
 ) {
     override fun hashCode(): Int {
         return Objects.hash(targetUrl ?: imageUrl)
@@ -49,14 +49,14 @@ class PreviewItem private constructor(
     override fun toString(): String {
         val sb = StringBuilder()
         sb.append(imageUrl).append('\n')
-            .append(targetUrl).append('\n')
-            .append(title).append('\n')
-            .append(views).append('\n')
-            .append(comments).append('\n')
-            .append(favorites).append('\n')
-            .append(author).append('\n')
-            .append(time).append('\n')
-            .append(category).append('\n')
+                .append(targetUrl).append('\n')
+                .append(title).append('\n')
+                .append(views).append('\n')
+                .append(comments).append('\n')
+                .append(favorites).append('\n')
+                .append(author).append('\n')
+                .append(time).append('\n')
+                .append(category).append('\n')
         return sb.toString()
     }
 
@@ -118,15 +118,15 @@ class PreviewItem private constructor(
 
         fun build(): PreviewItem {
             return PreviewItem(
-                imageUrl,
-                targetUrl,
-                title,
-                views,
-                comments,
-                favorites,
-                author,
-                time,
-                category
+                    imageUrl,
+                    targetUrl,
+                    title,
+                    views,
+                    comments,
+                    favorites,
+                    author,
+                    time,
+                    category
             )
         }
     }

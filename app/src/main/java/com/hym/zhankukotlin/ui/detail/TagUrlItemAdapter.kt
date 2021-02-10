@@ -12,13 +12,13 @@ import com.hym.zhankukotlin.util.ViewUtils.getActivityContext
 
 class TagUrlItemAdapter : NameValueAdapter<String, String>() {
     override fun getOnCheckedChangeListener(
-        holder: BindingViewHolder<ButtonItemBinding>, position: Int
+            holder: BindingViewHolder<ButtonItemBinding>, position: Int
     ): MaterialButton.OnCheckedChangeListener? {
         return null
     }
 
     override fun onBindViewHolder(
-        holder: BindingViewHolder<ButtonItemBinding>, position: Int
+            holder: BindingViewHolder<ButtonItemBinding>, position: Int
     ) {
         super.onBindViewHolder(holder, position)
         val binding = holder.binding
@@ -29,7 +29,7 @@ class TagUrlItemAdapter : NameValueAdapter<String, String>() {
             val tagUrl = mNameValues[position].value
             val intent = Intent(context, TagActivity::class.java)
             val categoryItem: CategoryItem = CategoryItem.getCategoryItem(tagUrl)
-                ?: return@setOnClickListener
+                    ?: return@setOnClickListener
             intent.putExtra(PreviewItemFragment.CATEGORY_ITEM, categoryItem)
             context.startActivity(intent)
         }

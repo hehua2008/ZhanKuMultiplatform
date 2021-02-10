@@ -12,39 +12,38 @@ import com.hym.zhankukotlin.databinding.ImageItemBinding
 import com.hym.zhankukotlin.ui.BindingViewHolder
 import com.hym.zhankukotlin.ui.ThemeColorListener
 
-
 class DetailImageAdapter : RecyclerView.Adapter<BindingViewHolder<ImageItemBinding>>() {
     private var mRequestManager: GlideRequests? = null
     private var mImgUrls: List<String> = emptyList()
     private var mFirstBind = true
 
     override fun onCreateViewHolder(
-        parent: ViewGroup, viewType: Int
+            parent: ViewGroup, viewType: Int
     ): BindingViewHolder<ImageItemBinding> {
         val binding: ImageItemBinding = DataBindingUtil.inflate(
-            LayoutInflater.from(parent.context), R.layout.image_item, parent, false
+                LayoutInflater.from(parent.context), R.layout.image_item, parent, false
         )
         return BindingViewHolder(binding)
     }
 
     override fun onBindViewHolder(
-        holder: BindingViewHolder<ImageItemBinding>, position: Int
+            holder: BindingViewHolder<ImageItemBinding>, position: Int
     ) {
         val url = mImgUrls[position]
         val imageView = holder.binding.imageView
         mRequestManager!!
-            .load(url)
-            .transparentPlaceHolder()
-            .transition(GlideAppExtension.DRAWABLE_CROSS_FADE)
-            //.originalSize()
-            .apply {
-                if (mFirstBind && position == 0) {
-                    mFirstBind = false
-                    addListener(ThemeColorListener)
+                .load(url)
+                .transparentPlaceHolder()
+                .transition(GlideAppExtension.DRAWABLE_CROSS_FADE)
+                //.originalSize()
+                .apply {
+                    if (mFirstBind && position == 0) {
+                        mFirstBind = false
+                        addListener(ThemeColorListener)
+                    }
                 }
-            }
-            .into(imageView)
-            .waitForLayout()
+                .into(imageView)
+                .waitForLayout()
     }
 
     override fun onViewRecycled(holder: BindingViewHolder<ImageItemBinding>) {

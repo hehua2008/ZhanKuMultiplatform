@@ -8,7 +8,7 @@ import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.withContext
 
 class PreviewPagingSource(private val networkService: NetworkService) :
-    PagingSource<String, PreviewItem>() {
+        PagingSource<String, PreviewItem>() {
     private val singleThreadDispatcher: CoroutineDispatcher = newSingleThreadContext(toString())
     private val previewItemSet: MutableSet<PreviewItem> = LinkedHashSet()
 
@@ -32,9 +32,9 @@ class PreviewPagingSource(private val networkService: NetworkService) :
                 previewItemSet.addAll(previewItems)
             }
             return LoadResult.Page(
-                data = previewItems,
-                prevKey = prevKey,
-                nextKey = nextKey
+                    data = previewItems,
+                    prevKey = prevKey,
+                    nextKey = nextKey
             )
         } catch (e: Exception) {
             return LoadResult.Error(e)

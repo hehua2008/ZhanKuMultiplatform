@@ -2,9 +2,9 @@ package com.hym.zhankukotlin.util
 
 object HexDump {
     private val HEX_DIGITS =
-        charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
+            charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
     private val HEX_LOWER_CASE_DIGITS =
-        charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f')
+            charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f')
 
     @JvmOverloads
     @JvmStatic
@@ -66,10 +66,10 @@ object HexDump {
     @JvmOverloads
     @JvmStatic
     fun toHexString(
-        array: ByteArray,
-        offset: Int = 0,
-        length: Int = array.size,
-        upperCase: Boolean = true
+            array: ByteArray,
+            offset: Int = 0,
+            length: Int = array.size,
+            upperCase: Boolean = true
     ): String {
         val digits = if (upperCase) HEX_DIGITS else HEX_LOWER_CASE_DIGITS
         val buf = CharArray(length * 2)
@@ -122,7 +122,7 @@ object HexDump {
         var i = 0
         while (i < length) {
             buffer[i / 2] = (toByte(hexString[i]) shl 4 or toByte(
-                hexString[i + 1]
+                    hexString[i + 1]
             )).toByte()
             i += 2
         }

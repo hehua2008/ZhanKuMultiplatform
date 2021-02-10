@@ -19,14 +19,14 @@ import kotlinx.coroutines.withContext
 
 object ThemeColorListener : RequestListener<Drawable> {
     override fun onLoadFailed(
-        e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean
+            e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean
     ): Boolean {
         return false
     }
 
     override fun onResourceReady(
-        resource: Drawable?, model: Any?, target: Target<Drawable>?,
-        dataSource: DataSource?, isFirstResource: Boolean
+            resource: Drawable?, model: Any?, target: Target<Drawable>?,
+            dataSource: DataSource?, isFirstResource: Boolean
     ): Boolean {
         if (resource is BitmapDrawable && target is ViewTarget<*, *>) {
             val activity = target.view.getActivityContext() as? ComponentActivity
