@@ -4,18 +4,16 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_view"
-        style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@null"
         android:checkable="true"
         android:maxLines="1"
-        android:minWidth="10dp"
-        android:minHeight="10dp"
+        android:minWidth="@dimen/button_min_width"
+        android:minHeight="@dimen/button_min_height"
         android:paddingHorizontal="@dimen/button_padding_horizontal"
         android:paddingVertical="0dp"
-        android:text="tag_view"
+        android:text="button"
         android:textAllCaps="false"
         android:textSize="@dimen/common_text_size"
-        app:backgroundTint="@color/btn_color" />
+        app:backgroundTint="@color/button_color" />
 </layout>

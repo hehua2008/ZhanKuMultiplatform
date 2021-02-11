@@ -20,7 +20,8 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        setTheme(R.style.Theme_ZhanKuKotlin)
+        //setTheme(R.style.Theme_ZhanKuKotlin)
+        theme.applyStyle(R.style.Theme_ZhanKuKotlin, true)
         INSTANCE = this
 
         /*

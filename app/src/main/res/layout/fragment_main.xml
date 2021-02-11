@@ -58,28 +58,28 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:minHeight="10dp"
+                    android:minHeight="@dimen/button_min_height"
                     android:text="编辑精选" />
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
                     android:id="@+id/order_all_recommend"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minHeight="10dp"
+                    android:minHeight="@dimen/button_min_height"
                     android:text="全部推荐" />
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
                     android:id="@+id/order_home_recommend"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minHeight="10dp"
+                    android:minHeight="@dimen/button_min_height"
                     android:text="首页推荐" />
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
                     android:id="@+id/order_latest_publish"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minHeight="10dp"
+                    android:minHeight="@dimen/button_min_height"
                     android:text="最新发布" />
             </RadioGroup>
 

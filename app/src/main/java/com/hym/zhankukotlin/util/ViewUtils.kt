@@ -3,8 +3,20 @@ package com.hym.zhankukotlin.util
 import android.app.Activity
 import android.content.Context
 import android.view.View
+import android.view.ViewGroup
+import java.lang.reflect.Method
 
 object ViewUtils {
+    private val mGenerateDefaultLayoutParamsMethod: Method =
+            ViewGroup::class.java.getDeclaredMethod("generateDefaultLayoutParams").apply {
+                isAccessible = true
+            }
+
+    @JvmStatic
+    fun View.getDefaultLayoutParamsFrom(parent: ViewGroup): ViewGroup.LayoutParams {
+        return mGenerateDefaultLayoutParamsMethod.invoke(parent) as ViewGroup.LayoutParams
+    }
+
     @JvmStatic
     fun View.getActivityContext(): Context? {
         var view = this

@@ -7,8 +7,9 @@
     <dimen name="preview_item_offset">6dp</dimen>
     <dimen name="button_item_horizontal_offset">4dp</dimen>
     <dimen name="button_padding_horizontal">6dp</dimen>
+    <dimen name="button_padding_vertical">6dp</dimen>
     <dimen name="detail_img_bottom_margin">100dp</dimen>
     <dimen name="button_min_width">10dp</dimen>
     <dimen name="button_min_height">10dp</dimen>
-    <dimen name="common_text_size">12sp</dimen>
+    <dimen name="common_text_size">14sp</dimen>
 </resources>
