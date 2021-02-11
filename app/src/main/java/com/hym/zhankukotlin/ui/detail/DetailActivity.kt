@@ -19,6 +19,8 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityDetailBinding
+import com.hym.zhankukotlin.ui.ThemeColorRetriever.setThemeColor
+import com.hym.zhankukotlin.util.MMCQ
 import com.hym.zhankukotlin.util.PermissionUtils
 import com.hym.zhankukotlin.util.PictureUtils
 
@@ -38,6 +40,7 @@ class DetailActivity : AppCompatActivity() {
         mTitle = intent.getStringExtra(KEY_TITLE)!!
         mUrl = intent.getStringExtra(KEY_URL)!!
         title = mTitle
+        setThemeColor(intent.getParcelableExtra(KEY_COLOR) as? MMCQ.ThemeColor)
 
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
@@ -120,5 +123,6 @@ class DetailActivity : AppCompatActivity() {
     companion object {
         const val KEY_TITLE = "TITLE"
         const val KEY_URL = "URL"
+        const val KEY_COLOR = "COLOR"
     }
 }

@@ -17,7 +17,7 @@ import com.hym.zhankukotlin.network.PreviewItem
 import com.hym.zhankukotlin.network.PreviewResult
 import com.hym.zhankukotlin.ui.BindingViewHolder
 import com.hym.zhankukotlin.ui.detail.DetailActivity
-import com.hym.zhankukotlin.util.ViewUtils.getActivityContext
+import com.hym.zhankukotlin.util.ViewUtils.getActivity
 
 class PreviewItemAdapter : RecyclerView.Adapter<BindingViewHolder<PreviewItemBinding>>() {
     companion object {
@@ -53,11 +53,11 @@ class PreviewItemAdapter : RecyclerView.Adapter<BindingViewHolder<PreviewItemBin
         val binding = holder.binding
         binding.previewItem = previewItem
         binding.previewImg.setOnClickListener { v ->
-            val context = v.getActivityContext() ?: return@setOnClickListener
-            val intent = Intent(context, DetailActivity::class.java)
+            val activity = v.getActivity() ?: return@setOnClickListener
+            val intent = Intent(activity, DetailActivity::class.java)
                     .putExtra(DetailActivity.KEY_TITLE, previewItem.title)
                     .putExtra(DetailActivity.KEY_URL, previewItem.targetUrl)
-            context.startActivity(intent)
+            activity.startActivity(intent)
         }
         mRequestManager!!
                 .load(imageUrl)

@@ -1,7 +1,6 @@
 package com.hym.zhankukotlin.util
 
 import android.app.Activity
-import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import java.lang.reflect.Method
@@ -18,7 +17,7 @@ object ViewUtils {
     }
 
     @JvmStatic
-    fun View.getActivityContext(): Context? {
+    fun View.getActivity(): Activity? {
         var view = this
         while (true) {
             val ctx = view.context

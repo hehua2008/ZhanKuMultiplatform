@@ -2,6 +2,8 @@ package com.hym.zhankukotlin.util;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.util.SparseLongArray;
 
@@ -458,7 +460,7 @@ public class MMCQ {
         }
     }
 
-    public static class ThemeColor implements Comparable<ThemeColor> {
+    public static class ThemeColor implements Comparable<ThemeColor>, Parcelable {
         private static final float MIN_CONTRAST_TITLE_TEXT = 3.0f;
         private static final float MIN_CONTRAST_BODY_TEXT = 4.5f;
 
@@ -479,6 +481,36 @@ public class MMCQ {
             double distance = colorDistance(mColor, Color.WHITE);
             mPriority = mProportion * distance;
         }
+
+        private ThemeColor(Parcel in) {
+            mColor = in.readInt();
+            mProportion = in.readDouble();
+            mPriority = in.readDouble();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(mColor);
+            dest.writeDouble(mProportion);
+            dest.writeDouble(mPriority);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<ThemeColor> CREATOR = new Creator<ThemeColor>() {
+            @Override
+            public ThemeColor createFromParcel(Parcel in) {
+                return new ThemeColor(in);
+            }
+
+            @Override
+            public ThemeColor[] newArray(int size) {
+                return new ThemeColor[size];
+            }
+        };
 
         @Override
         public int compareTo(ThemeColor themeColor) {

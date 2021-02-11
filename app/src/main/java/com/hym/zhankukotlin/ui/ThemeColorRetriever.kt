@@ -1,9 +1,11 @@
 package com.hym.zhankukotlin.ui
 
+import android.app.Activity
+import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ComponentActivity
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -13,12 +15,12 @@ import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.target.ViewTarget
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.util.MMCQ
-import com.hym.zhankukotlin.util.ViewUtils.getActivityContext
+import com.hym.zhankukotlin.util.ViewUtils.getActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-object ThemeColorListener : RequestListener<Drawable> {
+object ThemeColorRetriever : RequestListener<Drawable> {
     override fun onLoadFailed(
             e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean
     ): Boolean {
@@ -35,22 +37,30 @@ object ThemeColorListener : RequestListener<Drawable> {
                 is GifDrawable -> resource.firstFrame
                 else -> null
             } ?: return false
-            val activity = target.view.getActivityContext() as? ComponentActivity ?: return false
-            val toolbar = activity.findViewById(R.id.action_bar) as? Toolbar ?: return false
+            val activity = target.view.getActivity() ?: return false
+            if (activity !is LifecycleOwner) return false
             activity.lifecycleScope.launch(Dispatchers.Main) {
-                val themeColors: List<MMCQ.ThemeColor>
-                withContext(Dispatchers.Default) {
-                    val mmcq = MMCQ(bitmap, 3)
-                    themeColors = mmcq.quantize()
-                }
-                if (themeColors.isEmpty()) return@launch
-                val mainThemeColor = themeColors[0]
-                toolbar.setBackgroundColor(mainThemeColor.color)
-                toolbar.setTitleTextColor(mainThemeColor.titleTextColor)
-                toolbar.setSubtitleTextColor(mainThemeColor.titleTextColor)
-                activity.window.statusBarColor = mainThemeColor.color
+                activity.setThemeColor(getMainThemeColor(bitmap))
             }
         }
         return false
+    }
+
+    suspend fun getMainThemeColor(bitmap: Bitmap): MMCQ.ThemeColor? {
+        val themeColors = withContext(Dispatchers.Default) {
+            val mmcq = MMCQ(bitmap, 3)
+            mmcq.quantize()
+        }
+        return if (themeColors.isEmpty()) null else themeColors[0]
+    }
+
+    @JvmStatic
+    fun Activity.setThemeColor(themeColor: MMCQ.ThemeColor?) {
+        if (themeColor == null) return
+        val toolbar = findViewById(R.id.action_bar) as? Toolbar ?: return
+        toolbar.setBackgroundColor(themeColor.color)
+        toolbar.setTitleTextColor(themeColor.titleTextColor)
+        toolbar.setSubtitleTextColor(themeColor.titleTextColor)
+        window.statusBarColor = themeColor.color
     }
 }

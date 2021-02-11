@@ -1,10 +1,13 @@
 package com.hym.zhankukotlin.ui.main
 
 import android.content.Intent
+import android.graphics.drawable.BitmapDrawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,8 +20,11 @@ import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.PreviewItemBinding
 import com.hym.zhankukotlin.network.PreviewItem
 import com.hym.zhankukotlin.ui.BindingViewHolder
+import com.hym.zhankukotlin.ui.ThemeColorRetriever
 import com.hym.zhankukotlin.ui.detail.DetailActivity
-import com.hym.zhankukotlin.util.ViewUtils.getActivityContext
+import com.hym.zhankukotlin.util.ViewUtils.getActivity
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 
 class PagingPreviewItemAdapter :
         PagingDataAdapter<PreviewItem, BindingViewHolder<PreviewItemBinding>>(
@@ -72,11 +78,22 @@ class PagingPreviewItemAdapter :
         val binding = holder.binding
         binding.previewItem = previewItem
         binding.previewImg.setOnClickListener { v ->
-            val context = v.getActivityContext() ?: return@setOnClickListener
-            val intent = Intent(context, DetailActivity::class.java)
+            val activity = v.getActivity() ?: return@setOnClickListener
+            val intent = Intent(activity, DetailActivity::class.java)
                     .putExtra(DetailActivity.KEY_TITLE, previewItem.title)
                     .putExtra(DetailActivity.KEY_URL, previewItem.targetUrl)
-            context.startActivity(intent)
+            val bitmap = (binding.previewImg.drawable as? BitmapDrawable)?.bitmap
+            if (bitmap != null && activity is LifecycleOwner) {
+                activity.lifecycleScope.launch {
+                    val mainThemeColor = withTimeoutOrNull(200) {
+                        return@withTimeoutOrNull ThemeColorRetriever.getMainThemeColor(bitmap)
+                    }
+                    intent.putExtra(DetailActivity.KEY_COLOR, mainThemeColor)
+                    activity.startActivity(intent)
+                }
+            } else {
+                activity.startActivity(intent)
+            }
         }
         mRequestManager!!
                 .load(imageUrl)
