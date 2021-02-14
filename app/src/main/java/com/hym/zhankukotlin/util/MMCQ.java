@@ -477,9 +477,10 @@ public class MMCQ {
             mProportion = proportion;
             Log.d(TAG, "proportion:" + mProportion + " RGB:"
                     + Color.red(mColor) + " " + Color.green(mColor) + " " + Color.blue(mColor));
-            // (...) / 3d * (3 / 2d)
-            double distance = colorDistance(mColor, Color.WHITE);
-            mPriority = mProportion * distance;
+            double[] lab = new double[3];
+            ColorUtils.colorToLAB(color, lab);
+            double lightWeight = (1d - lab[0] / 100d) * 3d;
+            mPriority = mProportion * (lightWeight <= 1d ? lightWeight : Math.sqrt(lightWeight));
         }
 
         private ThemeColor(Parcel in) {
