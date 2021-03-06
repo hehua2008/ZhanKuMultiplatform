@@ -20,6 +20,6 @@ class LogInterceptor : Interceptor {
     }
 
     companion object {
-        private val TAG = LogInterceptor::class.java.simpleName
+        private val TAG = LogInterceptor::class.simpleName
     }
 }

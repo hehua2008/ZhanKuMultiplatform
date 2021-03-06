@@ -20,6 +20,6 @@ class MyAppGlideModule : AppGlideModule() {
     }
 
     companion object {
-        private val TAG = MyAppGlideModule::class.java.simpleName
+        private val TAG = MyAppGlideModule::class.simpleName
     }
 }

@@ -138,6 +138,6 @@ class PageViewModel : ViewModel() {
     }
 
     companion object {
-        private val TAG = PageViewModel::class.java.simpleName
+        private val TAG = PageViewModel::class.simpleName
     }
 }

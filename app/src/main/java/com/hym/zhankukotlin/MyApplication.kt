@@ -70,7 +70,7 @@ class MyApplication : Application() {
     }
 
     companion object {
-        private val TAG = MyApplication::class.java.simpleName
+        private val TAG = MyApplication::class.simpleName
         private const val CLIENT_CACHE_DIR_NAME = "retrofit"
 
         lateinit var INSTANCE: MyApplication

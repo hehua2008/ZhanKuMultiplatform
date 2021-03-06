@@ -30,6 +30,6 @@ class SectionsPagerViewModel : ViewModel() {
     }
 
     companion object {
-        private val TAG = SectionsPagerViewModel::class.java.simpleName
+        private val TAG = SectionsPagerViewModel::class.simpleName
     }
 }

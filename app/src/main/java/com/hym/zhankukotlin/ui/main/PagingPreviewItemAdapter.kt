@@ -44,7 +44,7 @@ class PagingPreviewItemAdapter :
         @JvmStatic
         val previewRecyclerPool = RecyclerView.RecycledViewPool()
         const val BUTTON_ITEM_TYPE = 1
-        val TAG = PagingPreviewItemAdapter::class.java.simpleName
+        val TAG = PagingPreviewItemAdapter::class.simpleName
 
         init {
             previewRecyclerPool.setMaxRecycledViews(BUTTON_ITEM_TYPE, 20)

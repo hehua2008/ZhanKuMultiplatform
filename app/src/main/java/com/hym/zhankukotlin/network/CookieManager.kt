@@ -115,7 +115,7 @@ class CookieManager private constructor(
     }
 
     companion object {
-        private val TAG = CookieManager::class.java.simpleName
+        private val TAG = CookieManager::class.simpleName
         private val COOKIE_MAP: MutableMap<String, CookieSerialize?> = ConcurrentHashMap()
         private const val COOKIE_DIR_NAME = "cookies"
 

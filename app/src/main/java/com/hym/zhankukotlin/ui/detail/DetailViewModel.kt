@@ -38,6 +38,6 @@ class DetailViewModel : ViewModel() {
     }
 
     companion object {
-        private val TAG = DetailViewModel::class.java.simpleName
+        private val TAG = DetailViewModel::class.simpleName
     }
 }

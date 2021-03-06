@@ -42,6 +42,6 @@ class PreviewPagingSource(private val networkService: NetworkService) :
     }
 
     companion object {
-        val TAG = PreviewPagingSource::class.java.simpleName
+        val TAG = PreviewPagingSource::class.simpleName
     }
 }
