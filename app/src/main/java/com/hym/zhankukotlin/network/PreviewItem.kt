@@ -36,6 +36,7 @@ class PreviewItem private constructor(
 
     override fun equals(obj: Any?): Boolean {
         return when {
+            obj === this -> true
             obj !is PreviewItem -> false
             targetUrl != null -> {
                 targetUrl == obj.targetUrl
