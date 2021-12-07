@@ -10,7 +10,7 @@ import com.hym.zhankukotlin.network.CategoryItem
  * one of the sections/tabs/pages.
  */
 class SectionsPagerAdapter(fm: FragmentManager) :
-        FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     private var mCategoryItems: List<CategoryItem> = emptyList()
 
     override fun getItem(position: Int): Fragment {

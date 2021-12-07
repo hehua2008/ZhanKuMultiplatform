@@ -37,14 +37,14 @@ object ItemParser {
             val typea = ulli.selectFirst("div.classify-item-type > a") ?: continue
             val categoryItem = getCategoryItem(typea)
             val lias = ulli.select(
-                    "div.type-combobox > div > div > div.item.item1 > ul > li.category > a"
+                "div.type-combobox > div > div > div.item.item1 > ul > li.category > a"
             )
             for (lia in lias) {
                 val subCategoryItem = getCategoryItem(lia)
                 categoryItem.addSubItem(subCategoryItem)
             }
             val lia2s = ulli.select(
-                    "div.type-combobox > div > div > div.item.item2 > ul > li.category > a"
+                "div.type-combobox > div > div > div.item.item2 > ul > li.category > a"
             )
             for (lia2 in lia2s) {
                 val sub2CategoryItem = getCategoryItem(lia2)
@@ -62,23 +62,23 @@ object ItemParser {
     private fun getCurrentCategoryItem(html: String, retry: Boolean): CategoryItem {
         val doc = Jsoup.parse(html)
         val ullis = doc.select(
-                "#body > main > div.classify-select > div > ul > li.parents-nodes.classify-item"
+            "#body > main > div.classify-select > div > ul > li.parents-nodes.classify-item"
         )
         for (ulli in ullis) {
             val cur = ulli.selectFirst(
-                    if (retry) "div.classify-item-type > a.classify-default"
-                    else "div.classify-item-type > a.classify-default.current"
+                if (retry) "div.classify-item-type > a.classify-default"
+                else "div.classify-item-type > a.classify-default.current"
             ) ?: continue
             val categoryItem = getCategoryItem(cur)
             val lias = ulli.select(
-                    "div.type-combobox > div > div > div.item.item1 > ul > li.category > a"
+                "div.type-combobox > div > div > div.item.item1 > ul > li.category > a"
             )
             for (lia in lias) {
                 val subCategoryItem = getCategoryItem(lia)
                 categoryItem.addSubItem(subCategoryItem)
             }
             val lia2s = ulli.select(
-                    "div.type-combobox > div > div > div.item.item2 > ul > li.category > a"
+                "div.type-combobox > div > div > div.item.item2 > ul > li.category > a"
             )
             for (lia2 in lia2s) {
                 val sub2CategoryItem = getCategoryItem(lia2)
@@ -104,7 +104,7 @@ object ItemParser {
         for (cur in elements) {
             val cardImg = cur.selectFirst("div.card-img > a") ?: continue
             val targetUrl = cardImg.absUrl("href")
-            val imageUrl = cardImg.selectFirst("img").absUrl("src")
+            val imageUrl = cardImg.selectFirst("img")?.absUrl("src")
             val cardInfo = cur.selectFirst("div.card-info") ?: continue
             val titleNode = cardInfo.selectFirst("p.card-info-title > a")
             val title = titleNode?.ownText() ?: ""
@@ -122,14 +122,14 @@ object ItemParser {
             val timeNode = cur.selectFirst("div.card-item > span.time")
             val time = timeNode?.ownText() ?: ""
             val builder: PreviewItem.Builder = PreviewItem.Builder()
-                    .imageUrl(imageUrl)
-                    .targetUrl(targetUrl)
-                    .title(title)
-                    .views(views)
-                    .comments(comments)
-                    .favorites(favorites)
-                    .author(author)
-                    .time(time)
+                .imageUrl(imageUrl)
+                .targetUrl(targetUrl)
+                .title(title)
+                .views(views)
+                .comments(comments)
+                .favorites(favorites)
+                .author(author)
+                .time(time)
             val previewItem = builder.build()
             previewItemList.add(previewItem)
         }
@@ -140,9 +140,9 @@ object ItemParser {
         val doc = Jsoup.parse(html)
         val builder: DetailItem.Builder = DetailItem.Builder()
         val parent = doc.selectFirst(
-                "#body > main > div.bc-fff.p-relative > div.work-details-wrap.border-bottom > div >"
-                        + " div.left-details-head.border-right.left > div"
-        )
+            "#body > main > div.bc-fff.p-relative > div.work-details-wrap.border-bottom > div >"
+                    + " div.left-details-head.border-right.left > div"
+        ) ?: return builder.build()
         val titleNode = parent.selectFirst("h2")
         if (titleNode != null) {
             builder.title(titleNode.ownText())
@@ -172,9 +172,9 @@ object ItemParser {
             builder.favorites(favorites.ownText())
         }
         val imgs = doc.select(
-                "#body > main > div.bc-fff.p-relative >"
-                        + " div.work-details-content > div.work-content-wrap > div >"
-                        + " div.work-show-box.mt-40.js-work-content > div > div > img"
+            "#body > main > div.bc-fff.p-relative >"
+                    + " div.work-details-content > div.work-content-wrap > div >"
+                    + " div.work-show-box.mt-40.js-work-content > div > div > img"
         )
         for (img in imgs) {
             val url = img.absUrl("src")
@@ -213,6 +213,6 @@ object ItemParser {
     fun getLoginInfo(html: String): String {
         val doc = Jsoup.parse(html)
         val body = doc.selectFirst("body")
-        return body.ownText()
+        return body?.ownText() ?: ""
     }
 }

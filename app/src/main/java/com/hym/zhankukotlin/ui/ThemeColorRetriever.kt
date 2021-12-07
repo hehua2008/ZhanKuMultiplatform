@@ -22,14 +22,12 @@ import kotlinx.coroutines.withContext
 
 object ThemeColorRetriever : RequestListener<Drawable> {
     override fun onLoadFailed(
-            e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean
-    ): Boolean {
-        return false
-    }
+        e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean
+    ): Boolean = false
 
     override fun onResourceReady(
-            resource: Drawable?, model: Any?, target: Target<Drawable>?,
-            dataSource: DataSource?, isFirstResource: Boolean
+        resource: Drawable?, model: Any?, target: Target<Drawable>?,
+        dataSource: DataSource?, isFirstResource: Boolean
     ): Boolean {
         if (target is ViewTarget<*, *>) {
             val bitmap = when (resource) {

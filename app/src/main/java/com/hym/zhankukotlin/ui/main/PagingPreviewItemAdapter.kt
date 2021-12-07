@@ -27,9 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 
 class PagingPreviewItemAdapter :
-        PagingDataAdapter<PreviewItem, BindingViewHolder<PreviewItemBinding>>(
-                PreviewItemCallback
-        ) {
+    PagingDataAdapter<PreviewItem, BindingViewHolder<PreviewItemBinding>>(PreviewItemCallback) {
     object PreviewItemCallback : DiffUtil.ItemCallback<PreviewItem>() {
         override fun areItemsTheSame(oldItem: PreviewItem, newItem: PreviewItem): Boolean {
             return oldItem == newItem
@@ -58,16 +56,16 @@ class PagingPreviewItemAdapter :
     }
 
     override fun onCreateViewHolder(
-            parent: ViewGroup, viewType: Int
+        parent: ViewGroup, viewType: Int
     ): BindingViewHolder<PreviewItemBinding> {
         val binding: PreviewItemBinding = DataBindingUtil.inflate(
-                LayoutInflater.from(MyApplication.INSTANCE), R.layout.preview_item, parent, false
+            LayoutInflater.from(MyApplication.INSTANCE), R.layout.preview_item, parent, false
         )
         return BindingViewHolder(binding)
     }
 
     override fun onBindViewHolder(
-            holder: BindingViewHolder<PreviewItemBinding>, position: Int
+        holder: BindingViewHolder<PreviewItemBinding>, position: Int
     ) {
         val previewItem = getItem(position) // Note that item may be null.
         val imageUrl = previewItem?.imageUrl
@@ -80,8 +78,8 @@ class PagingPreviewItemAdapter :
         binding.previewImg.setOnClickListener { v ->
             val activity = v.getActivity() ?: return@setOnClickListener
             val intent = Intent(activity, DetailActivity::class.java)
-                    .putExtra(DetailActivity.KEY_TITLE, previewItem.title)
-                    .putExtra(DetailActivity.KEY_URL, previewItem.targetUrl)
+                .putExtra(DetailActivity.KEY_TITLE, previewItem.title)
+                .putExtra(DetailActivity.KEY_URL, previewItem.targetUrl)
             val bitmap = (binding.previewImg.drawable as? BitmapDrawable)?.bitmap
             if (bitmap != null && activity is LifecycleOwner) {
                 activity.lifecycleScope.launch {
@@ -95,9 +93,10 @@ class PagingPreviewItemAdapter :
                 activity.startActivity(intent)
             }
         }
-        mRequestManager!!
-                .load(imageUrl)
+        mRequestManager?.run {
+            load(imageUrl)
                 .into(binding.previewImg)
+        }
     }
 
     override fun onViewRecycled(holder: BindingViewHolder<PreviewItemBinding>) {

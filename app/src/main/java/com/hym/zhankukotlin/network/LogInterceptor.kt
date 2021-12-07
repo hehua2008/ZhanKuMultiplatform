@@ -15,7 +15,7 @@ class LogInterceptor : Interceptor {
         val request = chain.request()
         Log.d(TAG, "[$count] >>>>>> $request")
         val response = chain.proceed(request)
-        Log.d(TAG, "[$count] <<<<<< $response contentLength=${response.body()?.contentLength()}")
+        Log.d(TAG, "[$count] <<<<<< $response contentLength=${response.body?.contentLength()}")
         return response
     }
 

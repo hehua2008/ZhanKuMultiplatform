@@ -4,25 +4,19 @@ import android.os.Parcel
 import android.os.Parcelable
 
 class CategoryItem private constructor(
-        val url: String,
-        val title: String
+    val url: String,
+    val title: String
 ) : Parcelable {
     private val mSubItems: MutableList<CategoryItem> = mutableListOf()
     private val mSub2Items: MutableList<CategoryItem> = mutableListOf()
 
-    fun hasSubItems(): Boolean {
-        return mSubItems.isNotEmpty()
-    }
+    fun hasSubItems(): Boolean = mSubItems.isNotEmpty()
 
-    fun hasSub2Items(): Boolean {
-        return mSub2Items.isNotEmpty()
-    }
+    fun hasSub2Items(): Boolean = mSub2Items.isNotEmpty()
 
-    val subItems: List<CategoryItem>
-        get() = mSubItems
+    val subItems: List<CategoryItem> get() = mSubItems
 
-    val sub2Items: List<CategoryItem>
-        get() = mSub2Items
+    val sub2Items: List<CategoryItem> get() = mSub2Items
 
     fun addSubItem(subItem: CategoryItem) {
         mSubItems.add(subItem)
@@ -52,16 +46,12 @@ class CategoryItem private constructor(
         return sb.toString()
     }
 
-    override fun describeContents(): Int {
-        return 0
-    }
+    override fun describeContents(): Int = 0
 
-    override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeString(url)
-    }
+    override fun writeToParcel(dest: Parcel, flags: Int) = dest.writeString(url)
 
     companion object CREATOR : Parcelable.Creator<CategoryItem?> {
-        private val URL_ITEM_MAP: MutableMap<String, CategoryItem> = HashMap()
+        private val URL_ITEM_MAP: MutableMap<String, CategoryItem> = mutableMapOf()
         val ERROR = CategoryItem("ERROR", "ERROR")
 
         fun getCategoryItem(url: String?): CategoryItem? {

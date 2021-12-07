@@ -33,14 +33,14 @@ object ButtonFactory {
     private val mMinHeight = mResources.getDimensionPixelSize(R.dimen.button_min_height)
 
     private val mPaddingHorizontal =
-            mResources.getDimensionPixelSize(R.dimen.button_padding_horizontal)
+        mResources.getDimensionPixelSize(R.dimen.button_padding_horizontal)
     private val mPaddingVertical =
-            mResources.getDimensionPixelSize(R.dimen.button_padding_vertical)
+        mResources.getDimensionPixelSize(R.dimen.button_padding_vertical)
 
     private val mTextSize = mResources.getDimension(R.dimen.common_text_size)
 
     private val mColorStatList: ColorStateList =
-            AppCompatResources.getColorStateList(mContext, R.color.button_color)
+        AppCompatResources.getColorStateList(mContext, R.color.button_color)
 
     fun create(parent: ViewGroup): MaterialButton {
         return MaterialButton(mContext).apply {

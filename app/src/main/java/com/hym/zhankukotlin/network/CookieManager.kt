@@ -1,5 +1,6 @@
 package com.hym.zhankukotlin.network
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.util.Log
@@ -12,11 +13,11 @@ import java.io.*
 import java.util.concurrent.ConcurrentHashMap
 
 class CookieManager private constructor(
-        private val mContext: Context
+    private val mContext: Context
 ) : CookieJar {
-    override fun saveFromResponse(url: HttpUrl, cookies: MutableList<Cookie>) {
-        val host = url.url().host
-        val cookieSerialize = CookieSerialize(cookies)
+    override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
+        val host = url.toUrl().host
+        val cookieSerialize = CookieSerialize(cookies.toMutableList())
         COOKIE_MAP[host] = cookieSerialize
         val fileName = hostStringToFileName(host)
         val dir = File(mContext.cacheDir, COOKIE_DIR_NAME)
@@ -33,8 +34,8 @@ class CookieManager private constructor(
     }
 
     override fun loadForRequest(url: HttpUrl): List<Cookie> {
-        val host = url.url().host
-        var cookieSerialize = COOKIE_MAP[host]
+        val host = url.toUrl().host
+        val cookieSerialize = COOKIE_MAP[host]
         if (cookieSerialize != null) {
             return cookieSerialize.mCookies
         } else {
@@ -44,9 +45,10 @@ class CookieManager private constructor(
             if (file.isFile) {
                 try {
                     ObjectInputStream(FileInputStream(file)).use { input ->
-                        cookieSerialize = input.readObject() as CookieSerialize
-                        COOKIE_MAP[host] = cookieSerialize
-                        return cookieSerialize!!.mCookies
+                        return (input.readObject() as CookieSerialize).let {
+                            COOKIE_MAP[host] = it
+                            it.mCookies
+                        }
                     }
                 } catch (e: IOException) {
                     Log.w(TAG, "loadForRequest failed", e)
@@ -58,21 +60,20 @@ class CookieManager private constructor(
         return emptyList()
     }
 
-    private class CookieSerialize(@field:Transient var mCookies: MutableList<Cookie>) :
-            Serializable {
+    private class CookieSerialize(var mCookies: MutableList<Cookie>) : Serializable {
         @Throws(IOException::class)
         private fun writeObject(out: ObjectOutputStream) {
             val size = mCookies.size
             out.writeInt(size)
             for (cookie in mCookies) {
-                out.writeObject(cookie.name())
-                out.writeObject(cookie.value())
-                out.writeLong(cookie.expiresAt())
-                out.writeObject(cookie.domain())
-                out.writeBoolean(cookie.hostOnly())
-                out.writeObject(cookie.path())
-                out.writeBoolean(cookie.secure())
-                out.writeBoolean(cookie.httpOnly())
+                out.writeObject(cookie.name)
+                out.writeObject(cookie.value)
+                out.writeLong(cookie.expiresAt)
+                out.writeObject(cookie.domain)
+                out.writeBoolean(cookie.hostOnly)
+                out.writeObject(cookie.path)
+                out.writeBoolean(cookie.secure)
+                out.writeBoolean(cookie.httpOnly)
             }
         }
 
@@ -90,10 +91,10 @@ class CookieManager private constructor(
                 val secure = input.readBoolean()
                 val httpOnly = input.readBoolean()
                 val builder = Cookie.Builder()
-                        .name(name)
-                        .value(value)
-                        .expiresAt(expiresAt)
-                        .path(path)
+                    .name(name)
+                    .value(value)
+                    .expiresAt(expiresAt)
+                    .path(path)
                 if (hostOnly) {
                     builder.hostOnlyDomain(domain)
                 } else {
@@ -119,22 +120,15 @@ class CookieManager private constructor(
         private val COOKIE_MAP: MutableMap<String, CookieSerialize?> = ConcurrentHashMap()
         private const val COOKIE_DIR_NAME = "cookies"
 
-        @Volatile
-        var INSTANCE: CookieManager? = null
-            private set
+        @SuppressLint("StaticFieldLeak")
+        lateinit var INSTANCE: CookieManager
 
         fun newInstance(context: Context) {
             var ctx = context
-            if (INSTANCE === null) {
-                synchronized(CookieManager::class.java) {
-                    if (INSTANCE === null) {
-                        if (ctx !is Application) {
-                            ctx = ctx.applicationContext
-                        }
-                        INSTANCE = CookieManager(ctx)
-                    }
-                }
+            if (ctx !is Application) {
+                ctx = ctx.applicationContext
             }
+            INSTANCE = CookieManager(ctx)
         }
 
         fun hostStringToFileName(hostStr: String): String {

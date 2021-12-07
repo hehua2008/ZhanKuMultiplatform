@@ -7,9 +7,9 @@ import java.lang.reflect.Method
 
 object ViewUtils {
     private val mGenerateDefaultLayoutParamsMethod: Method =
-            ViewGroup::class.java.getDeclaredMethod("generateDefaultLayoutParams").apply {
-                isAccessible = true
-            }
+        ViewGroup::class.java.getDeclaredMethod("generateDefaultLayoutParams").apply {
+            isAccessible = true
+        }
 
     @JvmStatic
     fun View.getDefaultLayoutParamsFrom(parent: ViewGroup): ViewGroup.LayoutParams {

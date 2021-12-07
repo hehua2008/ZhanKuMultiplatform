@@ -17,13 +17,13 @@ class TagActivity : AppCompatActivity() {
         setContentView(R.layout.tag_activity)
 
         val categoryItem: CategoryItem =
-                intent.getParcelableExtra(PreviewItemFragment.CATEGORY_ITEM)!!
+            intent.getParcelableExtra(PreviewItemFragment.CATEGORY_ITEM)!!
         title = categoryItem.title
 
         if (savedInstanceState === null) {
             supportFragmentManager.beginTransaction()
-                    .replace(R.id.container, PreviewItemFragment.newInstance(categoryItem))
-                    .commitNow()
+                .replace(R.id.container, PreviewItemFragment.newInstance(categoryItem))
+                .commitNow()
         }
     }
 

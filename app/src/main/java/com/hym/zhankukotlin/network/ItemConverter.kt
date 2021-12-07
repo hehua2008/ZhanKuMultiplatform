@@ -6,7 +6,9 @@ import java.io.IOException
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
-class ItemConverter<T>(private val mType: Type) : Converter<ResponseBody, T?> {
+class ItemConverter<T>(
+    private val mType: Type
+) : Converter<ResponseBody, T?> {
     @Throws(IOException::class)
     override fun convert(value: ResponseBody): T? {
         val html = value.string()

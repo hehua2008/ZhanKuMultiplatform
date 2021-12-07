@@ -23,7 +23,7 @@ class PreviewItemAdapter : RecyclerView.Adapter<BindingViewHolder<PreviewItemBin
     companion object {
         @JvmStatic
         val previewRecyclerPool = RecycledViewPool()
-        protected const val BUTTON_ITEM_TYPE = 1
+        private const val BUTTON_ITEM_TYPE = 1
 
         init {
             previewRecyclerPool.setMaxRecycledViews(BUTTON_ITEM_TYPE, 20)
@@ -39,10 +39,10 @@ class PreviewItemAdapter : RecyclerView.Adapter<BindingViewHolder<PreviewItemBin
     }
 
     override fun onCreateViewHolder(
-            parent: ViewGroup, viewType: Int
+        parent: ViewGroup, viewType: Int
     ): BindingViewHolder<PreviewItemBinding> {
         val binding: PreviewItemBinding = DataBindingUtil.inflate(
-                LayoutInflater.from(MyApplication.INSTANCE), R.layout.preview_item, parent, false
+            LayoutInflater.from(MyApplication.INSTANCE), R.layout.preview_item, parent, false
         )
         return BindingViewHolder(binding)
     }
@@ -55,13 +55,14 @@ class PreviewItemAdapter : RecyclerView.Adapter<BindingViewHolder<PreviewItemBin
         binding.previewImg.setOnClickListener { v ->
             val activity = v.getActivity() ?: return@setOnClickListener
             val intent = Intent(activity, DetailActivity::class.java)
-                    .putExtra(DetailActivity.KEY_TITLE, previewItem.title)
-                    .putExtra(DetailActivity.KEY_URL, previewItem.targetUrl)
+                .putExtra(DetailActivity.KEY_TITLE, previewItem.title)
+                .putExtra(DetailActivity.KEY_URL, previewItem.targetUrl)
             activity.startActivity(intent)
         }
-        mRequestManager!!
-                .load(imageUrl)
+        mRequestManager?.run {
+            load(imageUrl)
                 .into(binding.previewImg)
+        }
     }
 
     override fun onViewRecycled(holder: BindingViewHolder<PreviewItemBinding>) {

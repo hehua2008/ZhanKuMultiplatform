@@ -1,34 +1,29 @@
 package com.hym.zhankukotlin.network
 
 class DetailItem private constructor(
-        @JvmField
-        val title: String? = null,
+    val title: String? = null,
 
-        @JvmField
-        val time: String? = null,
+    val time: String? = null,
 
-        @JvmField
-        val views: String? = null,
+    val views: String? = null,
 
-        @JvmField
-        val comments: String? = null,
+    val comments: String? = null,
 
-        @JvmField
-        val favorites: String? = null,
+    val favorites: String? = null,
 
-        val categorys: List<CategoryItem> = emptyList(),
+    val categories: List<CategoryItem> = emptyList(),
 
-        val imgUrls: List<String> = emptyList()
+    val imgUrls: List<String> = emptyList()
 ) {
     override fun toString(): String {
         val sb = StringBuilder()
         sb.append(title).append('\n')
-                .append(time).append('\n')
-                .append(views).append('\n')
-                .append(comments).append('\n')
-                .append(favorites).append('\n')
-                .append(categorys).append('\n')
-                .append(imgUrls).append('\n')
+            .append(time).append('\n')
+            .append(views).append('\n')
+            .append(comments).append('\n')
+            .append(favorites).append('\n')
+            .append(categories).append('\n')
+            .append(imgUrls).append('\n')
         return sb.toString()
     }
 
@@ -38,7 +33,7 @@ class DetailItem private constructor(
         private var views: String? = null
         private var comments: String? = null
         private var favorites: String? = null
-        private var categorys: MutableList<CategoryItem> = mutableListOf()
+        private var categories: MutableList<CategoryItem> = mutableListOf()
         private var imgUrls: MutableList<String> = mutableListOf()
 
         fun title(title: String?): Builder {
@@ -67,7 +62,7 @@ class DetailItem private constructor(
         }
 
         fun addCategory(category: CategoryItem): Builder {
-            categorys.add(category)
+            categories.add(category)
             return this
         }
 
@@ -77,7 +72,7 @@ class DetailItem private constructor(
         }
 
         fun build(): DetailItem {
-            return DetailItem(title, time, views, comments, favorites, categorys, imgUrls)
+            return DetailItem(title, time, views, comments, favorites, categories, imgUrls)
         }
     }
 }

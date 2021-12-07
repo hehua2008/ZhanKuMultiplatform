@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.filter
 class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
     private lateinit var mPageViewModel: PageViewModel
     private var mBinding: FragmentMainBinding? = null
+    private val binding get() = checkNotNull(mBinding)
     private lateinit var mCategoryItem: CategoryItem
     private var mUrl: String? = null
 
@@ -66,15 +67,15 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
 
         mButtonItemDecoration = object : RecyclerView.ItemDecoration() {
             private val mOffset = resources.getDimensionPixelSize(
-                    R.dimen.button_item_horizontal_offset
+                R.dimen.button_item_horizontal_offset
             ) and 1.inv()
             private val mHalfOffset = mOffset shr 1
 
             override fun getItemOffsets(
-                    outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
+                outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
             ) {
                 val itemPosition =
-                        (view.layoutParams as RecyclerView.LayoutParams).viewLayoutPosition
+                    (view.layoutParams as RecyclerView.LayoutParams).viewLayoutPosition
                 val itemCount = state.itemCount
                 val left = if (itemPosition == 0) mOffset else mHalfOffset
                 val right = if (itemPosition == itemCount - 1) mOffset else mHalfOffset
@@ -83,15 +84,15 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
         }
         mPreviewItemDecoration = object : RecyclerView.ItemDecoration() {
             private val mOffset = resources.getDimensionPixelSize(
-                    R.dimen.preview_item_offset
+                R.dimen.preview_item_offset
             ) and 1.inv()
             private val mHalfOffset = mOffset shr 1
 
             override fun getItemOffsets(
-                    outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
+                outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
             ) {
                 val itemPosition =
-                        (view.layoutParams as RecyclerView.LayoutParams).viewLayoutPosition
+                    (view.layoutParams as RecyclerView.LayoutParams).viewLayoutPosition
                 if (itemPosition and 1 == 0) {
                     outRect.set(mOffset, 0, mHalfOffset, mOffset)
                 } else {
@@ -102,10 +103,9 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false)
-        val binding = mBinding!!
 
         val typedValue = TypedValue()
         requireContext().theme.resolveAttribute(R.attr.colorAccent, typedValue, true)
@@ -159,9 +159,9 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
     }
 
     private fun clearEditFocusAndHideSoftInput() {
-        mBinding!!.pagedLayout.numberEdit.clearFocus()
-        val imm = ContextCompat.getSystemService(context!!, InputMethodManager::class.java)!!
-        imm.hideSoftInputFromWindow(view!!.windowToken, 0)
+        binding.pagedLayout.numberEdit.clearFocus()
+        val imm = ContextCompat.getSystemService(requireContext(), InputMethodManager::class.java)!!
+        imm.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
 
     override fun onResume() {
@@ -171,15 +171,13 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        val binding = mBinding!!
-        mBinding = null
         binding.previewRecycler.adapter = null
         binding.catRecrcler.layoutManager = null
         binding.catRecrcler.adapter = null
+        mBinding = null
     }
 
     override fun onChanged(viewLifecycleOwner: LifecycleOwner) {
-        val binding = mBinding!!
         mPageViewModel.previewResult.observe(viewLifecycleOwner, Observer { previewResult ->
             previewResult ?: return@Observer
             //mPreviewItemAdapter.setPreviewItems(previewResult)
@@ -198,11 +196,11 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
             }
             viewLifecycleOwner.lifecycleScope.launchWhenCreated {
                 mPagingPreviewItemAdapter.loadStateFlow
-                        // Only emit when REFRESH LoadState changes.
-                        .distinctUntilChangedBy { it.refresh }
-                        // Only react to cases where REFRESH completes i.e., NotLoading.
-                        .filter { it.refresh is LoadState.NotLoading }
-                        .collect { binding.previewRecycler.scrollToPosition(0) }
+                    // Only emit when REFRESH LoadState changes.
+                    .distinctUntilChangedBy { it.refresh }
+                    // Only react to cases where REFRESH completes i.e., NotLoading.
+                    .filter { it.refresh is LoadState.NotLoading }
+                    .collect { binding.previewRecycler.scrollToPosition(0) }
             }
             viewLifecycleOwner.lifecycleScope.launchWhenCreated {
                 mPageViewModel.pagingFlow.value?.collectLatest { pagingData ->

@@ -6,7 +6,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.hym.zhankukotlin.network.CategoryItem
 
 class SectionsPager2Adapter(fragmentActivity: FragmentActivity) :
-        FragmentStateAdapter(fragmentActivity) {
+    FragmentStateAdapter(fragmentActivity) {
     private var mCategoryItems: List<CategoryItem> = emptyList()
 
     override fun createFragment(position: Int): Fragment {

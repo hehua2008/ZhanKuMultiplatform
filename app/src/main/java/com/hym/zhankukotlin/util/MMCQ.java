@@ -13,16 +13,14 @@ import androidx.core.graphics.ColorUtils;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
 /**
- * Created by hehua2008 on 9/20/18.
- * Blog: https://blog.csdn.net/hegan2010/article/details/84308152
+ * Created by hehua2008 on 9/20/18. Blog: https://blog.csdn.net/hegan2010/article/details/84308152
  * <p>
- * Modified Median Cut Quantization(MMCQ)
- * Leptonica: http://tpgit.github.io/UnOfficialLeptDocs/leptonica/color-quantization.html
+ * Modified Median Cut Quantization(MMCQ) Leptonica: http://tpgit.github
+ * .io/UnOfficialLeptDocs/leptonica/color-quantization.html
  */
 public class MMCQ {
     private static final String TAG = MMCQ.class.getSimpleName();
@@ -280,13 +278,10 @@ public class MMCQ {
         int popColors = (int) (mMaxColor * mFraction);
         iterCut(popColors, pOneQueue);
 
-        PriorityQueue<VBox> boxQueue = new PriorityQueue<>(mMaxColor, new Comparator<VBox>() {
-            @Override
-            public int compare(VBox o1, VBox o2) {
-                long priority1 = o1.getPriority() * o1.mVolume;
-                long priority2 = o2.getPriority() * o2.mVolume;
-                return Long.compare(priority1, priority2);
-            }
+        PriorityQueue<VBox> boxQueue = new PriorityQueue<>(mMaxColor, (o1, o2) -> {
+            long priority1 = o1.getPriority() * o1.mVolume;
+            long priority2 = o2.getPriority() * o2.mVolume;
+            return Long.compare(priority1, priority2);
         });
 
         boxQueue.addAll(pOneQueue);
@@ -387,7 +382,7 @@ public class MMCQ {
             final int rl = Math.abs(r2 - r1) + 1;
             final int gl = Math.abs(g2 - g1) + 1;
             final int bl = Math.abs(b2 - b1) + 1;
-            mVolume = rl * gl * bl;
+            mVolume = (long) rl * gl * bl;
             final int max = Math.max(Math.max(rl, gl), bl);
             if (max == rl) {
                 mAxis = COLOR_RED;
@@ -515,8 +510,7 @@ public class MMCQ {
 
         @Override
         public int compareTo(ThemeColor themeColor) {
-            double oPriority = themeColor.mPriority;
-            return Double.compare(oPriority, mPriority);
+            return Double.compare(themeColor.mPriority, mPriority);
         }
 
         public int getColor() {

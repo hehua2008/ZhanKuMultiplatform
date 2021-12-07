@@ -54,15 +54,15 @@ class DetailActivity : AppCompatActivity() {
         mBinding.tagItemRecycler.layoutManager = mTagItemLayoutManager
         mBinding.tagItemRecycler.addItemDecoration(object : ItemDecoration() {
             private val mOffset = resources.getDimensionPixelSize(
-                    R.dimen.button_item_horizontal_offset
+                R.dimen.button_item_horizontal_offset
             ) and 1.inv()
             private val mHalfOffset = mOffset shr 1
 
             override fun getItemOffsets(
-                    outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
+                outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
             ) {
                 val itemPosition =
-                        (view.layoutParams as RecyclerView.LayoutParams).viewLayoutPosition
+                    (view.layoutParams as RecyclerView.LayoutParams).viewLayoutPosition
                 val itemCount = state.itemCount
                 val left = if (itemPosition == 0) mOffset else mHalfOffset
                 val right = if (itemPosition == itemCount - 1) mOffset else mHalfOffset
@@ -76,7 +76,7 @@ class DetailActivity : AppCompatActivity() {
             private val mOffset = resources.getDimensionPixelSize(R.dimen.common_vertical_margin)
 
             override fun getItemOffsets(
-                    outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
+                outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
             ) {
                 outRect.set(0, mOffset, 0, 0)
             }
@@ -86,22 +86,22 @@ class DetailActivity : AppCompatActivity() {
 
         mDetailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
         mDetailViewModel.detailUrl.observe(
-                this,
-                { mDetailViewModel.getDetailFromNetwork() })
+            this,
+            { mDetailViewModel.getDetailFromNetwork() })
         mDetailViewModel.detailItem.observe(this, Observer { detailItem ->
             mBinding.detailItem = detailItem ?: return@Observer
-            mTagUrlItemAdapter.setTagItems(detailItem.categorys)
+            mTagUrlItemAdapter.setTagItems(detailItem.categories)
             mDetailImageAdapter.setImgUrls(detailItem.imgUrls)
             mBinding.downloadAll.setOnClickListener {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                        && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
-                        && !PermissionUtils.checkSelfPermission(
-                                this, Manifest.permission.WRITE_EXTERNAL_STORAGE
-                        )
+                    && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+                    && !PermissionUtils.checkSelfPermission(
+                        this, Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
                 ) {
                     Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_LONG).show()
                     PermissionUtils.requestPermissions(
-                            this, Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        this, Manifest.permission.WRITE_EXTERNAL_STORAGE
                     )
                     return@setOnClickListener
                 }

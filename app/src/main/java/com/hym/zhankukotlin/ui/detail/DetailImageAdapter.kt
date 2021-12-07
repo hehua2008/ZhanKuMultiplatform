@@ -33,7 +33,8 @@ class DetailImageAdapter : RecyclerView.Adapter<DetailImageAdapter.ViewHolder>()
         val context = parent.context
         val constraintLayout = ConstraintLayout(context)
         constraintLayout.layoutParams = RecyclerView.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         val imageView = ImageView(context).apply {
             id = R.id.image_view
             adjustViewBounds = true
@@ -41,25 +42,25 @@ class DetailImageAdapter : RecyclerView.Adapter<DetailImageAdapter.ViewHolder>()
             scaleType = ImageView.ScaleType.FIT_CENTER
         }
         imageView.layoutParams = ConstraintLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, 0).apply { dimensionRatio = "1:10" }
+            ViewGroup.LayoutParams.MATCH_PARENT, 0
+        ).apply { dimensionRatio = "1:10" }
         constraintLayout.addView(imageView)
         return ViewHolder(constraintLayout)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        mRequestManager!!
-                .load(mImgUrls[position])
+        mRequestManager?.run {
+            load(mImgUrls[position])
                 .transparentPlaceHolder()
                 .transition(GlideAppExtension.DRAWABLE_CROSS_FADE)
                 //.originalSize()
                 .addListener(ImageViewHeightListener)
                 .into(holder.imageView)
                 .waitForLayout()
+        }
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return position
-    }
+    override fun getItemViewType(position: Int): Int = position
 
     override fun onViewRecycled(holder: ViewHolder) {
         mRequestManager?.clear(holder.imageView)
@@ -73,9 +74,7 @@ class DetailImageAdapter : RecyclerView.Adapter<DetailImageAdapter.ViewHolder>()
         mRequestManager = null
     }
 
-    override fun getItemCount(): Int {
-        return mImgUrls.size
-    }
+    override fun getItemCount(): Int = mImgUrls.size
 
     fun setImgUrls(imgUrls: List<String>) {
         mImgUrls = imgUrls

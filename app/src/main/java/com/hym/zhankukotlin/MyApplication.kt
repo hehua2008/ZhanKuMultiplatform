@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.AsyncTask
+import androidx.core.content.ContextCompat
 import com.hym.zhankukotlin.network.*
 import me.weishu.reflection.Reflection
 import okhttp3.Cache
@@ -53,20 +54,20 @@ class MyApplication : Application() {
             clientCacheDir.mkdirs()
         }
         sClient = OkHttpClient.Builder()
-                .cookieJar(CookieManager.INSTANCE)
-                .addInterceptor(HeaderInterceptor())
-                .addNetworkInterceptor(LogInterceptor())
-                .cache(Cache(clientCacheDir, 100 * 1024 * 1024))
-                //.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 8888)))
-                .build()
+            .cookieJar(CookieManager.INSTANCE)
+            .addInterceptor(HeaderInterceptor())
+            .addNetworkInterceptor(LogInterceptor())
+            .cache(Cache(clientCacheDir, 100 * 1024 * 1024))
+            //.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 8888)))
+            .build()
         sRetrofit = Retrofit.Builder()
-                .client(sClient)
-                .baseUrl(Constants.BASE_URL)
-                .addConverterFactory(ItemConverterFactory.INSTANCE)
-                .callbackExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
-                .build()
+            .client(sClient)
+            .baseUrl(Constants.BASE_URL)
+            .addConverterFactory(ItemConverterFactory.INSTANCE)
+            .callbackExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+            .build()
         networkService = sRetrofit.create(NetworkService::class.java)
-        transparentDrawable = getDrawable(R.drawable.transparent)!!
+        transparentDrawable = ContextCompat.getDrawable(this, R.drawable.transparent)!!
     }
 
     companion object {

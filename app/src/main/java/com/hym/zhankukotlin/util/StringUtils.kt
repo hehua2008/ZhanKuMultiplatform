@@ -8,11 +8,12 @@ import java.security.MessageDigest
 
 object StringUtils {
     private const val REPLACEMENT_CHAR = 0xfffd.toChar()
-    private val TABLE_UTF8_NEEDED = intArrayOf( //0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
-            0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 0xc0 - 0xcf
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 0xd0 - 0xdf
-            2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  // 0xe0 - 0xef
-            3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    private val TABLE_UTF8_NEEDED = intArrayOf(
+        //0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+        0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 0xc0 - 0xcf
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 0xd0 - 0xdf
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  // 0xe0 - 0xef
+        3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     )
     private val TMP_STRING_BUILDER = object : ThreadLocal<StringBuilder>() {
         override fun initialValue(): StringBuilder {
@@ -23,13 +24,12 @@ object StringUtils {
     @JvmOverloads
     @JvmStatic
     fun newStringFromBytes(
-            data: ByteArray, offset: Int = 0, byteCount: Int = data.size,
-            charset: Charset = StandardCharsets.UTF_8
+        data: ByteArray, offset: Int = 0, byteCount: Int = data.size,
+        charset: Charset = StandardCharsets.UTF_8
     ): String {
         if (offset or byteCount < 0 || byteCount > data.size - offset) {
             throw IndexOutOfBoundsException(
-                    "length=" + data.size + "; regionStart=" + offset
-                            + "; regionLength=" + byteCount
+                "length=" + data.size + "; regionStart=" + offset + "; regionLength=" + byteCount
             )
         }
         val value: CharArray
@@ -183,8 +183,8 @@ object StringUtils {
             // reference to the CharBuffer it returns and later mutate it.
             value = cb.array()
         }
-        val tmpSb = TMP_STRING_BUILDER.get()
-        tmpSb!!.setLength(0)
+        val tmpSb = TMP_STRING_BUILDER.get()!!
+        tmpSb.setLength(0)
         tmpSb.append(value, 0, length)
         return tmpSb.toString()
     }

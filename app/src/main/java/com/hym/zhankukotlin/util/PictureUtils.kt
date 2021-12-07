@@ -40,8 +40,8 @@ object PictureUtils {
 
             imgUrls.forEach { url ->
                 val futureTarget = GlideApp.with(context)
-                        .download(url)
-                        .submit()
+                    .download(url)
+                    .submit()
 
                 val deferred = async(Dispatchers.IO) {
                     val uri = Uri.parse(url)
@@ -49,7 +49,7 @@ object PictureUtils {
 
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                         var dir = Environment.getExternalStoragePublicDirectory(
-                                Environment.DIRECTORY_PICTURES
+                            Environment.DIRECTORY_PICTURES
                         )
                         if (!dir.isDirectory && !dir.mkdirs()) {
                             Log.e(TAG, "getExternalStoragePublicDirectory failed")
@@ -65,17 +65,17 @@ object PictureUtils {
                             src.copyTo(dst, true)
                             try {
                                 MediaStore.Images.Media.insertImage(
-                                        context.contentResolver, dst.absolutePath, name, null
+                                    context.contentResolver, dst.absolutePath, name, null
                                 )
                             } catch (e: IOException) {
                                 Log.e(TAG, "insert $dst to media library failed", e)
                                 return@async null
                             }
                             context.sendBroadcast(
-                                    Intent(
-                                            Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                                            Uri.parse(dst.absolutePath)
-                                    )
+                                Intent(
+                                    Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                                    Uri.parse(dst.absolutePath)
+                                )
                             )
                             return@async dst
                         } catch (e: IOException) {
@@ -101,8 +101,8 @@ object PictureUtils {
                             }
                         }
                         values.put(
-                                MediaStore.Images.Media.RELATIVE_PATH,
-                                Environment.DIRECTORY_PICTURES
+                            MediaStore.Images.Media.RELATIVE_PATH,
+                            Environment.DIRECTORY_PICTURES
                         )
                         val externalContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                         val resolver = context.contentResolver
@@ -139,9 +139,9 @@ object PictureUtils {
             awaitAll(*deferreds.toTypedArray())
 
             Toast.makeText(
-                    context,
-                    "Saved ${deferreds[0].await()?.name} etc. ${deferreds.size} files",
-                    Toast.LENGTH_SHORT
+                context,
+                "Saved ${deferreds[0].await()?.name} etc. ${deferreds.size} files",
+                Toast.LENGTH_SHORT
             ).show()
         }
     }

@@ -23,9 +23,7 @@ class SectionsPagerViewModel : ViewModel() {
                     return@withContext null
                 }
             }
-            if (items != null) {
-                categoryItems.value = items
-            }
+            items?.let { categoryItems.value = it }
         }
     }
 

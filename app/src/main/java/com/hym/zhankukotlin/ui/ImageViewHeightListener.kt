@@ -11,13 +11,12 @@ import com.bumptech.glide.request.target.ViewTarget
 
 object ImageViewHeightListener : RequestListener<Drawable> {
     override fun onLoadFailed(
-            e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean
-    ): Boolean {
-        return false
-    }
+        e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean
+    ): Boolean = false
 
-    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?,
-                                 dataSource: DataSource?, isFirstResource: Boolean
+    override fun onResourceReady(
+        resource: Drawable?, model: Any?, target: Target<Drawable>?,
+        dataSource: DataSource?, isFirstResource: Boolean
     ): Boolean {
         val bitmap = when (resource) {
             is BitmapDrawable -> resource.bitmap

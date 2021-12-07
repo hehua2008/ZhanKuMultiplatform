@@ -13,13 +13,13 @@ import java.util.*
 object PermissionUtils {
     @JvmField
     val RUNTIME_PERMISSIONS = arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
 
     @JvmStatic
     fun checkSelfPermission(context: Context, permission: String): Boolean {
-        if (context == null || TextUtils.isEmpty(permission)) {
+        if (TextUtils.isEmpty(permission)) {
             return false
         }
         val result = context.checkSelfPermission(permission)
@@ -28,7 +28,7 @@ object PermissionUtils {
 
     @JvmStatic
     fun checkSelfPermissions(context: Context, permissions: List<String>): List<String> {
-        if (context == null || permissions == null || permissions.isEmpty()) {
+        if (permissions.isEmpty()) {
             return emptyList()
         }
         val notGrantedPermissions: MutableList<String> = LinkedList()
@@ -42,14 +42,14 @@ object PermissionUtils {
 
     @JvmStatic
     fun checkSelfPermissions(context: Context, vararg permissions: String): List<String> {
-        return if (context == null || permissions == null || permissions.isEmpty()) {
+        return if (permissions.isEmpty()) {
             emptyList()
         } else checkSelfPermissions(context, listOf(*permissions))
     }
 
     @JvmStatic
     fun requestPermissions(activity: Activity, vararg permissions: String) {
-        if (activity == null || permissions == null || permissions.isEmpty()) {
+        if (permissions.isEmpty()) {
             return
         }
         activity.requestPermissions(permissions, 0)
@@ -57,7 +57,7 @@ object PermissionUtils {
 
     @JvmStatic
     fun requestPermissions(activity: Activity, permissions: List<String>) {
-        if (activity == null || permissions == null || permissions.isEmpty()) {
+        if (permissions.isEmpty()) {
             return
         }
         requestPermissions(activity, *permissions.toTypedArray())
@@ -65,7 +65,7 @@ object PermissionUtils {
 
     @JvmStatic
     fun checkAndRequestPermissions(activity: Activity, permissions: List<String>) {
-        if (activity == null || permissions == null || permissions.isEmpty()) {
+        if (permissions.isEmpty()) {
             return
         }
         val notGrantedPermissions = checkSelfPermissions(activity, permissions)
@@ -76,7 +76,7 @@ object PermissionUtils {
 
     @JvmStatic
     fun checkAndRequestPermissions(activity: Activity, vararg permissions: String) {
-        if (activity == null || permissions == null || permissions.isEmpty()) {
+        if (permissions.isEmpty()) {
             return
         }
         checkAndRequestPermissions(activity, listOf(*permissions))

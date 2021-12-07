@@ -10,9 +10,7 @@ import com.hym.zhankukotlin.util.ViewUtils.getActivity
 
 class TagUrlItemAdapter : NameValueAdapter<String, String>() {
     override fun getOnCheckedChangeListener(holder: ViewHolder, position: Int)
-            : MaterialButton.OnCheckedChangeListener? {
-        return null
-    }
+            : MaterialButton.OnCheckedChangeListener? = null
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
@@ -23,7 +21,7 @@ class TagUrlItemAdapter : NameValueAdapter<String, String>() {
             val tagUrl = mNameValues[position].value
             val intent = Intent(activity, TagActivity::class.java)
             val categoryItem: CategoryItem = CategoryItem.getCategoryItem(tagUrl)
-                    ?: return@setOnClickListener
+                ?: return@setOnClickListener
             intent.putExtra(PreviewItemFragment.CATEGORY_ITEM, categoryItem)
             activity.startActivity(intent)
         }
