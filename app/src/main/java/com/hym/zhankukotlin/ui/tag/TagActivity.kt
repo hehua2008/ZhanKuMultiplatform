@@ -4,7 +4,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.hym.zhankukotlin.R
-import com.hym.zhankukotlin.network.CategoryItem
+import com.hym.zhankukotlin.model.SubCate
+import com.hym.zhankukotlin.model.TopCate
 import com.hym.zhankukotlin.ui.main.PreviewItemFragment
 
 class TagActivity : AppCompatActivity() {
@@ -16,13 +17,13 @@ class TagActivity : AppCompatActivity() {
 
         setContentView(R.layout.tag_activity)
 
-        val categoryItem: CategoryItem =
-            intent.getParcelableExtra(PreviewItemFragment.CATEGORY_ITEM)!!
-        title = categoryItem.title
+        val topCate: TopCate? = intent.getParcelableExtra(PreviewItemFragment.TOP_CATE)
+        val subCate: SubCate? = intent.getParcelableExtra(PreviewItemFragment.SUB_CATE)
+        title = topCate?.name ?: subCate?.name
 
-        if (savedInstanceState === null) {
+        if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.container, PreviewItemFragment.newInstance(categoryItem))
+                .replace(R.id.container, PreviewItemFragment.newInstance(topCate, subCate))
                 .commitNow()
         }
     }

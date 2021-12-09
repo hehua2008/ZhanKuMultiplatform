@@ -3,11 +3,11 @@ package com.hym.zhankukotlin.ui.main
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.hym.zhankukotlin.network.CategoryItem
+import com.hym.zhankukotlin.model.TopCate
 
 class SectionsPager2Adapter(fragmentActivity: FragmentActivity) :
     FragmentStateAdapter(fragmentActivity) {
-    private var mCategoryItems: List<CategoryItem> = emptyList()
+    private var mCategoryItems: List<TopCate> = emptyList()
 
     override fun createFragment(position: Int): Fragment {
         return PreviewItemFragment.newInstance(mCategoryItems[position])
@@ -17,7 +17,15 @@ class SectionsPager2Adapter(fragmentActivity: FragmentActivity) :
         return mCategoryItems.size
     }
 
-    fun setCategoryItems(categoryItems: List<CategoryItem>) {
+    override fun getItemId(position: Int): Long {
+        return mCategoryItems[position].id.toLong()
+    }
+
+    override fun containsItem(itemId: Long): Boolean {
+        return mCategoryItems.find { it.id.toLong() == itemId } != null
+    }
+
+    fun setCategoryItems(categoryItems: List<TopCate>) {
         mCategoryItems = categoryItems
         notifyDataSetChanged()
     }

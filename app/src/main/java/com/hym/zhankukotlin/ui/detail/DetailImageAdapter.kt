@@ -8,11 +8,12 @@ import com.hym.zhankukotlin.GlideApp
 import com.hym.zhankukotlin.GlideAppExtension
 import com.hym.zhankukotlin.GlideRequests
 import com.hym.zhankukotlin.R
+import com.hym.zhankukotlin.model.ProductImage
 import com.hym.zhankukotlin.ui.ImageViewHeightListener
 
 class DetailImageAdapter : RecyclerView.Adapter<DetailImageAdapter.ViewHolder>() {
     private var mRequestManager: GlideRequests? = null
-    private var mImgUrls: List<String> = emptyList()
+    private var mImages: List<ProductImage> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         /**
@@ -27,7 +28,7 @@ class DetailImageAdapter : RecyclerView.Adapter<DetailImageAdapter.ViewHolder>()
          *         android:adjustViewBounds="true"
          *         android:contentDescription="loading..."
          *         android:scaleType="fitCenter"
-         *         app:layout_constraintDimensionRatio="1:10" />
+         *         app:layout_constraintDimensionRatio="3:2" />
          * </androidx.constraintlayout.widget.ConstraintLayout>
          */
         val context = parent.context
@@ -43,15 +44,21 @@ class DetailImageAdapter : RecyclerView.Adapter<DetailImageAdapter.ViewHolder>()
         }
         imageView.layoutParams = ConstraintLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, 0
-        ).apply { dimensionRatio = "1:10" }
+        ).apply { dimensionRatio = "3:2" }
         constraintLayout.addView(imageView)
         return ViewHolder(constraintLayout)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val img = mImages[position]
+        holder.imageView.run {
+            layoutParams = (layoutParams as ConstraintLayout.LayoutParams).apply {
+                dimensionRatio = "${img.width}:${img.height}"
+            }
+        }
         mRequestManager?.run {
-            load(mImgUrls[position])
-                .transparentPlaceHolder()
+            load(img.url)
+                //.transparentPlaceHolder()
                 .transition(GlideAppExtension.DRAWABLE_CROSS_FADE)
                 //.originalSize()
                 .addListener(ImageViewHeightListener)
@@ -74,14 +81,14 @@ class DetailImageAdapter : RecyclerView.Adapter<DetailImageAdapter.ViewHolder>()
         mRequestManager = null
     }
 
-    override fun getItemCount(): Int = mImgUrls.size
+    override fun getItemCount(): Int = mImages.size
 
-    fun setImgUrls(imgUrls: List<String>) {
-        mImgUrls = imgUrls
+    fun setImages(images: List<ProductImage>) {
+        mImages = images
         notifyDataSetChanged()
     }
 
-    class ViewHolder(val viewGroup: ViewGroup) : RecyclerView.ViewHolder(viewGroup) {
+    class ViewHolder(viewGroup: ViewGroup) : RecyclerView.ViewHolder(viewGroup) {
         val imageView: ImageView = viewGroup.findViewById(R.id.image_view)
     }
 }

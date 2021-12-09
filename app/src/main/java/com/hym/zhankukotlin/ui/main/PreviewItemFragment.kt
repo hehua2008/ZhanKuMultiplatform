@@ -8,12 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.*
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
@@ -22,31 +18,58 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.FragmentMainBinding
-import com.hym.zhankukotlin.network.CategoryItem
-import com.hym.zhankukotlin.network.Order
+import com.hym.zhankukotlin.model.RecommendLevel
+import com.hym.zhankukotlin.model.SubCate
+import com.hym.zhankukotlin.model.TopCate
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
 
 class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
+    companion object {
+        private const val TAG = "PreviewItemFragment"
+        const val TOP_CATE = "TOP_CATE"
+        const val SUB_CATE = "SUB_CATE"
+
+        @JvmStatic
+        fun newInstance(topCate: TopCate? = null, subCate: SubCate? = null): PreviewItemFragment {
+            val fragment = PreviewItemFragment()
+            fragment.arguments = Bundle().apply {
+                putParcelable(TOP_CATE, topCate)
+                putParcelable(SUB_CATE, subCate)
+            }
+            return fragment
+        }
+    }
+
+    var topCate: TopCate? = null
+        private set
+    private var mSubCate: SubCate? = null
     private lateinit var mPageViewModel: PageViewModel
     private var mBinding: FragmentMainBinding? = null
     private val binding get() = checkNotNull(mBinding)
-    private lateinit var mCategoryItem: CategoryItem
-    private var mUrl: String? = null
 
-    //private lateinit var mPreviewItemAdapter: PreviewItemAdapter
     private lateinit var mPagingPreviewItemAdapter: PagingPreviewItemAdapter
     private lateinit var mCategoryItemLayoutManager: FlexboxLayoutManager
     private lateinit var mCategoryItemAdapter: CategoryItemAdapter
     private lateinit var mButtonItemDecoration: RecyclerView.ItemDecoration
     private lateinit var mPreviewItemDecoration: RecyclerView.ItemDecoration
 
+    private val mVMFactory = object : ViewModelProvider.NewInstanceFactory() {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return if (PageViewModel::class.java.isAssignableFrom(modelClass)) {
+                PageViewModel(topCate).apply { setSubCate(mSubCate) } as T
+            } else {
+                super.create(modelClass)
+            }
+        }
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelable(CATEGORY_ITEM, mCategoryItem)
-        outState.putString(CATEGORY_URL, mUrl)
+        outState.putParcelable(TOP_CATE, topCate)
+        outState.putParcelable(SUB_CATE, mSubCate)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,15 +78,14 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
         viewLifecycleOwnerLiveData.observe(this, this)
 
         val activeBundle = savedInstanceState ?: arguments
-        mCategoryItem = activeBundle!!.getParcelable(CATEGORY_ITEM)!!
-        mUrl = activeBundle.getString(CATEGORY_URL) ?: mCategoryItem.url
+        topCate = activeBundle!!.getParcelable(TOP_CATE)
+        mSubCate = activeBundle.getParcelable(SUB_CATE)
 
-        mPageViewModel = ViewModelProvider(this).get(PageViewModel::class.java)
-        //mPreviewItemAdapter = PreviewItemAdapter()
+        mPageViewModel = ViewModelProvider(this, mVMFactory).get(PageViewModel::class.java)
         mPagingPreviewItemAdapter = PagingPreviewItemAdapter()
         mCategoryItemLayoutManager = FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)
         mCategoryItemLayoutManager.justifyContent = JustifyContent.SPACE_EVENLY
-        mCategoryItemAdapter = CategoryItemAdapter(mPageViewModel)
+        mCategoryItemAdapter = CategoryItemAdapter(topCate, mSubCate, mPageViewModel)
 
         mButtonItemDecoration = object : RecyclerView.ItemDecoration() {
             private val mOffset = resources.getDimensionPixelSize(
@@ -105,7 +127,9 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false)
+        mBinding = FragmentMainBinding.inflate(inflater, container, false)
+
+        updateCategoryLink()
 
         val typedValue = TypedValue()
         requireContext().theme.resolveAttribute(R.attr.colorAccent, typedValue, true)
@@ -114,59 +138,52 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
 
         binding.previewRecycler.addItemDecoration(mPreviewItemDecoration)
         binding.previewRecycler.adapter = mPagingPreviewItemAdapter
-        //binding.previewRecycler.addOnScrollListener(mOnScrollListener)
 
         binding.catRecrcler.layoutManager = mCategoryItemLayoutManager
         binding.catRecrcler.addItemDecoration(mButtonItemDecoration)
         binding.catRecrcler.adapter = mCategoryItemAdapter
 
         binding.orderGroup.setOnCheckedChangeListener { group, checkedId ->
-            val order: Order = when (checkedId) {
-                R.id.order_all_recommend -> Order.ALL_RECOMMEND
-                R.id.order_home_recommend -> Order.HOME_RECOMMEND
-                R.id.order_latest_publish -> Order.LATEST_PUBLISH
-                R.id.order_editor_choice -> Order.EDITOR_CHOICE
-                else -> Order.EDITOR_CHOICE
+            val recommendLevel: RecommendLevel = when (checkedId) {
+                R.id.order_all_recommend -> RecommendLevel.ALL_RECOMMEND
+                R.id.order_home_recommend -> RecommendLevel.HOME_RECOMMEND
+                R.id.order_latest_publish -> RecommendLevel.LATEST_PUBLISH
+                R.id.order_editor_choice -> RecommendLevel.EDITOR_CHOICE
+                else -> RecommendLevel.EDITOR_CHOICE
             }
-            mPageViewModel.setOrder(order)
+            mPageViewModel.setRecommendLevel(recommendLevel)
         }
 
         binding.pagedLayout.prePage.setOnClickListener {
             clearEditFocusAndHideSoftInput()
-            val previewResult = mPageViewModel.previewResult.value ?: return@setOnClickListener
-            mPageViewModel.setPage(previewResult.pagedArr[0] - 1)
+            val curPage = mPageViewModel.page.value ?: return@setOnClickListener
+            mPageViewModel.setPage(curPage - 1)
         }
         binding.pagedLayout.nextPage.setOnClickListener {
             clearEditFocusAndHideSoftInput()
-            val previewResult = mPageViewModel.previewResult.value ?: return@setOnClickListener
-            mPageViewModel.setPage(previewResult.pagedArr[0] + 1)
+            val curPage = mPageViewModel.page.value ?: return@setOnClickListener
+            mPageViewModel.setPage(curPage + 1)
         }
         binding.pagedLayout.jumpButton.setOnClickListener(View.OnClickListener {
             clearEditFocusAndHideSoftInput()
             val numberEdit = binding.pagedLayout.numberEdit.text.toString()
-            if (numberEdit.isEmpty()) {
-                return@OnClickListener
-            }
-            val previewResult = mPageViewModel.previewResult.value ?: return@OnClickListener
-            val pagedArr = previewResult.pagedArr
-            val page = numberEdit.toInt()
-            if (page >= 1 && page <= pagedArr[1] && page != pagedArr[0]) {
-                mPageViewModel.setPage(page)
-            }
+            if (numberEdit.isEmpty()) return@OnClickListener
+            mPageViewModel.setPage(numberEdit.toInt())
         })
 
         return binding.root
+    }
+
+    private fun updateCategoryLink() {
+        val desc = mSubCate?.description?.trim() ?: topCate?.description?.trim()
+        binding.categoryLink.visibility = if (desc.isNullOrBlank()) View.GONE else View.VISIBLE
+        binding.categoryLink.text = desc
     }
 
     private fun clearEditFocusAndHideSoftInput() {
         binding.pagedLayout.numberEdit.clearFocus()
         val imm = ContextCompat.getSystemService(requireContext(), InputMethodManager::class.java)!!
         imm.hideSoftInputFromWindow(requireView().windowToken, 0)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mPageViewModel.setUrl(mUrl)
     }
 
     override fun onDestroyView() {
@@ -178,50 +195,35 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
     }
 
     override fun onChanged(viewLifecycleOwner: LifecycleOwner) {
-        mPageViewModel.previewResult.observe(viewLifecycleOwner, Observer { previewResult ->
-            previewResult ?: return@Observer
-            //mPreviewItemAdapter.setPreviewItems(previewResult)
-            mCategoryItemAdapter.setTitleSubcatMap(previewResult.categoryItem)
-            binding.pagedLayout.pageArr = previewResult.pagedArr
-        })
-        mPageViewModel.previewUrl.observe(viewLifecycleOwner, { url ->
-            mUrl = url
-            binding.categoryLink.text = url
-        })
-        mPageViewModel.pagingFlow.observe(viewLifecycleOwner, {
-            viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-                mPagingPreviewItemAdapter.loadStateFlow.collectLatest { loadStates ->
-                    binding.swipeRefresh.isRefreshing = loadStates.refresh is LoadState.Loading
-                }
+        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            mPageViewModel.page.observe(viewLifecycleOwner) {
+                binding.pagedLayout.pageArr = intArrayOf(it, 10000)
             }
-            viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-                mPagingPreviewItemAdapter.loadStateFlow
-                    // Only emit when REFRESH LoadState changes.
-                    .distinctUntilChangedBy { it.refresh }
-                    // Only react to cases where REFRESH completes i.e., NotLoading.
-                    .filter { it.refresh is LoadState.NotLoading }
-                    .collect { binding.previewRecycler.scrollToPosition(0) }
+            mPageViewModel.mediatorLiveData.observe(viewLifecycleOwner) {
+                mPagingPreviewItemAdapter.refresh()
             }
-            viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-                mPageViewModel.pagingFlow.value?.collectLatest { pagingData ->
-                    mPagingPreviewItemAdapter.submitData(pagingData)
-                }
+            mPageViewModel.subCate.observe(viewLifecycleOwner) {
+                mSubCate = it
+                updateCategoryLink()
             }
-        })
-    }
-
-    companion object {
-        val TAG = PreviewItemFragment::class.simpleName
-        const val CATEGORY_ITEM = "CATEGORY_ITEM"
-        const val CATEGORY_URL = "CATEGORY_URL"
-
-        @JvmStatic
-        fun newInstance(item: CategoryItem): PreviewItemFragment {
-            val fragment = PreviewItemFragment()
-            val bundle = Bundle()
-            bundle.putParcelable(CATEGORY_ITEM, item)
-            fragment.arguments = bundle
-            return fragment
+        }
+        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            mPagingPreviewItemAdapter.loadStateFlow.collectLatest { loadStates ->
+                binding.swipeRefresh.isRefreshing = loadStates.refresh is LoadState.Loading
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            mPagingPreviewItemAdapter.loadStateFlow
+                // Only emit when REFRESH LoadState changes.
+                .distinctUntilChangedBy { it.refresh }
+                // Only react to cases where REFRESH completes i.e., NotLoading.
+                .filter { it.refresh is LoadState.NotLoading }
+                .collect { binding.previewRecycler.scrollToPosition(0) }
+        }
+        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            mPageViewModel.pagingFlow.collectLatest { pagingData ->
+                mPagingPreviewItemAdapter.submitData(pagingData)
+            }
         }
     }
 }

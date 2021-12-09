@@ -116,7 +116,7 @@ class CookieManager private constructor(
     }
 
     companion object {
-        private val TAG = CookieManager::class.simpleName
+        private const val TAG = "CookieManager"
         private val COOKIE_MAP: MutableMap<String, CookieSerialize?> = ConcurrentHashMap()
         private const val COOKIE_DIR_NAME = "cookies"
 
@@ -137,9 +137,7 @@ class CookieManager private constructor(
 
         fun fileNameToHostString(fileName: String): String? {
             val len = fileName.length
-            if (len and 1 != 0) {
-                return null
-            }
+            if (len and 1 != 0) return null
             val bytes = ByteArray(len / 2)
             var i = 0
             while (i < len) {

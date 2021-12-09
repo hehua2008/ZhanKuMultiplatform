@@ -21,9 +21,7 @@ object ViewUtils {
         var view = this
         while (true) {
             val ctx = view.context
-            if (ctx is Activity) {
-                return ctx
-            }
+            if (ctx is Activity) return ctx
             val parent = view.parent
             if (parent is View) {
                 view = parent

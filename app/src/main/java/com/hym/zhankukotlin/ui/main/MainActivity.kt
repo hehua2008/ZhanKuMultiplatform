@@ -2,29 +2,46 @@ package com.hym.zhankukotlin.ui.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityMainBinding
+import com.hym.zhankukotlin.model.TopCate
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var mBinding: ActivityMainBinding
-    private lateinit var mSectionsPagerViewModel: SectionsPagerViewModel
+    companion object {
+        private const val TOP_CATES = "TOP_CATES"
+    }
+
+    private val mTopCates: ArrayList<TopCate> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        savedInstanceState?.getParcelableArrayList<TopCate>(TOP_CATES)?.let { mTopCates.addAll(it) }
+
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         val sectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
-        mBinding.viewPager.adapter = sectionsPagerAdapter
-        mBinding.tabs.setupWithViewPager(mBinding.viewPager)
+        sectionsPagerAdapter.setCategoryItems(mTopCates)
+        binding.viewPager.adapter = sectionsPagerAdapter
+        binding.tabs.setupWithViewPager(binding.viewPager)
 
-        mSectionsPagerViewModel = ViewModelProvider(this).get(SectionsPagerViewModel::class.java)
-        mSectionsPagerViewModel.categoryItems.observe(this, { categoryItems ->
-            mBinding.viewPager.offscreenPageLimit = categoryItems.size
-            sectionsPagerAdapter.setCategoryItems(categoryItems)
-        })
+        val sectionsPagerViewModel = ViewModelProvider(this).get(SectionsPagerViewModel::class.java)
+        sectionsPagerViewModel.categoryItems.observe(this) { categoryItems ->
+            mTopCates.clear()
+            mTopCates.addAll(categoryItems)
+            binding.viewPager.offscreenPageLimit = mTopCates.size
+            sectionsPagerAdapter.setCategoryItems(mTopCates)
+        }
 
-        mSectionsPagerViewModel.getCategoryItemsFromNetwork()
+        sectionsPagerViewModel.getCategoryItemsFromNetwork()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelableArrayList(TOP_CATES, mTopCates)
+    }
+
+    override fun onBackPressed() {
+        moveTaskToBack(false)
     }
 }

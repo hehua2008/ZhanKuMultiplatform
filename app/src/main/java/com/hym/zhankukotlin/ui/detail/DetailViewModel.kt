@@ -1,43 +1,44 @@
 package com.hym.zhankukotlin.ui.detail
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hym.zhankukotlin.MyApplication
-import com.hym.zhankukotlin.network.DetailItem
+import com.hym.zhankukotlin.model.WorkDetails
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class DetailViewModel : ViewModel() {
-    val detailUrl = MutableLiveData<String?>()
-    val detailItem = MutableLiveData<DetailItem?>()
+    companion object {
+        private const val TAG = "DetailViewModel"
+    }
 
-    fun setDetailUrl(url: String?) {
-        if (url != null && url != detailUrl.value) {
-            detailUrl.value = url
-        }
+    private val _detailWorkId = MutableLiveData<String>()
+    val detailWorkId: LiveData<String> = _detailWorkId
+
+    private val _detailItem = MutableLiveData<WorkDetails>()
+    val detailItem: LiveData<WorkDetails> = _detailItem
+
+    fun setDetailWorkId(workId: String) {
+        if (_detailWorkId.value == workId) return
+        _detailWorkId.value = workId
     }
 
     fun getDetailFromNetwork() {
-        val url: String = detailUrl.value ?: return
-        viewModelScope.launch {
-            val item = withContext(Dispatchers.IO) {
-                try {
-                    return@withContext MyApplication.networkService.getDetailItem(url)
-                } catch (t: Throwable) {
-                    Log.e(TAG, "getDetailItem $url failed", t)
-                    return@withContext null
+        val work: String = detailWorkId.value ?: return
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                MyApplication.networkService.getWorkDetails(work).run {
+                    dataContent.also {
+                        if (it == null) Log.e(TAG, "getWorkDetails $work failed: $msg")
+                        else _detailItem.postValue(it)
+                    }
                 }
-            }
-            if (item != null) {
-                detailItem.value = item
+            } catch (t: Throwable) {
+                Log.e(TAG, "getWorkDetails $work failed", t)
             }
         }
-    }
-
-    companion object {
-        private val TAG = DetailViewModel::class.simpleName
     }
 }

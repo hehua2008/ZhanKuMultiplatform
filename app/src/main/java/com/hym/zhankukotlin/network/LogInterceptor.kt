@@ -7,6 +7,10 @@ import java.io.IOException
 import java.util.concurrent.atomic.AtomicLong
 
 class LogInterceptor : Interceptor {
+    companion object {
+        private const val TAG = "LogInterceptor"
+    }
+
     private val mCount = AtomicLong()
 
     @Throws(IOException::class)
@@ -17,9 +21,5 @@ class LogInterceptor : Interceptor {
         val response = chain.proceed(request)
         Log.d(TAG, "[$count] <<<<<< $response contentLength=${response.body?.contentLength()}")
         return response
-    }
-
-    companion object {
-        private val TAG = LogInterceptor::class.simpleName
     }
 }

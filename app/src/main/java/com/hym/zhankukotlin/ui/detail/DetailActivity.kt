@@ -1,115 +1,68 @@
 package com.hym.zhankukotlin.ui.detail
 
-import android.Manifest
 import android.graphics.Rect
-import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
-import com.google.android.flexbox.FlexDirection
-import com.google.android.flexbox.FlexWrap
-import com.google.android.flexbox.FlexboxLayoutManager
-import com.google.android.flexbox.JustifyContent
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityDetailBinding
 import com.hym.zhankukotlin.ui.ThemeColorRetriever.setThemeColor
 import com.hym.zhankukotlin.util.MMCQ
-import com.hym.zhankukotlin.util.PermissionUtils
-import com.hym.zhankukotlin.util.PictureUtils
 
 class DetailActivity : AppCompatActivity() {
-    private lateinit var mTitle: String
-    private lateinit var mUrl: String
-
-    private lateinit var mBinding: ActivityDetailBinding
-    private lateinit var mDetailViewModel: DetailViewModel
-    private lateinit var mTagItemLayoutManager: FlexboxLayoutManager
-    private lateinit var mTagUrlItemAdapter: TagUrlItemAdapter
-    private lateinit var mDetailImageAdapter: DetailImageAdapter
+    companion object {
+        const val KEY_TITLE = "TITLE"
+        const val KEY_WORK_ID = "WORK_ID"
+        const val KEY_COLOR = "COLOR"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mTitle = intent.getStringExtra(KEY_TITLE)!!
-        mUrl = intent.getStringExtra(KEY_URL)!!
+        val mTitle = intent.getStringExtra(KEY_TITLE)!!
+        val mWorkId = intent.getStringExtra(KEY_WORK_ID)!!
         title = mTitle
         setThemeColor(intent.getParcelableExtra(KEY_COLOR) as? MMCQ.ThemeColor)
 
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail)
-        mBinding.detailTitle.text = mTitle
-        mBinding.detailLink.text = mUrl
-
-        mTagItemLayoutManager = FlexboxLayoutManager(this, FlexDirection.ROW, FlexWrap.WRAP)
-        mTagItemLayoutManager.justifyContent = JustifyContent.SPACE_EVENLY
-        mBinding.tagItemRecycler.layoutManager = mTagItemLayoutManager
-        mBinding.tagItemRecycler.addItemDecoration(object : ItemDecoration() {
-            private val mOffset = resources.getDimensionPixelSize(
-                R.dimen.button_item_horizontal_offset
-            ) and 1.inv()
-            private val mHalfOffset = mOffset shr 1
-
-            override fun getItemOffsets(
-                outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
-            ) {
-                val itemPosition =
-                    (view.layoutParams as RecyclerView.LayoutParams).viewLayoutPosition
-                val itemCount = state.itemCount
-                val left = if (itemPosition == 0) mOffset else mHalfOffset
-                val right = if (itemPosition == itemCount - 1) mOffset else mHalfOffset
-                outRect.set(left, 0, right, 0)
-            }
-        })
-        mTagUrlItemAdapter = TagUrlItemAdapter()
-        mBinding.tagItemRecycler.adapter = mTagUrlItemAdapter
-
-        mBinding.detailRecycler.addItemDecoration(object : ItemDecoration() {
+        val binding = ActivityDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.detailRecycler.addItemDecoration(object : ItemDecoration() {
             private val mOffset = resources.getDimensionPixelSize(R.dimen.common_vertical_margin)
+            private val mBottomOffset =
+                resources.getDimensionPixelSize(R.dimen.detail_img_bottom_margin)
 
             override fun getItemOffsets(
                 outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
             ) {
-                outRect.set(0, mOffset, 0, 0)
+                val position = (view.layoutParams as RecyclerView.LayoutParams).viewLayoutPosition
+                val lastPosition = state.itemCount - 1
+                outRect.set(
+                    0, if (position == 0) 0 else mOffset,
+                    0, if (position == lastPosition) mBottomOffset else 0
+                )
             }
         })
-        mDetailImageAdapter = DetailImageAdapter()
-        mBinding.detailRecycler.adapter = mDetailImageAdapter
+        val detailHeaderAdapter = DetailHeaderAdapter(mTitle, mWorkId)
+        val detailImageAdapter = DetailImageAdapter()
+        binding.detailRecycler.adapter = ConcatAdapter(detailHeaderAdapter, detailImageAdapter)
 
-        mDetailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
-        mDetailViewModel.detailUrl.observe(
-            this,
-            { mDetailViewModel.getDetailFromNetwork() })
-        mDetailViewModel.detailItem.observe(this, Observer { detailItem ->
-            mBinding.detailItem = detailItem ?: return@Observer
-            mTagUrlItemAdapter.setTagItems(detailItem.categories)
-            mDetailImageAdapter.setImgUrls(detailItem.imgUrls)
-            mBinding.downloadAll.setOnClickListener {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                    && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
-                    && !PermissionUtils.checkSelfPermission(
-                        this, Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    )
-                ) {
-                    Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_LONG).show()
-                    PermissionUtils.requestPermissions(
-                        this, Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    )
-                    return@setOnClickListener
-                }
-                PictureUtils.downloadAll(detailItem.imgUrls)
-            }
-        })
+        val mDetailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
+        mDetailViewModel.detailWorkId.observe(this) { mDetailViewModel.getDetailFromNetwork() }
+        mDetailViewModel.detailItem.observe(this) { detailItem ->
+            detailItem ?: return@observe
+            detailHeaderAdapter.setDetailItem(detailItem)
+            detailImageAdapter.setImages(detailItem.product.productImages)
+        }
 
-        mDetailViewModel.setDetailUrl(mUrl)
+        mDetailViewModel.setDetailWorkId(mWorkId)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -118,11 +71,5 @@ class DetailActivity : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    companion object {
-        const val KEY_TITLE = "TITLE"
-        const val KEY_URL = "URL"
-        const val KEY_COLOR = "COLOR"
     }
 }

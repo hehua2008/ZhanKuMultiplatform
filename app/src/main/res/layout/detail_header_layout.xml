@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="detailItem"
+            type="com.hym.zhankukotlin.model.WorkDetails" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/detail_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/common_vertical_margin"
+            android:text="detail_title"
+            android:textAlignment="center"
+            android:textIsSelectable="true"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/tag_item_recycler"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.hym.zhankukotlin.ui.ButtonGroupRecyclerView
+            android:id="@+id/tag_item_recycler"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            app:layout_constraintBottom_toTopOf="@id/download_all"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/detail_title"
+            app:selectionRequired="false"
+            app:singleSelection="true"
+            app:spanCount="4" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/download_all"
+            style="@style/Widget.Button.Common"
+            android:text="一键下载"
+            android:visibility="@{detailItem.product.productImages.isEmpty ? View.GONE : View.VISIBLE}"
+            app:layout_constraintBottom_toTopOf="@id/detail_link"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tag_item_recycler" />
+
+        <TextView
+            android:id="@+id/detail_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/common_vertical_margin"
+            android:autoLink="web"
+            android:selectAllOnFocus="true"
+            android:text="https://www.zcool.com.cn"
+            android:textAlignment="center"
+            android:textIsSelectable="true"
+            app:layout_constraintBottom_toTopOf="@id/detail_time"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/download_all" />
+
+        <TextView
+            android:id="@+id/detail_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/common_vertical_margin"
+            android:text="@{detailItem.product.publishTimeDiffStr, default=`detail_time`}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/detail_views"
+            app:layout_constraintTop_toBottomOf="@id/detail_link" />
+
+        <TextView
+            android:id="@+id/detail_views"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{String.valueOf(detailItem.product.viewCount), default=`detail_views`}"
+            app:layout_constraintBottom_toBottomOf="@id/detail_time"
+            app:layout_constraintLeft_toRightOf="@id/detail_time"
+            app:layout_constraintRight_toLeftOf="@id/detail_comments"
+            app:layout_constraintTop_toTopOf="@id/detail_time" />
+
+        <TextView
+            android:id="@+id/detail_comments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{String.valueOf(detailItem.product.commentCount), default=`detail_comments`}"
+            app:layout_constraintBottom_toBottomOf="@id/detail_time"
+            app:layout_constraintLeft_toRightOf="@id/detail_views"
+            app:layout_constraintRight_toLeftOf="@id/detail_favorites"
+            app:layout_constraintTop_toTopOf="@id/detail_time" />
+
+        <TextView
+            android:id="@+id/detail_favorites"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{String.valueOf(detailItem.product.favoriteCount), default=`detail_favorites`}"
+            app:layout_constraintBottom_toBottomOf="@id/detail_time"
+            app:layout_constraintLeft_toRightOf="@id/detail_comments"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/detail_time" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

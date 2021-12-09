@@ -10,6 +10,10 @@ import com.bumptech.glide.request.RequestOptions
 
 @GlideModule
 class MyAppGlideModule : AppGlideModule() {
+    companion object {
+        private const val TAG = "MyAppGlideModule"
+    }
+
     override fun isManifestParsingEnabled(): Boolean {
         return false
     }
@@ -17,9 +21,5 @@ class MyAppGlideModule : AppGlideModule() {
     override fun applyOptions(context: Context, builder: GlideBuilder) {
         builder.setLogLevel(Log.DEBUG)
         builder.setDefaultRequestOptions(RequestOptions().format(DecodeFormat.PREFER_ARGB_8888))
-    }
-
-    companion object {
-        private val TAG = MyAppGlideModule::class.simpleName
     }
 }

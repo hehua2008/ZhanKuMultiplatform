@@ -6,7 +6,7 @@
 
         <variable
             name="previewItem"
-            type="com.hym.zhankukotlin.network.PreviewItem" />
+            type="com.hym.zhankukotlin.model.Content" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -30,14 +30,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
-                android:contentDescription="@{previewItem.imageUrl, default=`loading...`}"
+                android:contentDescription="@{previewItem.cover, default=`loading...`}"
                 android:scaleType="centerCrop" />
         </androidx.cardview.widget.CardView>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/author"
             style="@style/Widget.Button.Common"
-            android:text="@{previewItem.author, default=`author`}"
+            android:text="@{previewItem.creatorObj.username, default=`author`}"
             app:layout_constraintBottom_toTopOf="@id/description"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -61,7 +61,7 @@
             android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{previewItem.time, default=`time`}"
+            android:text="@{previewItem.publishTimeDiffStr, default=`time`}"
             android:textSize="@dimen/common_text_size"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
@@ -72,7 +72,7 @@
             android:id="@+id/view_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{previewItem.views, default=`views`}"
+            android:text="@{previewItem.viewCountStr, default=`views`}"
             android:textSize="@dimen/common_text_size"
             app:layout_constraintBottom_toBottomOf="@id/time"
             app:layout_constraintLeft_toRightOf="@id/time"
@@ -83,23 +83,23 @@
             android:id="@+id/comments"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{previewItem.comments, default=`comments`}"
+            android:text="@{previewItem.commentCountStr, default=`comments`}"
             android:textSize="@dimen/common_text_size"
             app:layout_constraintBottom_toBottomOf="@id/time"
             app:layout_constraintLeft_toRightOf="@id/view_count"
-            app:layout_constraintRight_toLeftOf="@id/favorites"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@id/time" />
 
-        <TextView
+        <!--TextView
             android:id="@+id/favorites"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{previewItem.favorites, default=`favorites`}"
+            android:text="@{previewItem.favoriteCountStr, default=`favorites`}"
             android:textSize="@dimen/common_text_size"
             app:layout_constraintBottom_toBottomOf="@id/time"
             app:layout_constraintLeft_toRightOf="@id/comments"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@id/time" />
+            app:layout_constraintTop_toTopOf="@id/time" /-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

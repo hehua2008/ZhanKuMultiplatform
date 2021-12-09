@@ -9,7 +9,7 @@ class HeaderInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
         val host = request.url.host
-        if (Constants.HOST == host) {
+        if (Constants.HOST == host || Constants.API_HOST == host) {
             val headers = request.headers.newBuilder().addAll(Constants.BASE_HEADERS).build()
             request = request.newBuilder().headers(headers).build()
         }

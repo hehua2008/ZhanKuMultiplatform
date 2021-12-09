@@ -31,9 +31,7 @@ object PictureUtils {
 
     @JvmStatic
     fun downloadAll(vararg imgUrls: String) {
-        if (imgUrls.isEmpty()) {
-            return
-        }
+        if (imgUrls.isEmpty()) return
         GlobalScope.launch(Dispatchers.Main) {
             val context = MyApplication.INSTANCE
             val deferreds = mutableListOf<Deferred<File?>>()

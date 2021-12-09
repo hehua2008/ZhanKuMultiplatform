@@ -5,11 +5,14 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.AsyncTask
 import androidx.core.content.ContextCompat
+import com.google.gson.GsonBuilder
+import com.hym.zhankukotlin.model.ZkTypeAdapterFactory
 import com.hym.zhankukotlin.network.*
 import me.weishu.reflection.Reflection
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 
 class MyApplication : Application() {
@@ -62,8 +65,12 @@ class MyApplication : Application() {
             .build()
         sRetrofit = Retrofit.Builder()
             .client(sClient)
-            .baseUrl(Constants.BASE_URL)
-            .addConverterFactory(ItemConverterFactory.INSTANCE)
+            .baseUrl(Constants.API_URL)
+            .addConverterFactory(
+                GsonConverterFactory.create(
+                    GsonBuilder().registerTypeAdapterFactory(ZkTypeAdapterFactory).create()
+                )
+            )
             .callbackExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
             .build()
         networkService = sRetrofit.create(NetworkService::class.java)
@@ -71,7 +78,7 @@ class MyApplication : Application() {
     }
 
     companion object {
-        private val TAG = MyApplication::class.simpleName
+        private const val TAG = "MyApplication"
         private const val CLIENT_CACHE_DIR_NAME = "retrofit"
 
         lateinit var INSTANCE: MyApplication

@@ -19,18 +19,14 @@ object PermissionUtils {
 
     @JvmStatic
     fun checkSelfPermission(context: Context, permission: String): Boolean {
-        if (TextUtils.isEmpty(permission)) {
-            return false
-        }
+        if (TextUtils.isEmpty(permission)) return false
         val result = context.checkSelfPermission(permission)
         return result == PackageManager.PERMISSION_GRANTED
     }
 
     @JvmStatic
     fun checkSelfPermissions(context: Context, permissions: List<String>): List<String> {
-        if (permissions.isEmpty()) {
-            return emptyList()
-        }
+        if (permissions.isEmpty()) return emptyList()
         val notGrantedPermissions: MutableList<String> = LinkedList()
         for (permission in permissions) {
             if (!checkSelfPermission(context, permission)) {
@@ -49,25 +45,19 @@ object PermissionUtils {
 
     @JvmStatic
     fun requestPermissions(activity: Activity, vararg permissions: String) {
-        if (permissions.isEmpty()) {
-            return
-        }
+        if (permissions.isEmpty()) return
         activity.requestPermissions(permissions, 0)
     }
 
     @JvmStatic
     fun requestPermissions(activity: Activity, permissions: List<String>) {
-        if (permissions.isEmpty()) {
-            return
-        }
+        if (permissions.isEmpty()) return
         requestPermissions(activity, *permissions.toTypedArray())
     }
 
     @JvmStatic
     fun checkAndRequestPermissions(activity: Activity, permissions: List<String>) {
-        if (permissions.isEmpty()) {
-            return
-        }
+        if (permissions.isEmpty()) return
         val notGrantedPermissions = checkSelfPermissions(activity, permissions)
         if (notGrantedPermissions.isNotEmpty()) {
             requestPermissions(activity, notGrantedPermissions)
@@ -76,9 +66,7 @@ object PermissionUtils {
 
     @JvmStatic
     fun checkAndRequestPermissions(activity: Activity, vararg permissions: String) {
-        if (permissions.isEmpty()) {
-            return
-        }
+        if (permissions.isEmpty()) return
         checkAndRequestPermissions(activity, listOf(*permissions))
     }
 }
