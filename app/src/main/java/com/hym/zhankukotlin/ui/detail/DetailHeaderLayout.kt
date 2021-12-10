@@ -2,9 +2,9 @@ package com.hym.zhankukotlin.ui.detail
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.hym.zhankukotlin.databinding.DetailHeaderLayoutBinding
 import com.hym.zhankukotlin.model.WorkDetails
+import com.hym.zhankukotlin.ui.HeaderLayout
 
 /**
  * @author hehua2008
@@ -12,7 +12,7 @@ import com.hym.zhankukotlin.model.WorkDetails
  */
 class DetailHeaderLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, defStyleRes: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr, defStyleRes) {
+) : HeaderLayout(context, attrs, defStyleAttr, defStyleRes) {
     private lateinit var binding: DetailHeaderLayoutBinding
 
     override fun onFinishInflate() {
