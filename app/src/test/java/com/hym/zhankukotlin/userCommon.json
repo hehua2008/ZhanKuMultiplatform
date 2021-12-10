@@ -1,0 +1,367 @@
+{
+  "code": 0,
+  "data": {
+    "postMap": [
+      {
+        "createTime": 1389888000000,
+        "dr": 1,
+        "id": 1,
+        "name": "平面设计师",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1389888000000,
+        "dr": 1,
+        "id": 2,
+        "name": "插画师",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1389888000000,
+        "dr": 1,
+        "id": 3,
+        "name": "三维设计师",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1389888000000,
+        "dr": 1,
+        "id": 4,
+        "name": "视觉设计师",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1389888000000,
+        "dr": 1,
+        "id": 5,
+        "name": "网页设计师",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1389888000000,
+        "dr": 1,
+        "id": 6,
+        "name": "UI设计师",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1389888000000,
+        "dr": 1,
+        "id": 7,
+        "name": "动画师",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1389888000000,
+        "dr": 1,
+        "id": 8,
+        "name": "产品设计师",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1389888000000,
+        "dr": 1,
+        "id": 9,
+        "name": "室内设计师",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1389888000000,
+        "dr": 1,
+        "id": 10,
+        "name": "UX设计师",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1389888000000,
+        "dr": 1,
+        "id": 11,
+        "name": "新媒体设计师",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1389888000000,
+        "dr": 1,
+        "id": 12,
+        "name": "概念设计师",
+        "orderno": 1,
+        "postGroup": 2
+      },
+      {
+        "createTime": 1389888000000,
+        "dr": 1,
+        "id": 13,
+        "name": "特效合成师",
+        "orderno": 1,
+        "postGroup": 2
+      },
+      {
+        "createTime": 1389888000000,
+        "dr": 1,
+        "id": 14,
+        "name": "设计经理/总监",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1407311394000,
+        "dr": 1,
+        "id": 16,
+        "name": "手工艺人",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1407311485000,
+        "dr": 1,
+        "id": 17,
+        "name": "服装设计师",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1441525885000,
+        "dr": 1,
+        "id": 18,
+        "name": "艺术工作者",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1457509885000,
+        "dr": 1,
+        "id": 19,
+        "name": "教育工作者",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1473234685000,
+        "dr": 1,
+        "id": 20,
+        "name": "漫画家",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1473234685000,
+        "dr": 1,
+        "id": 21,
+        "name": "编辑",
+        "orderno": 1,
+        "postGroup": 2
+      },
+      {
+        "createTime": 1407311485000,
+        "dr": 1,
+        "id": 22,
+        "name": "交互设计师",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1441525885000,
+        "dr": 1,
+        "id": 23,
+        "name": "产品经理",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1457509885000,
+        "dr": 1,
+        "id": 24,
+        "name": "策划",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1473234685000,
+        "dr": 1,
+        "id": 25,
+        "name": "运营",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1473234685000,
+        "dr": 1,
+        "id": 26,
+        "name": "市场",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1473234685000,
+        "dr": 1,
+        "id": 27,
+        "name": "品牌",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1473234685000,
+        "dr": 1,
+        "id": 28,
+        "name": "商务",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1473234685000,
+        "dr": 1,
+        "id": 29,
+        "name": "销售",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1473234685000,
+        "dr": 1,
+        "id": 30,
+        "name": "HR",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1473234685000,
+        "dr": 1,
+        "id": 31,
+        "name": "文案",
+        "orderno": 1,
+        "postGroup": 1
+      },
+      {
+        "createTime": 1473234685000,
+        "dr": 1,
+        "id": 32,
+        "name": "其他职业",
+        "orderno": 1,
+        "postGroup": 1
+      }
+    ],
+    "constellation": "摩羯座",
+    "qrcode": "community/07375c619643bf1101508eb5163d1a.jpg",
+    "member": {
+      "articleCount": 81,
+      "avatar": "https://img.zcool.cn/community/01b4df60532c2f11013e87f40d5ed4.jpg@750w_750h_1c_1e_1o_100sh.jpg",
+      "bgColor": "",
+      "bgImageStatus": 1,
+      "bgImg": "",
+      "bgImgAlign": 2,
+      "bgImgLock": 0,
+      "bgImgRepeat": 0,
+      "bgImgShow": 0,
+      "bgImgUrl": "",
+      "birthday": -315586042000,
+      "contentRecommendCount": 13135,
+      "coverImageStatus": 1,
+      "coverImg": "community/01d34c60532c4311013fb117959970.jpg",
+      "coverImgUrl": "https://img.zcool.cn/community/01d34c60532c4311013fb117959970.jpg",
+      "createTime": 1438749950000,
+      "descript": "我们致力于为艺术设计及相关行业的广大师生，打造一所可以随时开课、自我深造的线上大学。\n\n2015年成立于北京，汇聚全球艺术设计领域的名师精英，以录播课、直播课、线下课等多元化教学方式，提供摄影、设计、绘画、影视、三维等领域的专业课程及服务。目前，我们已拥有超百万学员，不论是零基础的设计爱好者、亟待入行的设计新人，还是自驱进阶的资深设计师，都可以通过300余门包罗万象的在线课程，随时链接行业高手，学习前沿知识，高效快速提升职业竞争力。     ",
+      "domain": "gogoup",
+      "email": "",
+      "faceImageStatus": 1,
+      "faceName": "01b4df60532c2f11013e87f40d5ed4.jpg",
+      "facePath": "community",
+      "fansCount": 33319,
+      "followingCount": 97,
+      "gender": 1,
+      "genderStr": "男",
+      "graduateYear": 0,
+      "homeCity": 4170,
+      "homeCityName": "北京",
+      "homeProvince": 1,
+      "homeProvinceName": "亚洲",
+      "homeViewCount": 341437,
+      "honors": [
+        {
+          "id": 5,
+          "image": "https://static.zcool.cn/z/images/svg/honor_tuijian_designer.svg",
+          "name": "站酷推荐设计师",
+          "nameEn": "",
+          "status": 1,
+          "url": "https://www.zcool.com.cn/toDesigners.do"
+        },
+        {
+          "id": 6,
+          "image": "https://static.zcool.cn/z/images/svg/honor_gogoup.svg",
+          "name": "高高手老师",
+          "nameEn": "",
+          "status": 1,
+          "url": "https://www.gogoup.com/teacher/13580089/"
+        }
+      ],
+      "id": 13580089,
+      "link": "2:=https://weibo.com/p/1006062853342250/home?from=page_100606&mod=TAB#place@*@3:=@*@4:=@*@5:=@*@6:=@*@7:=@*@8:=@*@9:=@*@10:=@*@11:=@*@12:=https://www.gogoup.com@*@",
+      "major": "",
+      "manager": 0,
+      "memberType": 0,
+      "nowCity": 4170,
+      "nowCityObj": {
+        "id": 4170,
+        "level": 4,
+        "name": "北京",
+        "nameEn": "Beijing",
+        "parent": 247
+      },
+      "nowDistrictObj": {},
+      "nowProvince": 247,
+      "nowProvinceObj": {
+        "id": 247,
+        "level": 3,
+        "name": "北京",
+        "nameEn": "Beijing",
+        "parent": 7
+      },
+      "openEmail": 1,
+      "openFavorite": 0,
+      "pageUrl": "https://gogoup.zcool.com.cn",
+      "phone": "13*******91",
+      "pointCount": 303,
+      "popularityCount": 6281856,
+      "productCount": 2,
+      "profession": 23,
+      "professionObj": {
+        "id": 23,
+        "name": "教育工作者",
+        "nameEn": "Educators"
+      },
+      "qq": "863334796",
+      "qqPrivacy": 1,
+      "realname": "高高手",
+      "recommend": 1,
+      "recommendCount": 13135,
+      "school": 0,
+      "schoolName": "",
+      "signature": "艺术设计在线教育平台",
+      "source": "",
+      "statusId": 1,
+      "tags": "在线教育平台,艺术设计教育",
+      "username": "站酷学习",
+      "webAddress": "",
+      "webShow": 0,
+      "wechat": "高高手",
+      "wechatPrivacy": 1,
+      "workExperienceList": [],
+      "xueli": 0
+    },
+    "honors_str": "zcool,gogoup",
+    "time": "60后",
+    "birthdayStr": "1960-01-01",
+    "guanzhuStatus": 0
+  },
+  "msg": "success"
+}

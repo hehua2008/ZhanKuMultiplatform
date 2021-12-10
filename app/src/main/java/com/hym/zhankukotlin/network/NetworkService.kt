@@ -32,6 +32,16 @@ interface NetworkService {
         @Query("contentType") contentType: Int = 0
     ): ContentPageResponse
 
+    // https://api.zcool.com.cn/v2/api/u/601779?app=android&p=1&ps=10&sort=8
+    @GET("${Constants.API_URL}u/{uid}")
+    suspend fun getUserContentList(
+        @Path("uid") uid: Int,
+        @Query("app") app: String = "android",
+        @Query("p") page: Int = 1,
+        @Query("ps") pageSize: Int = 10,
+        @Query("sort") sort: SortOrder = SortOrder.LATEST_PUBLISH
+    ): ContentPageResponse
+
     // https://api.zcool.com.cn/v2/api/getAllCategoryListContainArticle.do?app=android
     @GET("${Constants.API_URL}getAllCategoryListContainArticle.do")
     suspend fun getAllCategoryListContainArticle(@Query("app") app: String = "android"): TopCateResponse
@@ -78,6 +88,15 @@ interface NetworkService {
                     topCate = 33
                 )
                 discoverListNewResponse.dataContent?.let {
+                    println(it.copy(content = emptyList()))
+                    it.content.forEach { c ->
+                        println("    $c")
+                    }
+                }
+                val userContentPageResponse = networkService.getUserContentList(
+                    uid = 601779
+                )
+                userContentPageResponse.dataContent?.let {
                     println(it.copy(content = emptyList()))
                     it.content.forEach { c ->
                         println("    $c")
