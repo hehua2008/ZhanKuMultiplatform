@@ -30,4 +30,9 @@ object ViewUtils {
             }
         }
     }
+
+    @JvmStatic
+    fun View.requireActivity(): Activity {
+        return getActivity() ?: throw IllegalStateException("View $this not attached to a context.")
+    }
 }

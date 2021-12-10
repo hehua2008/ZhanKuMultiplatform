@@ -1,7 +1,6 @@
 package com.hym.zhankukotlin.ui.detail
 
 import android.Manifest
-import android.app.Activity
 import android.graphics.Rect
 import android.os.Build
 import android.view.LayoutInflater
@@ -13,12 +12,14 @@ import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
+import com.hym.zhankukotlin.MyApplication
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.DetailHeaderLayoutBinding
 import com.hym.zhankukotlin.model.WorkDetails
 import com.hym.zhankukotlin.ui.BindingViewHolder
 import com.hym.zhankukotlin.util.PermissionUtils
 import com.hym.zhankukotlin.util.PictureUtils
+import com.hym.zhankukotlin.util.ViewUtils.getActivity
 
 class DetailHeaderAdapter(private val mTitle: String, private val mWorkId: String) :
     RecyclerView.Adapter<BindingViewHolder<DetailHeaderLayoutBinding>>() {
@@ -74,23 +75,29 @@ class DetailHeaderAdapter(private val mTitle: String, private val mWorkId: Strin
 
     fun setDetailItem(workDetails: WorkDetails) {
         binding?.run {
-            detailItem = workDetails
+            root.setWorkDetails(workDetails)
 
             (tagItemRecycler.adapter as TagUrlItemAdapter).setTagItems(workDetails.product.run {
                 listOf(fieldCateObj, subCateObj)
             })
 
             downloadAll.setOnClickListener {
+                val activity = root.getActivity()
+                if (activity == null) {
+                    Toast.makeText(
+                        MyApplication.INSTANCE, R.string.download_failed, Toast.LENGTH_LONG
+                    ).show()
+                    return@setOnClickListener
+                }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                     && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
                     && !PermissionUtils.checkSelfPermission(
-                        root.context, Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        activity, Manifest.permission.WRITE_EXTERNAL_STORAGE
                     )
                 ) {
-                    Toast.makeText(root.context, R.string.permission_denied, Toast.LENGTH_LONG)
-                        .show()
+                    Toast.makeText(activity, R.string.permission_denied, Toast.LENGTH_LONG).show()
                     PermissionUtils.requestPermissions(
-                        (root.context as Activity), Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        activity, Manifest.permission.WRITE_EXTERNAL_STORAGE
                     )
                     return@setOnClickListener
                 }

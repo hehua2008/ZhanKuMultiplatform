@@ -139,11 +139,11 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
         binding.previewRecycler.addItemDecoration(mPreviewItemDecoration)
         binding.previewRecycler.adapter = mPagingPreviewItemAdapter
 
-        binding.catRecrcler.layoutManager = mCategoryItemLayoutManager
-        binding.catRecrcler.addItemDecoration(mButtonItemDecoration)
-        binding.catRecrcler.adapter = mCategoryItemAdapter
+        binding.previewHeader.catRecrcler.layoutManager = mCategoryItemLayoutManager
+        binding.previewHeader.catRecrcler.addItemDecoration(mButtonItemDecoration)
+        binding.previewHeader.catRecrcler.adapter = mCategoryItemAdapter
 
-        binding.orderGroup.setOnCheckedChangeListener { group, checkedId ->
+        binding.previewHeader.orderGroup.setOnCheckedChangeListener { group, checkedId ->
             val recommendLevel: RecommendLevel = when (checkedId) {
                 R.id.order_all_recommend -> RecommendLevel.ALL_RECOMMEND
                 R.id.order_home_recommend -> RecommendLevel.HOME_RECOMMEND
@@ -154,19 +154,19 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
             mPageViewModel.setRecommendLevel(recommendLevel)
         }
 
-        binding.pagedLayout.prePage.setOnClickListener {
+        binding.previewHeader.paged.prePage.setOnClickListener {
             clearEditFocusAndHideSoftInput()
             val curPage = mPageViewModel.page.value ?: return@setOnClickListener
             mPageViewModel.setPage(curPage - 1)
         }
-        binding.pagedLayout.nextPage.setOnClickListener {
+        binding.previewHeader.paged.nextPage.setOnClickListener {
             clearEditFocusAndHideSoftInput()
             val curPage = mPageViewModel.page.value ?: return@setOnClickListener
             mPageViewModel.setPage(curPage + 1)
         }
-        binding.pagedLayout.jumpButton.setOnClickListener(View.OnClickListener {
+        binding.previewHeader.paged.jumpButton.setOnClickListener(View.OnClickListener {
             clearEditFocusAndHideSoftInput()
-            val numberEdit = binding.pagedLayout.numberEdit.text.toString()
+            val numberEdit = binding.previewHeader.paged.numberEdit.text.toString()
             if (numberEdit.isEmpty()) return@OnClickListener
             mPageViewModel.setPage(numberEdit.toInt())
         })
@@ -176,12 +176,13 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
 
     private fun updateCategoryLink() {
         val desc = mSubCate?.description?.trim() ?: topCate?.description?.trim()
-        binding.categoryLink.visibility = if (desc.isNullOrBlank()) View.GONE else View.VISIBLE
-        binding.categoryLink.text = desc
+        binding.previewHeader.categoryLink.visibility =
+            if (desc.isNullOrBlank()) View.GONE else View.VISIBLE
+        binding.previewHeader.categoryLink.text = desc
     }
 
     private fun clearEditFocusAndHideSoftInput() {
-        binding.pagedLayout.numberEdit.clearFocus()
+        binding.previewHeader.paged.numberEdit.clearFocus()
         val imm = ContextCompat.getSystemService(requireContext(), InputMethodManager::class.java)!!
         imm.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
@@ -189,15 +190,18 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
     override fun onDestroyView() {
         super.onDestroyView()
         binding.previewRecycler.adapter = null
-        binding.catRecrcler.layoutManager = null
-        binding.catRecrcler.adapter = null
+        binding.previewHeader.catRecrcler.layoutManager = null
+        binding.previewHeader.catRecrcler.adapter = null
         mBinding = null
     }
 
     override fun onChanged(viewLifecycleOwner: LifecycleOwner) {
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
             mPageViewModel.page.observe(viewLifecycleOwner) {
-                binding.pagedLayout.pageArr = intArrayOf(it, 10000)
+                binding.previewHeader.paged.root.run {
+                    activePage = it
+                    lastPage = 10000
+                }
             }
             mPageViewModel.mediatorLiveData.observe(viewLifecycleOwner) {
                 mPagingPreviewItemAdapter.refresh()
