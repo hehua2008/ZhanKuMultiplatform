@@ -11,15 +11,10 @@ object Constants {
 
     init {
         val headerMap: MutableMap<String, String> = mutableMapOf()
+        headerMap["User-Agent"] = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
+                + " AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.1 Safari/605.1.15")
+        headerMap["Accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
         headerMap["Accept-Language"] = "zh-cn"
-        ("{\"uniqueCode\":\"07841fde-9dcf-40f1-aa53-595032b62a5c\"," +
-                "\"appId\":\"com.zcool.community\"," +
-                "\"channel\":\"oppo\"," +
-                "\"mobileType\":\"android\"," +
-                "\"versionCode\":4644}").let {
-            headerMap["common"] = it
-            headerMap["BaseInfo"] = it
-        }
         BASE_HEADERS = headerMap.toHeaders()
     }
 }

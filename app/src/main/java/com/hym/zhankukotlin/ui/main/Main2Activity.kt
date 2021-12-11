@@ -3,8 +3,8 @@ package com.hym.zhankukotlin.ui.main
 import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.os.Bundle
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.google.android.material.tabs.TabLayout
@@ -37,7 +37,7 @@ class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
                 if (tabCount == 0) return
                 for (i in 0 until tabCount) {
                     val tab = binding.tabs.getTabAt(i) ?: continue
-                    val tabView = tab.customView as? TextView ?: continue
+                    val tabView = tab.customView as? AppCompatTextView ?: continue
                     if (tab.position == position) {
                         tabView.textSize = 16f
                         tabView.typeface = Typeface.DEFAULT_BOLD
@@ -79,7 +79,7 @@ class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
         states[1] = IntArray(0)
         val colors = intArrayOf(R.color.white, R.color.black)
         val colorStateList = ColorStateList(states, colors)
-        val tabView = TextView(this)
+        val tabView = AppCompatTextView(this)
         tabView.text = mTopCates[position].name
         tabView.textSize = 16f
         tabView.setTextColor(colorStateList)

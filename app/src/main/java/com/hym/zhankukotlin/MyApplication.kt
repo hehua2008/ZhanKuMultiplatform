@@ -56,15 +56,15 @@ class MyApplication : Application() {
         if (!clientCacheDir.isDirectory) {
             clientCacheDir.mkdirs()
         }
-        sClient = OkHttpClient.Builder()
+        okHttpClient = OkHttpClient.Builder()
             .cookieJar(CookieManager.INSTANCE)
             .addInterceptor(HeaderInterceptor())
             .addNetworkInterceptor(LogInterceptor())
             .cache(Cache(clientCacheDir, 100 * 1024 * 1024))
             //.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 8888)))
             .build()
-        sRetrofit = Retrofit.Builder()
-            .client(sClient)
+        retrofit = Retrofit.Builder()
+            .client(okHttpClient)
             .baseUrl(Constants.API_URL)
             .addConverterFactory(
                 GsonConverterFactory.create(
@@ -73,7 +73,7 @@ class MyApplication : Application() {
             )
             .callbackExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
             .build()
-        networkService = sRetrofit.create(NetworkService::class.java)
+        networkService = retrofit.create(NetworkService::class.java)
         transparentDrawable = ContextCompat.getDrawable(this, R.drawable.transparent)!!
     }
 
@@ -84,10 +84,10 @@ class MyApplication : Application() {
         lateinit var INSTANCE: MyApplication
 
         @JvmStatic
-        private lateinit var sClient: OkHttpClient
+        lateinit var okHttpClient: OkHttpClient
 
         @JvmStatic
-        private lateinit var sRetrofit: Retrofit
+        lateinit var retrofit: Retrofit
 
         @JvmStatic
         lateinit var networkService: NetworkService

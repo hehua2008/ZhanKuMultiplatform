@@ -90,7 +90,6 @@ class DetailHeaderAdapter(private val mTitle: String, private val mWorkId: Strin
                     return@setOnClickListener
                 }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                    && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
                     && !PermissionUtils.checkSelfPermission(
                         activity, Manifest.permission.WRITE_EXTERNAL_STORAGE
                     )

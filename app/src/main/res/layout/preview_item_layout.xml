@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.hym.zhankukotlin.ui.main.PreviewItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -17,12 +18,12 @@
         app:layout_constraintVertical_bias="0"
         app:layout_constraintVertical_chainStyle="packed">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/preview_img"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
-            android:contentDescription="loading..."
+            android:contentDescription="Loading..."
             android:scaleType="centerCrop" />
     </androidx.cardview.widget.CardView>
 
@@ -35,7 +36,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/img_card" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,7 +50,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/author" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -60,37 +61,42 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/view_count" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/view_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="views"
         android:textSize="@dimen/common_text_size"
+        app:drawableLeftCompat="@drawable/zcool_ic_view"
         app:layout_constraintBottom_toBottomOf="@id/time"
         app:layout_constraintLeft_toRightOf="@id/time"
         app:layout_constraintRight_toLeftOf="@id/comments"
         app:layout_constraintTop_toTopOf="@id/time" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/comments"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="comments"
         android:textSize="@dimen/common_text_size"
+        app:drawableLeftCompat="@drawable/zcool_ic_comment"
         app:layout_constraintBottom_toBottomOf="@id/time"
         app:layout_constraintLeft_toRightOf="@id/view_count"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/time" />
 
-    <!--TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/favorites"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="favorites"
         android:textSize="@dimen/common_text_size"
+        android:visibility="gone"
+        app:drawableLeftCompat="@drawable/zcool_ic_like"
         app:layout_constraintBottom_toBottomOf="@id/time"
         app:layout_constraintLeft_toRightOf="@id/comments"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/time" /-->
+        app:layout_constraintTop_toTopOf="@id/time"
+        tools:visibility="visible" />
 
 </com.hym.zhankukotlin.ui.main.PreviewItemLayout>

@@ -10,11 +10,9 @@ import android.util.Log
 import android.widget.Toast
 import com.hym.zhankukotlin.GlideApp
 import com.hym.zhankukotlin.MyApplication
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
@@ -34,16 +32,19 @@ object PictureUtils {
         if (imgUrls.isEmpty()) return
         GlobalScope.launch(Dispatchers.Main) {
             val context = MyApplication.INSTANCE
-            val deferreds = mutableListOf<Deferred<File?>>()
-
-            imgUrls.forEach { url ->
+            val imgFiles = mutableListOf<File>()
+            imgUrls.forEachIndexed { index, url ->
+                val startMsg = "start to download ${index + 1}/${imgUrls.size}: $url"
+                Log.d(TAG, startMsg)
+                Toast.makeText(context, startMsg, Toast.LENGTH_SHORT).show()
                 val futureTarget = GlideApp.with(context)
                     .download(url)
                     .submit()
 
                 val deferred = async(Dispatchers.IO) {
-                    val uri = Uri.parse(url)
-                    val name = uri.lastPathSegment ?: StringUtils.generateMD5(url)
+                    val name = Uri.parse(url).lastPathSegment?.let {
+                        if (it.lastIndexOf('.') == -1) "$it.jpg" else it
+                    } ?: "${System.currentTimeMillis()}.jpg"
 
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                         var dir = Environment.getExternalStoragePublicDirectory(
@@ -57,7 +58,12 @@ object PictureUtils {
                                 return@async null
                             }
                         }
-                        val src = futureTarget.get()
+                        val src = try {
+                            futureTarget.get()
+                        } catch (e: Exception) {
+                            Log.e(TAG, "download $url failed", e)
+                            return@async null
+                        }
                         val dst = File(dir, name)
                         try {
                             src.copyTo(dst, true)
@@ -85,11 +91,11 @@ object PictureUtils {
                         values.put(MediaStore.Images.Media.DESCRIPTION, "This is an image")
                         values.put(MediaStore.Images.Media.DISPLAY_NAME, name)
                         when {
-                            name.toLowerCase().endsWith(".png") -> {
+                            name.endsWith(".png") -> {
                                 values.put(MediaStore.Images.Media.MIME_TYPE, "image/png")
                                 values.put(MediaStore.Images.Media.TITLE, "Image.png")
                             }
-                            name.toLowerCase().endsWith(".gif") -> {
+                            name.endsWith(".gif") -> {
                                 values.put(MediaStore.Images.Media.MIME_TYPE, "image/gif")
                                 values.put(MediaStore.Images.Media.TITLE, "Image.gif")
                             }
@@ -109,7 +115,12 @@ object PictureUtils {
                             Log.e(TAG, "insert uri for $values failed")
                             return@async null
                         }
-                        val srcFile = futureTarget.get()
+                        val src = try {
+                            futureTarget.get()
+                        } catch (e: Exception) {
+                            Log.e(TAG, "download $url failed", e)
+                            return@async null
+                        }
                         var output: OutputStream? = null
                         var input: InputStream? = null
                         try {
@@ -118,11 +129,11 @@ object PictureUtils {
                                 Log.e(TAG, "openOutputStream for $insertUri failed")
                                 return@async null
                             }
-                            input = srcFile.inputStream()
+                            input = src.inputStream()
                             input.copyTo(output)
-                            return@async srcFile
+                            return@async src
                         } catch (e: IOException) {
-                            Log.e(TAG, "copy $srcFile to $insertUri failed", e)
+                            Log.e(TAG, "copy $src to $insertUri failed", e)
                             return@async null
                         } finally {
                             output?.close()
@@ -131,16 +142,20 @@ object PictureUtils {
                     }
                 }
 
-                deferreds.add(deferred)
+                deferred.await().let {
+                    if (it != null) {
+                        imgFiles.add(it)
+                    } else {
+                        val failedMsg = "failed to download ${index + 1})/${imgUrls.size}: $url"
+                        Log.w(TAG, failedMsg)
+                        Toast.makeText(context, failedMsg, Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
 
-            awaitAll(*deferreds.toTypedArray())
-
-            Toast.makeText(
-                context,
-                "Saved ${deferreds[0].await()?.name} etc. ${deferreds.size} files",
-                Toast.LENGTH_SHORT
-            ).show()
+            val completeMsg = "Saved ${imgFiles.size} images"
+            Log.d(TAG, completeMsg)
+            Toast.makeText(context, completeMsg, Toast.LENGTH_LONG).show()
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.hym.zhankukotlin.model
 
 import androidx.annotation.Keep
+import androidx.core.text.HtmlCompat
 
 /**
 {
@@ -86,4 +87,6 @@ data class Content(
     val viewCountStr: String
 ) {
     val workId: String get() = pageUrl.split('/').last()
+
+    val formatTitle get() = HtmlCompat.fromHtml(title, HtmlCompat.FROM_HTML_MODE_COMPACT).toString()
 }

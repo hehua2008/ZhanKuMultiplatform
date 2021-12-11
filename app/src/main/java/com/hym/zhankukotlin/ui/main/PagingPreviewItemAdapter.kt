@@ -77,7 +77,7 @@ class PagingPreviewItemAdapter :
         binding.previewImg.setOnClickListener { v ->
             val activity = v.getActivity() ?: return@setOnClickListener
             val intent = Intent(activity, DetailActivity::class.java)
-                .putExtra(DetailActivity.KEY_TITLE, previewItem.title)
+                .putExtra(DetailActivity.KEY_TITLE, previewItem.formatTitle)
                 .putExtra(DetailActivity.KEY_WORK_ID, previewItem.workId)
             val bitmap = (binding.previewImg.drawable as? BitmapDrawable)?.bitmap
             if (bitmap != null && activity is LifecycleOwner) {

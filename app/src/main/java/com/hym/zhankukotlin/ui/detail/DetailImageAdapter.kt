@@ -2,6 +2,7 @@ package com.hym.zhankukotlin.ui.detail
 
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.hym.zhankukotlin.GlideApp
@@ -21,12 +22,12 @@ class DetailImageAdapter : RecyclerView.Adapter<DetailImageAdapter.ViewHolder>()
          *     android:layout_width="match_parent"
          *     android:layout_height="wrap_content">
          *
-         *     <ImageView
+         *     <androidx.appcompat.widget.AppCompatImageView
          *         android:id="@+id/image_view"
          *         android:layout_width="match_parent"
          *         android:layout_height="0dp"
          *         android:adjustViewBounds="true"
-         *         android:contentDescription="loading..."
+         *         android:contentDescription="Loading..."
          *         android:scaleType="fitCenter"
          *         app:layout_constraintDimensionRatio="3:2" />
          * </androidx.constraintlayout.widget.ConstraintLayout>
@@ -36,7 +37,7 @@ class DetailImageAdapter : RecyclerView.Adapter<DetailImageAdapter.ViewHolder>()
         constraintLayout.layoutParams = RecyclerView.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        val imageView = ImageView(context).apply {
+        val imageView = AppCompatImageView(context).apply {
             id = R.id.image_view
             adjustViewBounds = true
             contentDescription = "Loading..."
@@ -89,6 +90,6 @@ class DetailImageAdapter : RecyclerView.Adapter<DetailImageAdapter.ViewHolder>()
     }
 
     class ViewHolder(viewGroup: ViewGroup) : RecyclerView.ViewHolder(viewGroup) {
-        val imageView: ImageView = viewGroup.findViewById(R.id.image_view)
+        val imageView: AppCompatImageView = viewGroup.findViewById(R.id.image_view)
     }
 }
