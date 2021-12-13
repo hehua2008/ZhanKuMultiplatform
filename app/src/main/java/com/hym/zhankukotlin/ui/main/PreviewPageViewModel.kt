@@ -22,14 +22,16 @@ class PreviewPageViewModel(private val topCate: TopCate? = null) : ViewModel() {
     private val _page = MutableLiveData<Int>(1)
     val page: LiveData<Int> = _page
 
+    private val _totalPages = MutableLiveData<Int>(2)
+    val totalPages: LiveData<Int> = _totalPages
+
     private val _pageSize = MutableLiveData<Int>(25)
     val pageSize: LiveData<Int> = _pageSize
 
     private val _subCate = MutableLiveData<SubCate?>()
     val subCate: LiveData<SubCate?> = _subCate
 
-    private val _recommendLevel = MutableLiveData<RecommendLevel>(RecommendLevel.EDITOR_CHOICE)
-    val recommendLevel: LiveData<RecommendLevel> = _recommendLevel
+    private var recommendLevel = RecommendLevel.EDITOR_CHOICE
 
     private val _contentType = MutableLiveData<Int>(0)
     val contentType: LiveData<Int> = _contentType
@@ -38,14 +40,13 @@ class PreviewPageViewModel(private val topCate: TopCate? = null) : ViewModel() {
         addSource(page) { value = Unit }
         addSource(pageSize) { value = Unit }
         addSource(subCate) { value = Unit }
-        addSource(recommendLevel) { value = Unit }
         addSource(contentType) { value = Unit }
     }
     val mediatorLiveData: LiveData<Unit> = _mediatorLiveData
 
     fun setPage(page: Int) {
         if (page < 1 || _page.value == page) return
-        _page.value = page
+        _page.value = page.coerceAtMost(totalPages.value ?: page)
     }
 
     fun setPageSize(pageSize: Int) {
@@ -59,8 +60,9 @@ class PreviewPageViewModel(private val topCate: TopCate? = null) : ViewModel() {
     }
 
     fun setRecommendLevel(recommendLevel: RecommendLevel) {
-        if (_recommendLevel.value == recommendLevel) return
-        _recommendLevel.value = recommendLevel
+        if (this.recommendLevel == recommendLevel) return
+        this.recommendLevel = recommendLevel
+        _page.value = 1
     }
 
     fun setContentType(contentType: Int) {
@@ -80,9 +82,11 @@ class PreviewPageViewModel(private val topCate: TopCate? = null) : ViewModel() {
                 subCate = subCate.value,
                 initialPage = page.value ?: 1,
                 pageSize = pageSize.value ?: 25,
-                recommendLevel = recommendLevel.value ?: RecommendLevel.EDITOR_CHOICE,
+                recommendLevel = recommendLevel,
                 contentType = contentType.value ?: 0
-            )
+            ) {
+                _totalPages.postValue(it)
+            }
         }
     )
         .flow

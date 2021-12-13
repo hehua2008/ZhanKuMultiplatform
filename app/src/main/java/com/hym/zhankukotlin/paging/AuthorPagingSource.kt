@@ -9,8 +9,9 @@ class AuthorPagingSource(
     private val authorUid: Int,
     private val pageSize: Int,
     private val sortOrder: SortOrder,
-    initialPage: Int
-) : ContentPagingSource(initialPage) {
+    initialPage: Int,
+    totalPagesCallback: ((Int) -> Unit)? = null
+) : ContentPagingSource(initialPage, totalPagesCallback) {
 
     override suspend fun getContentPageResponse(paramsKey: LoadParamsHolder): ContentPageResponse {
         return networkService.getUserContentList(

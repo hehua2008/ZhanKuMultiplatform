@@ -4,8 +4,10 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.hym.zhankukotlin.model.*
 
-abstract class ContentPagingSource(private val initialPage: Int) :
-    PagingSource<LoadParamsHolder, Content>() {
+abstract class ContentPagingSource(
+    private val initialPage: Int,
+    private val totalPagesCallback: ((Int) -> Unit)? = null
+) : PagingSource<LoadParamsHolder, Content>() {
     companion object {
         private const val TAG = "ContentPagingSource"
     }
@@ -23,6 +25,7 @@ abstract class ContentPagingSource(private val initialPage: Int) :
             val contentPage = response.dataContent
                 ?: return LoadResult.Error(IllegalArgumentException(response.msg))
             val totalPages = contentPage.totalPages
+            totalPagesCallback?.invoke(totalPages)
             val contentList = contentPage.content
             val nextKey = if (paramsKey.page >= totalPages) null
             else LoadParamsHolder(paramsKey.page + 1, totalPages, contentList.lastOrNull()?.id)

@@ -202,10 +202,10 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner> {
     override fun onChanged(viewLifecycleOwner: LifecycleOwner) {
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
             mPageViewModel.page.observe(viewLifecycleOwner) {
-                binding.previewHeader.paged.root.run {
-                    activePage = it
-                    lastPage = 10000
-                }
+                binding.previewHeader.paged.root.activePage = it
+            }
+            mPageViewModel.totalPages.observe(viewLifecycleOwner) {
+                binding.previewHeader.paged.root.lastPage = it
             }
             mPageViewModel.mediatorLiveData.observe(viewLifecycleOwner) {
                 mPagingPreviewItemAdapter.refresh()

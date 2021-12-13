@@ -20,22 +20,23 @@ class AuthorPageViewModel(private val authorUid: Int) : ViewModel() {
     private val _page = MutableLiveData<Int>(1)
     val page: LiveData<Int> = _page
 
+    private val _totalPages = MutableLiveData<Int>(2)
+    val totalPages: LiveData<Int> = _totalPages
+
     private val _pageSize = MutableLiveData<Int>(25)
     val pageSize: LiveData<Int> = _pageSize
 
-    private val _sortOrder = MutableLiveData<SortOrder>(SortOrder.LATEST_PUBLISH)
-    val sortOrder: LiveData<SortOrder> = _sortOrder
+    private var sortOrder = SortOrder.LATEST_PUBLISH
 
     private val _mediatorLiveData = MediatorLiveData<Unit>().apply {
         addSource(page) { value = Unit }
         addSource(pageSize) { value = Unit }
-        addSource(sortOrder) { value = Unit }
     }
     val mediatorLiveData: LiveData<Unit> = _mediatorLiveData
 
     fun setPage(page: Int) {
         if (page < 1 || _page.value == page) return
-        _page.value = page
+        _page.value = page.coerceAtMost(totalPages.value ?: page)
     }
 
     fun setPageSize(pageSize: Int) {
@@ -44,8 +45,9 @@ class AuthorPageViewModel(private val authorUid: Int) : ViewModel() {
     }
 
     fun setSortOrder(sortOrder: SortOrder) {
-        if (_sortOrder.value == sortOrder) return
-        _sortOrder.value = sortOrder
+        if (this.sortOrder == sortOrder) return
+        this.sortOrder = sortOrder
+        _page.value = 1
     }
 
     val pagingFlow: Flow<PagingData<Content>> = Pager(
@@ -59,8 +61,10 @@ class AuthorPageViewModel(private val authorUid: Int) : ViewModel() {
                 authorUid = authorUid,
                 initialPage = page.value ?: 1,
                 pageSize = pageSize.value ?: 25,
-                sortOrder = sortOrder.value ?: SortOrder.LATEST_PUBLISH
-            )
+                sortOrder = sortOrder
+            ) {
+                _totalPages.postValue(it)
+            }
         }
     )
         .flow
