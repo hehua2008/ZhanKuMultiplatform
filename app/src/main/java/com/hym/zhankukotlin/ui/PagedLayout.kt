@@ -3,6 +3,7 @@ package com.hym.zhankukotlin.ui
 import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.view.isVisible
 import com.hym.zhankukotlin.databinding.PagedLayoutBinding
 
 /**
@@ -32,9 +33,9 @@ class PagedLayout @JvmOverloads constructor(
     }
 
     private fun onUpdatePage() {
-        visibility = if (activePage == 1 && lastPage == 1) GONE else VISIBLE
-        binding.prePage.visibility = if (activePage > 1) VISIBLE else GONE
-        binding.nextPage.visibility = if (activePage == lastPage) GONE else VISIBLE
+        isVisible = !(activePage == 1 && lastPage == 1)
+        binding.prePage.isVisible = (activePage > 1)
+        binding.nextPage.isVisible = (activePage != lastPage)
         binding.numberEdit.setText("${(activePage + 1).coerceAtMost(lastPage)}")
     }
 }

@@ -19,13 +19,13 @@ data class LoadParamsHolder(
 
     operator fun plus(other: Int): LoadParamsHolder? {
         return (page + other).let {
-            if (it > totalPages) null else copy(page = it)
+            if (it > totalPages) null else copy(page = it, lastId = null)
         }
     }
 
     operator fun minus(other: Int): LoadParamsHolder? {
         return (page - other).let {
-            if (it < 1) null else copy(page = it)
+            if (it < 1) null else copy(page = it, lastId = null)
         }
     }
 }
@@ -74,7 +74,6 @@ class PreviewPagingSource(
     }
 
     override fun getRefreshKey(state: PagingState<LoadParamsHolder, Content>): LoadParamsHolder? {
-        return null
         // Try to find the page key of the closest page to anchorPosition, from either the prevKey
         // or the nextKey, but you need to handle nullability here:
         //  * prevKey == null -> anchorPage is the first page.

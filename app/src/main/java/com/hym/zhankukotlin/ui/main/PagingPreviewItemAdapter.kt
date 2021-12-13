@@ -44,6 +44,7 @@ class PagingPreviewItemAdapter :
         const val PREVIEW_ITEM_TYPE = 1
 
         init {
+            //previewRecyclerPool.setMaxRecycledViews(0 /*StateViewType*/, 0) // Avoid memory leak
             previewRecyclerPool.setMaxRecycledViews(PREVIEW_ITEM_TYPE, 20)
         }
     }

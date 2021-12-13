@@ -2,6 +2,7 @@ package com.hym.zhankukotlin.ui.detail
 
 import android.content.Context
 import android.util.AttributeSet
+import androidx.core.view.isVisible
 import com.hym.zhankukotlin.databinding.DetailHeaderLayoutBinding
 import com.hym.zhankukotlin.model.WorkDetails
 import com.hym.zhankukotlin.ui.HeaderLayout
@@ -22,8 +23,7 @@ class DetailHeaderLayout @JvmOverloads constructor(
 
     fun setWorkDetails(workDetails: WorkDetails) {
         binding.run {
-            downloadAll.visibility =
-                if (workDetails.product.productImages.isEmpty()) GONE else VISIBLE
+            downloadAll.isVisible = workDetails.product.productImages.isNotEmpty()
             detailTime.text = workDetails.product.publishTimeDiffStr
             detailViews.text = "${workDetails.product.viewCount}"
             detailComments.text = "${workDetails.product.commentCount}"

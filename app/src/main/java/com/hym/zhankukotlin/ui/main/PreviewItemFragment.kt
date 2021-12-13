@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import androidx.paging.LoadState
@@ -21,6 +23,7 @@ import com.hym.zhankukotlin.databinding.FragmentMainBinding
 import com.hym.zhankukotlin.model.RecommendLevel
 import com.hym.zhankukotlin.model.SubCate
 import com.hym.zhankukotlin.model.TopCate
+import com.hym.zhankukotlin.ui.HeaderFooterLoadStateAdapter
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -137,7 +140,30 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
         binding.swipeRefresh.setOnRefreshListener { mPagingPreviewItemAdapter.refresh() }
 
         binding.previewRecycler.addItemDecoration(mPreviewItemDecoration)
-        binding.previewRecycler.adapter = mPagingPreviewItemAdapter
+        binding.previewRecycler.adapter = mPagingPreviewItemAdapter.withLoadStateFooter(
+            HeaderFooterLoadStateAdapter(mPagingPreviewItemAdapter)
+        )
+        binding.previewRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            var mLastState = RecyclerView.SCROLL_STATE_IDLE
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                mLastState = newState
+            }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val scaledTouchSlop =
+                    ViewConfiguration.getTouchSlop() * recyclerView.resources.displayMetrics.density
+                if (mLastState == RecyclerView.SCROLL_STATE_SETTLING &&
+                    dy < -scaledTouchSlop && recyclerView.canScrollVertically(-1)
+                ) {
+                    binding.fab.show()
+                } else if (!recyclerView.canScrollVertically(-1) ||
+                    (dy > scaledTouchSlop && recyclerView.canScrollVertically(1))
+                ) {
+                    binding.fab.hide()
+                }
+            }
+        })
 
         binding.previewHeader.catRecrcler.layoutManager = mCategoryItemLayoutManager
         binding.previewHeader.catRecrcler.addItemDecoration(mButtonItemDecoration)
@@ -164,20 +190,24 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
             val curPage = mPageViewModel.page.value ?: return@setOnClickListener
             mPageViewModel.setPage(curPage + 1)
         }
-        binding.previewHeader.paged.jumpButton.setOnClickListener(View.OnClickListener {
+        binding.previewHeader.paged.jumpButton.setOnClickListener {
             clearEditFocusAndHideSoftInput()
             val numberEdit = binding.previewHeader.paged.numberEdit.text.toString()
-            if (numberEdit.isEmpty()) return@OnClickListener
+            if (numberEdit.isEmpty()) return@setOnClickListener
             mPageViewModel.setPage(numberEdit.toInt())
-        })
+        }
+
+        binding.fab.hide()
+        binding.fab.setOnClickListener {
+            binding.previewRecycler.scrollToPosition(0)
+        }
 
         return binding.root
     }
 
     private fun updateCategoryLink() {
         val desc = mSubCate?.description?.trim() ?: topCate?.description?.trim()
-        binding.previewHeader.categoryLink.visibility =
-            if (desc.isNullOrBlank()) View.GONE else View.VISIBLE
+        binding.previewHeader.categoryLink.isVisible = !desc.isNullOrBlank()
         binding.previewHeader.categoryLink.text = desc
     }
 
@@ -190,6 +220,7 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
     override fun onDestroyView() {
         super.onDestroyView()
         binding.previewRecycler.adapter = null
+        binding.previewRecycler.clearOnScrollListeners()
         binding.previewHeader.catRecrcler.layoutManager = null
         binding.previewHeader.catRecrcler.adapter = null
         mBinding = null
