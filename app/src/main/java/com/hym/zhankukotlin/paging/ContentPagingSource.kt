@@ -30,8 +30,8 @@ abstract class ContentPagingSource(
             val totalPages = contentPage.totalPages
             totalPagesCallback?.invoke(totalPages)
             val contentList = contentPage.content
-            val nextKey = if (paramsKey.page >= totalPages) null
-            else LoadParamsHolder(paramsKey.page + 1, totalPages, contentList.lastOrNull()?.id)
+            val nextKey = if (paramsKey.page >= totalPages || contentList.isEmpty()) null
+            else LoadParamsHolder(paramsKey.page + 1, totalPages, contentList.last().id)
             return LoadResult.Page(
                 data = contentList,
                 prevKey = null,
