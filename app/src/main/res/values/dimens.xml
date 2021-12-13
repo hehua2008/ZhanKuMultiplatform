@@ -3,6 +3,7 @@
     <dimen name="activity_horizontal_padding">6dp</dimen>
     <dimen name="activity_vertical_padding">6dp</dimen>
     <dimen name="actionbar_height">36dp</dimen>
+    <dimen name="common_horizontal_margin">6dp</dimen>
     <dimen name="common_vertical_margin">6dp</dimen>
     <dimen name="preview_item_offset">6dp</dimen>
     <dimen name="button_item_horizontal_offset">4dp</dimen>

@@ -28,6 +28,10 @@ class DetailHeaderLayout @JvmOverloads constructor(
             detailViews.text = "${workDetails.product.viewCount}"
             detailComments.text = "${workDetails.product.commentCount}"
             detailFavorites.text = "${workDetails.product.favoriteCount}"
+            workDetails.sharewords.let {
+                detailShareWords.isVisible = it.isNotBlank()
+                detailShareWords.text = it
+            }
         }
     }
 }
