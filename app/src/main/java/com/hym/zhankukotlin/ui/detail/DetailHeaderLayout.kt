@@ -1,11 +1,15 @@
 package com.hym.zhankukotlin.ui.detail
 
 import android.content.Context
+import android.content.Intent
 import android.util.AttributeSet
 import androidx.core.view.isVisible
 import com.hym.zhankukotlin.databinding.DetailHeaderLayoutBinding
 import com.hym.zhankukotlin.model.WorkDetails
 import com.hym.zhankukotlin.ui.HeaderLayout
+import com.hym.zhankukotlin.ui.author.AuthorItemFragment
+import com.hym.zhankukotlin.ui.tag.TagActivity
+import com.hym.zhankukotlin.util.ViewUtils.getActivity
 
 /**
  * @author hehua2008
@@ -23,6 +27,16 @@ class DetailHeaderLayout @JvmOverloads constructor(
 
     fun setWorkDetails(workDetails: WorkDetails) {
         binding.run {
+            detailAuthor.text = workDetails.product.creatorObj.username
+            detailAuthor.setOnClickListener { v ->
+                val activity = v.getActivity() ?: return@setOnClickListener
+                val intent = Intent(activity, TagActivity::class.java)
+                workDetails.product.creatorObj.run {
+                    intent.putExtra(AuthorItemFragment.AUTHOR_UID, id)
+                    intent.putExtra(AuthorItemFragment.AUTHOR_NAME, username)
+                }
+                activity.startActivity(intent)
+            }
             downloadAll.isVisible = workDetails.product.productImages.isNotEmpty()
             detailTime.text = workDetails.product.publishTimeDiffStr
             detailViews.text = "${workDetails.product.viewCount}"

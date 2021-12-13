@@ -19,7 +19,9 @@ import com.hym.zhankukotlin.databinding.PreviewItemLayoutBinding
 import com.hym.zhankukotlin.model.Content
 import com.hym.zhankukotlin.ui.BindingViewHolder
 import com.hym.zhankukotlin.ui.ThemeColorRetriever
+import com.hym.zhankukotlin.ui.author.AuthorItemFragment
 import com.hym.zhankukotlin.ui.detail.DetailActivity
+import com.hym.zhankukotlin.ui.tag.TagActivity
 import com.hym.zhankukotlin.util.ViewUtils.getActivity
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
@@ -92,6 +94,15 @@ class PagingPreviewItemAdapter :
             } else {
                 activity.startActivity(intent)
             }
+        }
+        binding.author.setOnClickListener { v ->
+            val activity = v.getActivity() ?: return@setOnClickListener
+            val intent = Intent(activity, TagActivity::class.java)
+            previewItem.creatorObj.run {
+                intent.putExtra(AuthorItemFragment.AUTHOR_UID, id)
+                intent.putExtra(AuthorItemFragment.AUTHOR_NAME, username)
+            }
+            activity.startActivity(intent)
         }
         mRequestManager?.run {
             load(imageUrl)

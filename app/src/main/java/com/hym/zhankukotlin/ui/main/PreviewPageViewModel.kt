@@ -14,9 +14,9 @@ import com.hym.zhankukotlin.paging.LoadParamsHolder
 import com.hym.zhankukotlin.paging.PreviewPagingSource
 import kotlinx.coroutines.flow.Flow
 
-class PageViewModel(val topCate: TopCate? = null) : ViewModel() {
+class PreviewPageViewModel(private val topCate: TopCate? = null) : ViewModel() {
     companion object {
-        private const val TAG = "PageViewModel"
+        private const val TAG = "PreviewPageViewModel"
     }
 
     private val _page = MutableLiveData<Int>(1)

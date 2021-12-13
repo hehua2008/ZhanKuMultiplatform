@@ -8,7 +8,7 @@ import com.hym.zhankukotlin.ui.NameValueAdapter
 class CategoryItemAdapter(
     private val topCate: TopCate?,
     private var subCate: SubCate?,
-    private val mPageViewModel: PageViewModel
+    private val mPageViewModel: PreviewPageViewModel
 ) : NameValueAdapter<String, SubCate?>() {
     init {
         topCate?.run {

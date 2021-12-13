@@ -3,21 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/preview_header"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingVertical="@dimen/activity_vertical_padding">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/category_link"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/common_horizontal_margin"
         android:autoLink="web"
         android:gravity="center"
-        android:paddingHorizontal="@dimen/activity_horizontal_padding"
         android:text="https://www.zcool.com.cn"
         android:textIsSelectable="true"
         app:layout_constraintBottom_toTopOf="@id/cat_recrcler"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_goneMarginBottom="@dimen/common_vertical_margin" />
 
     <com.hym.zhankukotlin.ui.ButtonGroupRecyclerView
         android:id="@+id/cat_recrcler"
@@ -45,7 +47,7 @@
         app:layout_constraintTop_toBottomOf="@id/cat_recrcler">
 
         <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/order_editor_choice"
+            android:id="@+id/order_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
@@ -53,21 +55,21 @@
             android:text="编辑精选" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/order_all_recommend"
+            android:id="@+id/order_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="@dimen/button_min_height"
             android:text="全部推荐" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/order_home_recommend"
+            android:id="@+id/order_3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="@dimen/button_min_height"
             android:text="首页推荐" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/order_latest_publish"
+            android:id="@+id/order_4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="@dimen/button_min_height"

@@ -39,7 +39,8 @@ interface NetworkService {
         @Query("app") app: String = "android",
         @Query("p") page: Int = 1,
         @Query("ps") pageSize: Int = 10,
-        @Query("sort") sort: SortOrder = SortOrder.LATEST_PUBLISH
+        @Query("sort") sort: SortOrder = SortOrder.LATEST_PUBLISH,
+        @Query("lastId") lastId: Int? = null
     ): ContentPageResponse
 
     // https://api.zcool.com.cn/v2/api/getAllCategoryListContainArticle.do?app=android
