@@ -12,10 +12,13 @@ abstract class ContentPagingSource(
         private const val TAG = "ContentPagingSource"
     }
 
+    private var isRefreshAfterInvalidate = true
+
     protected abstract suspend fun getContentPageResponse(paramsKey: LoadParamsHolder): ContentPageResponse
 
     final override suspend fun load(params: LoadParams<LoadParamsHolder>): LoadResult<LoadParamsHolder, Content> {
         try {
+            isRefreshAfterInvalidate = false
             var paramsKey =
                 params.key ?: return LoadResult.Error(IllegalArgumentException("Empty params key!"))
             if (paramsKey === LoadParamsHolder.INITIAL) {
@@ -40,6 +43,7 @@ abstract class ContentPagingSource(
     }
 
     final override fun getRefreshKey(state: PagingState<LoadParamsHolder, Content>): LoadParamsHolder? {
+        if (isRefreshAfterInvalidate) return LoadParamsHolder.INITIAL
         // Try to find the page key of the closest page to anchorPosition, from either the prevKey
         // or the nextKey, but you need to handle nullability here:
         //  * prevKey == null -> anchorPage is the first page.
