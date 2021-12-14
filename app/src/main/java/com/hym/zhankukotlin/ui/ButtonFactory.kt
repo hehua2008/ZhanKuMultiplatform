@@ -1,6 +1,5 @@
 package com.hym.zhankukotlin.ui
 
-import android.content.res.ColorStateList
 import android.util.TypedValue
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
@@ -26,8 +25,7 @@ object ButtonFactory {
      *     android:textSize="@dimen/common_text_size"
      *     app:backgroundTint="@color/btn_color" />
      */
-    private val mContext by lazy { MyApplication.INSTANCE }
-    private val mResources = mContext.resources
+    private val mResources by lazy { MyApplication.INSTANCE.resources }
 
     private val mMinWidth = mResources.getDimensionPixelSize(R.dimen.button_min_width)
     private val mMinHeight = mResources.getDimensionPixelSize(R.dimen.button_min_height)
@@ -39,11 +37,9 @@ object ButtonFactory {
 
     private val mTextSize = mResources.getDimension(R.dimen.common_text_size)
 
-    private val mColorStatList: ColorStateList =
-        AppCompatResources.getColorStateList(mContext, R.color.button_color)
-
     fun create(parent: ViewGroup): MaterialButton {
-        return MaterialButton(mContext).apply {
+        val context = parent.context
+        return MaterialButton(context).apply {
             id = R.id.button_view
             isCheckable = true
             maxLines = 1
@@ -59,7 +55,7 @@ object ButtonFactory {
                 width = ViewGroup.LayoutParams.WRAP_CONTENT
                 height = ViewGroup.LayoutParams.WRAP_CONTENT
             }
-            backgroundTintList = mColorStatList
+            backgroundTintList = AppCompatResources.getColorStateList(context, R.color.button_color)
         }
     }
 }

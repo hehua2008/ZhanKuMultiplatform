@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.hym.zhankukotlin.GlideApp
 import com.hym.zhankukotlin.GlideRequests
-import com.hym.zhankukotlin.MyApplication
 import com.hym.zhankukotlin.databinding.PreviewItemLayoutBinding
 import com.hym.zhankukotlin.model.Content
 import com.hym.zhankukotlin.ui.BindingViewHolder
@@ -41,14 +40,7 @@ class PagingPreviewItemAdapter :
     companion object {
         private const val TAG = "PagingPreviewItemAdapter"
 
-        @JvmStatic
-        val previewRecyclerPool = RecyclerView.RecycledViewPool()
         const val PREVIEW_ITEM_TYPE = 1
-
-        init {
-            //previewRecyclerPool.setMaxRecycledViews(0 /*StateViewType*/, 0) // Avoid memory leak
-            previewRecyclerPool.setMaxRecycledViews(PREVIEW_ITEM_TYPE, 20)
-        }
     }
 
     private var mRequestManager: GlideRequests? = null
@@ -61,7 +53,7 @@ class PagingPreviewItemAdapter :
         parent: ViewGroup, viewType: Int
     ): BindingViewHolder<PreviewItemLayoutBinding> {
         val binding = PreviewItemLayoutBinding.inflate(
-            LayoutInflater.from(MyApplication.INSTANCE), parent, false
+            LayoutInflater.from(parent.context), parent, false
         )
         return BindingViewHolder(binding)
     }
@@ -116,16 +108,16 @@ class PagingPreviewItemAdapter :
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.setRecycledViewPool(previewRecyclerPool)
+        /*
         when (val layoutManager = recyclerView.layoutManager) {
             is LinearLayoutManager -> layoutManager.recycleChildrenOnDetach = true
             is FlexboxLayoutManager -> layoutManager.recycleChildrenOnDetach = true
         }
+        */
         mRequestManager = GlideApp.with(recyclerView)
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.setRecycledViewPool(null)
         mRequestManager = null
     }
 }

@@ -7,7 +7,6 @@ import androidx.paging.LoadState
 import androidx.paging.LoadState.Error
 import androidx.paging.LoadState.Loading
 import androidx.recyclerview.widget.RecyclerView
-import com.hym.zhankukotlin.MyApplication
 import com.hym.zhankukotlin.databinding.NetworkStateItemBinding
 
 /**
@@ -17,7 +16,7 @@ import com.hym.zhankukotlin.databinding.NetworkStateItemBinding
 class NetworkStateItemViewHolder(
     parent: ViewGroup, private val retryCallback: () -> Unit
 ) : RecyclerView.ViewHolder(
-    NetworkStateItemBinding.inflate(LayoutInflater.from(MyApplication.INSTANCE), parent, false).root
+    NetworkStateItemBinding.inflate(LayoutInflater.from(parent.context), parent, false).root
 ) {
     private val binding = NetworkStateItemBinding.bind(itemView)
         .apply {
