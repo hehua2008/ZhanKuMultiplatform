@@ -14,7 +14,7 @@
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior=".ui.HeaderLayout$HeaderScrollingViewBehavior">
+        app:layout_behavior="com.hym.zhankukotlin.ui.HeaderLayout$HeaderScrollingViewBehavior">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/preview_recycler"
