@@ -6,23 +6,7 @@ import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
 
 abstract class CateTypeAdapter<T : Cate> : TypeAdapter<T>() {
-    abstract fun create(
-        backgroundImage: String,
-        commonOrderNo: Int,
-        description: String,
-        descriptionEn: String,
-        icon: String,
-        iconHover: String,
-        id: Int,
-        level: Int,
-        name: String,
-        nameEn: String,
-        orderNo: Int,
-        parent: Int,
-        statusId: Int,
-        subCateList: List<SubCate>,
-        type: Int
-    ): T
+    abstract val cateCreator: Cate.CateCreator<T>
 
     override fun read(reader: JsonReader): T? {
         if (reader.peek() == JsonToken.NULL) {
@@ -175,7 +159,7 @@ abstract class CateTypeAdapter<T : Cate> : TypeAdapter<T>() {
                 if (cache.description.isNotBlank() && description.isNullOrBlank()) return cache
             }
         }
-        return create(
+        return cateCreator.create(
             backgroundImage = backgroundImage ?: "",
             commonOrderNo = commonOrderNo ?: 0,
             description = description ?: "",

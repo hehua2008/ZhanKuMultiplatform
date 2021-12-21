@@ -1,6 +1,5 @@
 package com.hym.zhankukotlin.model
 
-import android.os.Parcelable
 import androidx.annotation.Keep
 
 /**
@@ -47,9 +46,7 @@ data class SubCate(
 
     companion object {
         @JvmField
-        val CREATOR: Parcelable.Creator<SubCate?> = Creator()
-
-        val SubCateTypeAdapter = object : CateTypeAdapter<SubCate>() {
+        val CREATOR = object : CateCreator<SubCate>() {
             override fun create(
                 backgroundImage: String,
                 commonOrderNo: Int,
@@ -84,6 +81,10 @@ data class SubCate(
                     type
                 )
             }
+        }
+
+        val SubCateTypeAdapter = object : CateTypeAdapter<SubCate>() {
+            override val cateCreator get() = CREATOR
         }
     }
 }

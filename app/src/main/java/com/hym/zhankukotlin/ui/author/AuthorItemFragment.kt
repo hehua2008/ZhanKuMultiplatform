@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
@@ -42,7 +43,7 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner> {
         }
     }
 
-    private lateinit var mPageViewModel: AuthorPageViewModel
+    private val mPageViewModel: AuthorPageViewModel by viewModels(factoryProducer = { mVMFactory })
     private var mBinding: FragmentMainBinding? = null
     private val binding get() = checkNotNull(mBinding)
     private var mAuthorUid by Delegates.notNull<Int>()
@@ -78,7 +79,6 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner> {
         }
         mAuthorName = activeBundle.getString(AUTHOR_NAME)!!
 
-        mPageViewModel = ViewModelProvider(this, mVMFactory).get(AuthorPageViewModel::class.java)
         mPagingPreviewItemAdapter = PagingPreviewItemAdapter()
 
         mPreviewItemDecoration = object : RecyclerView.ItemDecoration() {

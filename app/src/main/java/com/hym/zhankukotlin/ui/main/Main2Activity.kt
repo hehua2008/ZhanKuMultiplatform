@@ -3,33 +3,38 @@ package com.hym.zhankukotlin.ui.main
 import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.tabs.TabLayoutMediator.TabConfigurationStrategy
+import com.hym.zhankukotlin.MyAppViewModel
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityMain2Binding
+import com.hym.zhankukotlin.getAppViewModel
 import com.hym.zhankukotlin.model.TopCate
 
 class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
     companion object {
-        private const val TOP_CATES = "TOP_CATES"
+        private const val TAG = "Main2Activity"
     }
 
-    private val mTopCates: ArrayList<TopCate> = ArrayList()
+    private val mTopCates: MutableList<TopCate> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Add callback before fragmentManager
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                moveTaskToBack(false)
+            }
+        })
         super.onCreate(savedInstanceState)
-
-        savedInstanceState?.getParcelableArrayList<TopCate>(TOP_CATES)?.let { mTopCates.addAll(it) }
 
         val binding = ActivityMain2Binding.inflate(layoutInflater)
         setContentView(binding.root)
         val sectionsPagerAdapter = SectionsPager2Adapter(this)
-        sectionsPagerAdapter.setCategoryItems(mTopCates)
         binding.viewPager.adapter = sectionsPagerAdapter
         binding.viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -50,8 +55,7 @@ class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
         })
 
         val tabLayoutMediator = TabLayoutMediator(binding.tabs, binding.viewPager, this)
-        val sectionsPagerViewModel = ViewModelProvider(this).get(SectionsPagerViewModel::class.java)
-        sectionsPagerViewModel.categoryItems.observe(this) { categoryItems ->
+        getAppViewModel<MyAppViewModel>().categoryItems.observe(this) { categoryItems ->
             mTopCates.clear()
             mTopCates.addAll(categoryItems)
             binding.viewPager.offscreenPageLimit = mTopCates.size
@@ -59,17 +63,6 @@ class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
             tabLayoutMediator.detach()
             tabLayoutMediator.attach()
         }
-
-        sectionsPagerViewModel.getCategoryItemsFromNetwork()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelableArrayList(TOP_CATES, mTopCates)
-    }
-
-    override fun onBackPressed() {
-        moveTaskToBack(false)
     }
 
     override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {

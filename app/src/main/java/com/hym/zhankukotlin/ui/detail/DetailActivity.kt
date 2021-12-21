@@ -54,7 +54,7 @@ class DetailActivity : AppCompatActivity() {
         val detailImageAdapter = DetailImageAdapter()
         binding.detailRecycler.adapter = ConcatAdapter(detailHeaderAdapter, detailImageAdapter)
 
-        val mDetailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
+        val mDetailViewModel = ViewModelProvider(this)[DetailViewModel::class.java]
         mDetailViewModel.detailWorkId.observe(this) { mDetailViewModel.getDetailFromNetwork() }
         mDetailViewModel.detailItem.observe(this) { detailItem ->
             detailItem ?: return@observe

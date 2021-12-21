@@ -57,7 +57,9 @@ abstract class Cate : Parcelable {
 
     final override fun describeContents(): Int = 0
 
-    final override fun writeToParcel(dest: Parcel, flags: Int) = dest.writeInt(id)
+    final override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeInt(id)
+    }
 
     companion object {
         private val CATE_MAP: MutableMap<Int, Cate> = mutableMapOf()
@@ -74,10 +76,28 @@ abstract class Cate : Parcelable {
         }
     }
 
-    protected class Creator<T : Cate> : Parcelable.Creator<T?> {
-        override fun createFromParcel(parcel: Parcel): T? {
-            val id = parcel.readInt()
-            return CATE_MAP[id] as? T
+    abstract class CateCreator<T : Cate> : Parcelable.Creator<T> {
+        abstract fun create(
+            backgroundImage: String,
+            commonOrderNo: Int,
+            description: String,
+            descriptionEn: String,
+            icon: String,
+            iconHover: String,
+            id: Int,
+            level: Int,
+            name: String,
+            nameEn: String,
+            orderNo: Int,
+            parent: Int,
+            statusId: Int,
+            subCateList: List<SubCate>,
+            type: Int
+        ): T
+
+        override fun createFromParcel(source: Parcel): T {
+            val id = source.readInt()
+            return getCategory(id)!!
         }
 
         override fun newArray(size: Int): Array<T?> {

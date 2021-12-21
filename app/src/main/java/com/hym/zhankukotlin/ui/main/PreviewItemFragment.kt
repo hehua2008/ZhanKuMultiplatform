@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
@@ -49,7 +50,7 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
     var topCate: TopCate? = null
         private set
     private var mSubCate: SubCate? = null
-    private lateinit var mPageViewModel: PreviewPageViewModel
+    private val mPageViewModel: PreviewPageViewModel by viewModels(factoryProducer = { mVMFactory })
     private var mBinding: FragmentMainBinding? = null
     private val binding get() = checkNotNull(mBinding)
 
@@ -84,7 +85,6 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
         topCate = activeBundle!!.getParcelable(TOP_CATE)
         mSubCate = activeBundle.getParcelable(SUB_CATE)
 
-        mPageViewModel = ViewModelProvider(this, mVMFactory).get(PreviewPageViewModel::class.java)
         mPagingPreviewItemAdapter = PagingPreviewItemAdapter()
         mCategoryItemLayoutManager = FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)
         mCategoryItemLayoutManager.justifyContent = JustifyContent.SPACE_EVENLY

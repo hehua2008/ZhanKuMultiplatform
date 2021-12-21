@@ -5,9 +5,13 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.AsyncTask
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.*
 import com.google.gson.GsonBuilder
 import com.hym.zhankukotlin.model.ZkTypeAdapterFactory
 import com.hym.zhankukotlin.network.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import me.weishu.reflection.Reflection
 import okhttp3.Cache
 import okhttp3.OkHttpClient
@@ -15,7 +19,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 
-class MyApplication : Application() {
+class MyApplication : Application(), ViewModelStoreOwner, HasDefaultViewModelProviderFactory {
+    private val viewModelStore = ViewModelStore()
+
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         Reflection.unseal(base)
@@ -75,7 +81,18 @@ class MyApplication : Application() {
             .build()
         networkService = retrofit.create(NetworkService::class.java)
         transparentDrawable = ContextCompat.getDrawable(this, R.drawable.transparent)!!
+
+        val deferredList: MutableList<Deferred<*>> = mutableListOf()
+        deferredList.add(getAppViewModel<MyAppViewModel>().getCategoryItemsFromNetworkAsync())
+        runBlocking {
+            deferredList.awaitAll()
+        }
     }
+
+    override fun getViewModelStore(): ViewModelStore = viewModelStore
+
+    override fun getDefaultViewModelProviderFactory(): ViewModelProvider.Factory =
+        ViewModelProvider.AndroidViewModelFactory.getInstance(this)
 
     companion object {
         private const val TAG = "MyApplication"
@@ -98,3 +115,6 @@ class MyApplication : Application() {
             private set
     }
 }
+
+inline fun <reified VM : ViewModel> getAppViewModel() =
+    ViewModelProvider(MyApplication.INSTANCE)[VM::class.java]
