@@ -2,10 +2,13 @@ package com.hym.zhankukotlin
 
 import com.bumptech.glide.annotation.GlideExtension
 import com.bumptech.glide.annotation.GlideOption
+import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.BaseRequestOptions
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
+import jp.wasabeef.glide.transformations.BlurTransformation
 
 @GlideExtension
 object GlideAppExtension {
@@ -15,6 +18,13 @@ object GlideAppExtension {
     @JvmField
     val DRAWABLE_CROSS_FADE = DrawableTransitionOptions.withCrossFade(
         DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(false).build()
+    )
+
+    private val blurMulti = RequestOptions.bitmapTransform(
+        MultiTransformation(
+            BlurTransformation(5, 1),
+            //BrightnessFilterTransformation(-0.15f)
+        )
     )
 
     @JvmStatic
@@ -33,5 +43,11 @@ object GlideAppExtension {
     @GlideOption
     fun originalSize(options: BaseRequestOptions<*>): BaseRequestOptions<*> {
         return options.override(Target.SIZE_ORIGINAL)
+    }
+
+    @JvmStatic
+    @GlideOption
+    fun blur(options: BaseRequestOptions<*>): BaseRequestOptions<*> {
+        return options.apply(blurMulti)
     }
 }

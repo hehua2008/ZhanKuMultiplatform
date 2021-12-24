@@ -3,6 +3,8 @@ package com.hym.zhankukotlin.ui.main
 import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.TypedValue
+import android.view.Gravity
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
@@ -70,11 +72,16 @@ class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
         val states = arrayOfNulls<IntArray>(2)
         states[0] = intArrayOf(android.R.attr.state_selected)
         states[1] = IntArray(0)
-        val colors = intArrayOf(R.color.white, R.color.black)
+        val colorPrimary = TypedValue()
+        theme.resolveAttribute(R.attr.colorPrimary, colorPrimary, true)
+        val colorOnSurface = TypedValue()
+        theme.resolveAttribute(R.attr.colorOnSurface, colorOnSurface, true)
+        val colors = intArrayOf(colorPrimary.data, colorOnSurface.data)
         val colorStateList = ColorStateList(states, colors)
         val tabView = AppCompatTextView(this)
         tabView.text = mTopCates[position].name
         tabView.textSize = 16f
+        tabView.gravity = Gravity.CENTER_HORIZONTAL
         tabView.setTextColor(colorStateList)
         tab.customView = tabView
     }

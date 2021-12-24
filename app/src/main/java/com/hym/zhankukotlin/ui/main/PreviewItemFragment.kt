@@ -9,7 +9,6 @@ import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
@@ -19,6 +18,9 @@ import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
+import com.hym.zhankukotlin.GlideApp
+import com.hym.zhankukotlin.GlideAppExtension
+import com.hym.zhankukotlin.GlideRequests
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.FragmentMainBinding
 import com.hym.zhankukotlin.model.RecommendLevel
@@ -53,6 +55,7 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
     private val mPageViewModel: PreviewPageViewModel by viewModels(factoryProducer = { mVMFactory })
     private var mBinding: FragmentMainBinding? = null
     private val binding get() = checkNotNull(mBinding)
+    private lateinit var mRequestManager: GlideRequests
 
     private lateinit var mPagingPreviewItemAdapter: PagingPreviewItemAdapter
     private lateinit var mCategoryItemLayoutManager: FlexboxLayoutManager
@@ -125,6 +128,8 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
                 }
             }
         }
+
+        mRequestManager = GlideApp.with(this)
     }
 
     override fun onCreateView(
@@ -132,6 +137,7 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
     ): View {
         mBinding = FragmentMainBinding.inflate(inflater, container, false)
 
+        updateBackgroundImage()
         updateCategoryLink()
 
         val typedValue = TypedValue()
@@ -209,10 +215,25 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
         return binding.root
     }
 
+    private fun updateBackgroundImage() {
+        (mSubCate?.backgroundImage.takeUnless { it.isNullOrBlank() }
+            ?: topCate?.backgroundImage.takeUnless { it.isNullOrBlank() })?.let {
+            mRequestManager.load(it)
+                .transition(GlideAppExtension.DRAWABLE_CROSS_FADE)
+                .blur()
+                .into(binding.previewHeader.bgView)
+        }
+    }
+
     private fun updateCategoryLink() {
-        val desc = mSubCate?.description?.trim() ?: topCate?.description?.trim()
-        binding.previewHeader.categoryLink.isVisible = !desc.isNullOrBlank()
-        binding.previewHeader.categoryLink.text = desc
+        val sb = StringBuilder("https://www.zcool.com.cn/discover?")
+        topCate?.id?.let { cate ->
+            sb.append("cate=").append(cate)
+            mSubCate?.id?.let { subCate ->
+                sb.append("&subCate=").append(subCate)
+            }
+        }
+        binding.previewHeader.categoryLink.text = sb
     }
 
     private fun clearEditFocusAndHideSoftInput() {
@@ -227,6 +248,7 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
         binding.previewRecycler.clearOnScrollListeners()
         binding.previewHeader.catRecrcler.layoutManager = null
         binding.previewHeader.catRecrcler.adapter = null
+        mRequestManager.clear(binding.previewHeader.bgView)
         mBinding = null
     }
 
@@ -243,6 +265,7 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
             }
             mPageViewModel.subCate.observe(viewLifecycleOwner) {
                 mSubCate = it
+                updateBackgroundImage()
                 updateCategoryLink()
             }
         }

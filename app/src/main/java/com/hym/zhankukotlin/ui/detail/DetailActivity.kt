@@ -2,7 +2,6 @@ package com.hym.zhankukotlin.ui.detail
 
 import android.graphics.Rect
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -26,14 +25,14 @@ class DetailActivity : AppCompatActivity() {
 
         val mTitle = intent.getStringExtra(KEY_TITLE)!!
         val mWorkId = intent.getStringExtra(KEY_WORK_ID)!!
-        title = mTitle
-        setThemeColor(intent.getParcelableExtra(KEY_COLOR) as? MMCQ.ThemeColor)
-
-        val actionBar = supportActionBar
-        actionBar?.setDisplayHomeAsUpEnabled(true)
 
         val binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setThemeColor(intent.getParcelableExtra(KEY_COLOR) as? MMCQ.ThemeColor)
+        binding.actionBar.run {
+            title = mTitle
+            setNavigationOnClickListener { finish() }
+        }
         binding.detailRecycler.addItemDecoration(object : ItemDecoration() {
             private val mOffset = resources.getDimensionPixelSize(R.dimen.common_vertical_margin)
             private val mBottomOffset =
@@ -63,13 +62,5 @@ class DetailActivity : AppCompatActivity() {
         }
 
         mDetailViewModel.setDetailWorkId(mWorkId)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
     }
 }
