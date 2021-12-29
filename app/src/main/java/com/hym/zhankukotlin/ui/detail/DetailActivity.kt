@@ -10,13 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityDetailBinding
+import com.hym.zhankukotlin.model.Content
 import com.hym.zhankukotlin.ui.ThemeColorRetriever.setThemeColor
 import com.hym.zhankukotlin.util.MMCQ
 
 class DetailActivity : AppCompatActivity() {
     companion object {
         const val KEY_TITLE = "TITLE"
-        const val KEY_WORK_ID = "WORK_ID"
+        const val KEY_CONTENT_TYPE = "CONTENT_TYPE"
+        const val KEY_CONTENT_ID = "CONTENT_ID"
         const val KEY_COLOR = "COLOR"
     }
 
@@ -24,7 +26,8 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         val mTitle = intent.getStringExtra(KEY_TITLE)!!
-        val mWorkId = intent.getStringExtra(KEY_WORK_ID)!!
+        val mContentType = intent.getIntExtra(KEY_CONTENT_TYPE, Content.CONTENT_TYPE_WORK)
+        val mContentId = intent.getStringExtra(KEY_CONTENT_ID)!!
 
         val binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -49,18 +52,18 @@ class DetailActivity : AppCompatActivity() {
                 )
             }
         })
-        val detailHeaderAdapter = DetailHeaderAdapter(mTitle, mWorkId)
+        val detailHeaderAdapter =
+            DetailHeaderAdapter(binding.detailRecycler, mTitle, mContentType, mContentId)
         val detailImageAdapter = DetailImageAdapter()
         binding.detailRecycler.adapter = ConcatAdapter(detailHeaderAdapter, detailImageAdapter)
 
         val mDetailViewModel = ViewModelProvider(this)[DetailViewModel::class.java]
-        mDetailViewModel.detailWorkId.observe(this) { mDetailViewModel.getDetailFromNetwork() }
-        mDetailViewModel.detailItem.observe(this) { detailItem ->
-            detailItem ?: return@observe
-            detailHeaderAdapter.setDetailItem(detailItem)
-            detailImageAdapter.setImages(detailItem.product.productImages)
+        mDetailViewModel.workDetails.observe(this) { workDetails ->
+            workDetails ?: return@observe
+            detailHeaderAdapter.setWorkDetails(workDetails)
+            detailImageAdapter.setImages(workDetails.product.productImages)
         }
 
-        mDetailViewModel.setDetailWorkId(mWorkId)
+        mDetailViewModel.setDetailTypeAndId(mContentType, mContentId)
     }
 }

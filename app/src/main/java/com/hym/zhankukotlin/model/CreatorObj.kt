@@ -37,13 +37,14 @@ data class CreatorObj(
     val fansPageUrl: String = ""
     val guanzhuStatus: Int = 0
 
-    val memberHonors: List<Any> = emptyList()
+    val memberHonors: List<MemberHonor> = emptyList()
 
     val popularityCount: Int = 0
     val popularityCountStr: String = ""
     val popularityCountTips: String = ""
     val profession: Int = 0
     val professionName: String = ""
+    val recommend: Int = 0
     val recommendTime: Long = 0L
     val signature: String = ""
 }

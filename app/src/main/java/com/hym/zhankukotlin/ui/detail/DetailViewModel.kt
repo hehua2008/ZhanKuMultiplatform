@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hym.zhankukotlin.MyApplication
+import com.hym.zhankukotlin.model.Content
 import com.hym.zhankukotlin.model.WorkDetails
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -15,29 +16,27 @@ class DetailViewModel : ViewModel() {
         private const val TAG = "DetailViewModel"
     }
 
-    private val _detailWorkId = MutableLiveData<String>()
-    val detailWorkId: LiveData<String> = _detailWorkId
+    private val _workDetails = MutableLiveData<WorkDetails>()
+    val workDetails: LiveData<WorkDetails> = _workDetails
 
-    private val _detailItem = MutableLiveData<WorkDetails>()
-    val detailItem: LiveData<WorkDetails> = _detailItem
-
-    fun setDetailWorkId(workId: String) {
-        if (_detailWorkId.value == workId) return
-        _detailWorkId.value = workId
-    }
-
-    fun getDetailFromNetwork() {
-        val work: String = detailWorkId.value ?: return
+    fun setDetailTypeAndId(type: Int, id: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                MyApplication.networkService.getWorkDetails(work).run {
-                    dataContent.also {
-                        if (it == null) Log.e(TAG, "getWorkDetails $work failed: $msg")
-                        else _detailItem.postValue(it)
+                when (type) {
+                    Content.CONTENT_TYPE_WORK -> {
+                        MyApplication.networkService.getWorkDetails(id).run {
+                            dataContent.also {
+                                if (it == null) Log.e(TAG, "getWorkDetails $id failed: $msg")
+                                else _workDetails.postValue(it)
+                            }
+                        }
+                    }
+                    Content.CONTENT_TYPE_ARTICLE -> {
+                        // TODO: 2021/12/29
                     }
                 }
             } catch (t: Throwable) {
-                Log.e(TAG, "getWorkDetails $work failed", t)
+                Log.e(TAG, "setDetailTypeAndId $type $id failed", t)
             }
         }
     }
