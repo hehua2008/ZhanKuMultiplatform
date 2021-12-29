@@ -32,25 +32,39 @@
         app:singleSelection="true"
         app:spanCount="4" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/detail_author"
-        style="@style/Widget.Button.Common"
-        android:text="author"
-        android:textIsSelectable="true"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/author_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@id/detail_link"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/download_all"
-        app:layout_constraintTop_toBottomOf="@id/tag_item_recycler" />
+        app:layout_constraintTop_toBottomOf="@id/tag_item_recycler">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/detail_avatar"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            tools:src="@drawable/ic_rocket" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/detail_author"
+            style="@style/Widget.Button.Common"
+            android:text="author"
+            android:textIsSelectable="true" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/download_all"
         style="@style/Widget.Button.Common"
         android:text="一键下载"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@id/detail_author"
-        app:layout_constraintLeft_toRightOf="@id/detail_author"
+        app:layout_constraintBottom_toBottomOf="@id/author_group"
+        app:layout_constraintLeft_toRightOf="@id/author_group"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/detail_author" />
+        app:layout_constraintTop_toTopOf="@id/author_group" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/detail_link"

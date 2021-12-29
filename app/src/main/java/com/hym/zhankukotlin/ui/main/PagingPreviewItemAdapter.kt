@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -87,24 +88,33 @@ class PagingPreviewItemAdapter :
                 activity.startActivity(intent)
             }
         }
-        binding.author.setOnClickListener { v ->
-            val activity = v.getActivity() ?: return@setOnClickListener
+        View.OnClickListener { v ->
+            val activity = v.getActivity() ?: return@OnClickListener
             val intent = Intent(activity, TagActivity::class.java)
             previewItem.creatorObj.run {
                 intent.putExtra(AuthorItemFragment.AUTHOR_UID, id)
                 intent.putExtra(AuthorItemFragment.AUTHOR_NAME, username)
             }
             activity.startActivity(intent)
+        }.let {
+            binding.avatar.setOnClickListener(it)
+            binding.author.setOnClickListener(it)
         }
         mRequestManager?.run {
             load(imageUrl)
                 .into(binding.previewImg)
+
+            load(previewItem.creatorObj.avatar1x)
+                .into(binding.avatar)
         }
     }
 
     override fun onViewRecycled(holder: BindingViewHolder<PreviewItemLayoutBinding>) {
         holder.binding.previewImg.setOnClickListener(null)
-        mRequestManager?.clear(holder.binding.previewImg)
+        mRequestManager?.run {
+            clear(holder.binding.previewImg)
+            clear(holder.binding.avatar)
+        }
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {

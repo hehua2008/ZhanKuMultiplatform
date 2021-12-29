@@ -12,6 +12,7 @@ import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
+import com.hym.zhankukotlin.GlideApp
 import com.hym.zhankukotlin.MyApplication
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.DetailHeaderLayoutBinding
@@ -102,6 +103,10 @@ class DetailHeaderAdapter(private val mTitle: String, private val mWorkId: Strin
                 }
                 PictureUtils.downloadAll(workDetails.product.productImages.map { it.oriUrl })
             }
+
+            GlideApp.with(root)
+                .load(workDetails.product.creatorObj.avatar1x)
+                .into(detailAvatar)
         }
     }
 }

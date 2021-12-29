@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.hym.zhankukotlin.databinding.PreviewItemLayoutBinding
 import com.hym.zhankukotlin.model.Content
+import com.hym.zhankukotlin.ui.CircleViewOutlineProvider
 
 /**
  * @author hehua2008
@@ -17,7 +18,10 @@ class PreviewItemLayout @JvmOverloads constructor(
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        binding = PreviewItemLayoutBinding.bind(this)
+        binding = PreviewItemLayoutBinding.bind(this).apply {
+            avatar.clipToOutline = true
+            avatar.outlineProvider = CircleViewOutlineProvider
+        }
     }
 
     fun setContent(content: Content) {
