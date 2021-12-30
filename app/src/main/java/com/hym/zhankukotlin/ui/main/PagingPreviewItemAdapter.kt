@@ -2,18 +2,16 @@ package com.hym.zhankukotlin.ui.main
 
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.LayerDrawable
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.flexbox.FlexboxLayoutManager
 import com.hym.zhankukotlin.GlideApp
+import com.hym.zhankukotlin.GlideAppExtension
 import com.hym.zhankukotlin.GlideRequests
 import com.hym.zhankukotlin.databinding.PreviewItemLayoutBinding
 import com.hym.zhankukotlin.model.Content
@@ -25,6 +23,7 @@ import com.hym.zhankukotlin.ui.tag.TagActivity
 import com.hym.zhankukotlin.util.ViewUtils.getActivity
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.math.abs
 
 class PagingPreviewItemAdapter :
     PagingDataAdapter<Content, BindingViewHolder<PreviewItemLayoutBinding>>(PreviewItemCallback) {
@@ -45,6 +44,61 @@ class PagingPreviewItemAdapter :
     }
 
     private var mRequestManager: GlideRequests? = null
+
+    private val mOnScrollListener = object : RecyclerView.OnScrollListener() {
+        var mScrolledY = 0F
+        var mLastScrollState = RecyclerView.SCROLL_STATE_IDLE
+        val mVelocityTracker: VelocityTracker = VelocityTracker.obtain()
+
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            mScrolledY += dy
+        }
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                mScrolledY = 0F
+                mVelocityTracker.clear()
+                mRequestManager?.let {
+                    if (it.isPaused) {
+                        //Log.w(TAG, "resumeRequestsRecursive")
+                        it.resumeRequestsRecursive()
+                    }
+                }
+            } else if (mLastScrollState == RecyclerView.SCROLL_STATE_IDLE) {
+                Choreographer.getInstance().postFrameCallback(object : Choreographer.FrameCallback {
+                    override fun doFrame(frameTimeNanos: Long) {
+                        if (mLastScrollState == RecyclerView.SCROLL_STATE_IDLE) return
+
+                        val now = frameTimeNanos / 1000000
+                        val ev =
+                            MotionEvent.obtain(now, now, MotionEvent.ACTION_MOVE, 0F, mScrolledY, 0)
+                        mVelocityTracker.addMovement(ev)
+                        ev.recycle()
+
+                        mVelocityTracker.computeCurrentVelocity(
+                            1000,
+                            recyclerView.maxFlingVelocity.toFloat()
+                        )
+                        val velocityY = mVelocityTracker.yVelocity
+                        //Log.w(TAG, "mVelocityTracker.yVelocity=$velocityY")
+                        mRequestManager?.let {
+                            val isPaused = it.isPaused
+                            if (!isPaused && abs(velocityY) >= recyclerView.resources.displayMetrics.density * 6000) {
+                                //Log.w(TAG, "pauseRequestsRecursive velocityY=$velocityY")
+                                it.pauseRequestsRecursive()
+                            } else if (isPaused && abs(velocityY) < recyclerView.resources.displayMetrics.density * 2000) {
+                                //Log.w(TAG, "resumeRequestsRecursive velocityY=$velocityY")
+                                it.resumeRequestsRecursive()
+                            }
+                        }
+
+                        Choreographer.getInstance().postFrameCallback(this)
+                    }
+                })
+            }
+            mLastScrollState = newState
+        }
+    }
 
     override fun getItemViewType(position: Int): Int {
         return PREVIEW_ITEM_TYPE
@@ -76,7 +130,17 @@ class PagingPreviewItemAdapter :
                 .putExtra(DetailActivity.KEY_TITLE, previewItem.formatTitle)
                 .putExtra(DetailActivity.KEY_CONTENT_TYPE, previewItem.objectType)
                 .putExtra(DetailActivity.KEY_CONTENT_ID, previewItem.contentId)
-            val bitmap = (binding.previewImg.drawable as? BitmapDrawable)?.bitmap
+            val bitmap = binding.previewImg.drawable?.let {
+                when (it) {
+                    is BitmapDrawable -> return@let it.bitmap
+                    is LayerDrawable -> {
+                        return@let (it.numberOfLayers - 1 downTo 0).firstNotNullOfOrNull { idx ->
+                            (it.getDrawable(idx) as? BitmapDrawable)?.bitmap
+                        }
+                    }
+                    else -> return@let null
+                }
+            }
             if (bitmap != null && activity is LifecycleOwner) {
                 activity.lifecycleScope.launch {
                     val mainThemeColor = withTimeoutOrNull(200) {
@@ -103,6 +167,7 @@ class PagingPreviewItemAdapter :
         }
         mRequestManager?.run {
             load(imageUrl)
+                .transition(GlideAppExtension.DRAWABLE_CROSS_FADE)
                 .into(binding.previewImg)
 
             load(previewItem.creatorObj.avatar1x)
@@ -125,10 +190,12 @@ class PagingPreviewItemAdapter :
             is FlexboxLayoutManager -> layoutManager.recycleChildrenOnDetach = true
         }
         */
+        recyclerView.addOnScrollListener(mOnScrollListener)
         mRequestManager = GlideApp.with(recyclerView)
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        recyclerView.removeOnScrollListener(mOnScrollListener)
         mRequestManager = null
     }
 }

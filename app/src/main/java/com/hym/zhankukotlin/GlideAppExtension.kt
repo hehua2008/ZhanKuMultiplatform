@@ -17,7 +17,7 @@ object GlideAppExtension {
 
     @JvmField
     val DRAWABLE_CROSS_FADE = DrawableTransitionOptions.withCrossFade(
-        DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(false).build()
+        DrawableCrossFadeFactory.Builder(150).setCrossFadeEnabled(false).build()
     )
 
     private val blurMulti = RequestOptions.bitmapTransform(
