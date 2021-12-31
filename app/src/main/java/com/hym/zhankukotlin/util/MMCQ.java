@@ -464,6 +464,7 @@ public class MMCQ {
         private final double mPriority;
 
         private boolean mGeneratedTextColors;
+        private boolean mIsDarkText;
         private int mTitleTextColor;
         private int mBodyTextColor;
 
@@ -521,6 +522,11 @@ public class MMCQ {
             return mProportion;
         }
 
+        public boolean isDarkText() {
+            ensureTextColorsGenerated();
+            return mIsDarkText;
+        }
+
         public int getBodyTextColor() {
             ensureTextColorsGenerated();
             return mBodyTextColor;
@@ -544,6 +550,7 @@ public class MMCQ {
                     mBodyTextColor = ColorUtils.setAlphaComponent(Color.WHITE, lightBodyAlpha);
                     mTitleTextColor = ColorUtils.setAlphaComponent(Color.WHITE, lightTitleAlpha);
                     mGeneratedTextColors = true;
+                    mIsDarkText = false;
                     return;
                 }
 
@@ -557,6 +564,7 @@ public class MMCQ {
                     mBodyTextColor = ColorUtils.setAlphaComponent(Color.BLACK, darkBodyAlpha);
                     mTitleTextColor = ColorUtils.setAlphaComponent(Color.BLACK, darkTitleAlpha);
                     mGeneratedTextColors = true;
+                    mIsDarkText = true;
                     return;
                 }
 
@@ -569,6 +577,7 @@ public class MMCQ {
                         ? ColorUtils.setAlphaComponent(Color.WHITE, lightTitleAlpha)
                         : ColorUtils.setAlphaComponent(Color.BLACK, darkTitleAlpha);
                 mGeneratedTextColors = true;
+                mIsDarkText = lightTitleAlpha == -1;
             }
         }
     }

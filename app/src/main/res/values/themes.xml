@@ -12,7 +12,12 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <!-- Customize your theme here. -->
+    </style>
+
+    <style name="Theme.ZhanKuKotlin.Detail">
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
 
     <style name="Theme.ZhanKuKotlin.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
@@ -24,7 +29,7 @@
         <item name="android:elevation">4dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/actionbar_height</item>
-        <item name="navigationIcon">@drawable/abc_ic_ab_back_material</item>
+        <item name="navigationIcon">@drawable/ic_ab_back</item>
     </style>
 
     <style name="Widget.ButtonGroupRecyclerView" parent="@android:style/Widget">

@@ -36,7 +36,8 @@
 
         <activity
             android:name=".ui.detail.DetailActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.ZhanKuKotlin.Detail">
         </activity>
 
         <activity
