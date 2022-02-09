@@ -68,20 +68,25 @@ class DetailActivity : AppCompatActivity() {
                 val lastPosition = state.itemCount - 1
                 outRect.set(
                     0, if (position == 0) 0 else mOffset,
-                    0, if (position == lastPosition) mBottomOffset else 0
+                    0, if (lastPosition != 0 && position == lastPosition) mBottomOffset else 0
                 )
             }
         })
-        val detailHeaderAdapter =
-            DetailHeaderAdapter(binding.detailRecycler, mTitle, mContentType, mContentId)
-        val detailImageAdapter = DetailImageAdapter()
-        binding.detailRecycler.adapter = ConcatAdapter(detailHeaderAdapter, detailImageAdapter)
 
         val mDetailViewModel = ViewModelProvider(this)[DetailViewModel::class.java]
+
+        val detailHeaderAdapter =
+            DetailHeaderAdapter(binding.detailRecycler, mTitle, mContentType, mContentId)
+        val detailVideoAdapter = DetailVideoAdapter(mDetailViewModel.playerProvider)
+        val detailImageAdapter = DetailImageAdapter()
+        binding.detailRecycler.adapter =
+            ConcatAdapter(detailHeaderAdapter, detailVideoAdapter, detailImageAdapter)
+
         mDetailViewModel.workDetails.observe(this) { workDetails ->
             workDetails ?: return@observe
             detailHeaderAdapter.setWorkDetails(workDetails)
-            detailImageAdapter.setImages(workDetails.product.productImages)
+            detailVideoAdapter.submitList(workDetails.product.productVideos)
+            detailImageAdapter.submitList(workDetails.product.productImages)
         }
 
         mDetailViewModel.setDetailTypeAndId(mContentType, mContentId)

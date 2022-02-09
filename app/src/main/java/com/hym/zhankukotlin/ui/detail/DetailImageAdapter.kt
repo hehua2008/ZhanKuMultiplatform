@@ -4,6 +4,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.hym.zhankukotlin.GlideApp
 import com.hym.zhankukotlin.GlideAppExtension
@@ -12,9 +14,20 @@ import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.model.ProductImage
 import com.hym.zhankukotlin.ui.ImageViewHeightListener
 
-class DetailImageAdapter : RecyclerView.Adapter<DetailImageAdapter.ViewHolder>() {
+class DetailImageAdapter : ListAdapter<ProductImage, DetailImageAdapter.ViewHolder>(ITEM_CALLBACK) {
+    companion object {
+        val ITEM_CALLBACK = object : DiffUtil.ItemCallback<ProductImage>() {
+            override fun areItemsTheSame(oldItem: ProductImage, newItem: ProductImage): Boolean {
+                return oldItem.url == newItem.url
+            }
+
+            override fun areContentsTheSame(oldItem: ProductImage, newItem: ProductImage): Boolean {
+                return oldItem == newItem
+            }
+        }
+    }
+
     private var mRequestManager: GlideRequests? = null
-    private var mImages: List<ProductImage> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         /**
@@ -51,7 +64,7 @@ class DetailImageAdapter : RecyclerView.Adapter<DetailImageAdapter.ViewHolder>()
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val img = mImages[position]
+        val img = getItem(position)
         holder.imageView.run {
             layoutParams = (layoutParams as ConstraintLayout.LayoutParams).apply {
                 dimensionRatio = "${img.width}:${img.height}"
@@ -68,8 +81,6 @@ class DetailImageAdapter : RecyclerView.Adapter<DetailImageAdapter.ViewHolder>()
         }
     }
 
-    override fun getItemViewType(position: Int): Int = position
-
     override fun onViewRecycled(holder: ViewHolder) {
         mRequestManager?.clear(holder.imageView)
     }
@@ -80,13 +91,6 @@ class DetailImageAdapter : RecyclerView.Adapter<DetailImageAdapter.ViewHolder>()
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         mRequestManager = null
-    }
-
-    override fun getItemCount(): Int = mImages.size
-
-    fun setImages(images: List<ProductImage>) {
-        mImages = images
-        notifyDataSetChanged()
     }
 
     class ViewHolder(viewGroup: ViewGroup) : RecyclerView.ViewHolder(viewGroup) {

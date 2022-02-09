@@ -6,4 +6,5 @@
     <item name="image_view_listener_key" type="id"></item>
     <item name="image_view_loaded_key" type="id"></item>
     <item name="button_view" type="id"></item>
+    <item name="player_view" type="id"></item>
 </resources>

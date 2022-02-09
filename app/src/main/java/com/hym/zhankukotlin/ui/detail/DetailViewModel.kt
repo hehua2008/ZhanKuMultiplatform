@@ -8,7 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.hym.zhankukotlin.MyApplication
 import com.hym.zhankukotlin.model.Content
 import com.hym.zhankukotlin.model.WorkDetails
+import com.hym.zhankukotlin.player.PlayerProvider
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class DetailViewModel : ViewModel() {
@@ -18,6 +20,8 @@ class DetailViewModel : ViewModel() {
 
     private val _workDetails = MutableLiveData<WorkDetails>()
     val workDetails: LiveData<WorkDetails> = _workDetails
+
+    val playerProvider = PlayerProvider()
 
     fun setDetailTypeAndId(type: Int, id: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -38,6 +42,13 @@ class DetailViewModel : ViewModel() {
             } catch (t: Throwable) {
                 Log.e(TAG, "setDetailTypeAndId $type $id failed", t)
             }
+        }
+    }
+
+    override fun onCleared() {
+        // Post playerProvider.onCleared() action after ViewModel.onCleared() (Activity.onDestroy())
+        GlobalScope.launch(Dispatchers.Main) {
+            playerProvider.onCleared()
         }
     }
 }
