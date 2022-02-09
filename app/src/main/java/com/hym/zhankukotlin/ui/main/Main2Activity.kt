@@ -1,9 +1,7 @@
 package com.hym.zhankukotlin.ui.main
 
-import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.Gravity
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -13,10 +11,10 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.tabs.TabLayoutMediator.TabConfigurationStrategy
 import com.hym.zhankukotlin.MyAppViewModel
-import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityMain2Binding
 import com.hym.zhankukotlin.getAppViewModel
 import com.hym.zhankukotlin.model.TopCate
+import com.hym.zhankukotlin.util.createTextColorStateListByColorAttr
 
 class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
     companion object {
@@ -74,20 +72,12 @@ class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
 
     override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
         if (mTopCates.isEmpty()) return
-        val states = arrayOfNulls<IntArray>(2)
-        states[0] = intArrayOf(android.R.attr.state_selected)
-        states[1] = IntArray(0)
-        val colorPrimary = TypedValue()
-        theme.resolveAttribute(R.attr.colorPrimary, colorPrimary, true)
-        val colorOnSurface = TypedValue()
-        theme.resolveAttribute(R.attr.colorOnSurface, colorOnSurface, true)
-        val colors = intArrayOf(colorPrimary.data, colorOnSurface.data)
-        val colorStateList = ColorStateList(states, colors)
         val tabView = AppCompatTextView(this)
         tabView.text = mTopCates[position].name
         tabView.textSize = 16f
         tabView.gravity = Gravity.CENTER_HORIZONTAL
-        tabView.setTextColor(colorStateList)
+        tabView.setTextColor(createTextColorStateListByColorAttr())
+        //tabView.isEnabled = false
         tab.customView = tabView
     }
 }
