@@ -36,6 +36,11 @@ class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
 
         val binding = ActivityMain2Binding.inflate(layoutInflater)
         setContentView(binding.root)
+        /*
+        binding.root.setLayerType(View.LAYER_TYPE_HARDWARE, Paint().apply {
+            colorFilter = ColorMatrixColorFilter(ColorMatrix().apply { setSaturation(0F) })
+        })
+        */
         val sectionsPagerAdapter = SectionsPager2Adapter(this)
         binding.viewPager.adapter = sectionsPagerAdapter
         binding.viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
