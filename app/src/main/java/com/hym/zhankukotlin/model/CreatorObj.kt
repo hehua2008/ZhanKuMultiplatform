@@ -1,6 +1,8 @@
 package com.hym.zhankukotlin.model
 
+import android.os.Parcelable
 import androidx.annotation.Keep
+import kotlinx.parcelize.Parcelize
 
 /**
 {
@@ -14,6 +16,7 @@ import androidx.annotation.Keep
 "username": "画画的淘米"
 }
  */
+@Parcelize
 @Keep
 data class CreatorObj(
     val avatar: String,
@@ -24,7 +27,7 @@ data class CreatorObj(
     val pageUrl: String,
     val status: Int,
     val username: String
-) {
+) : Parcelable {
     val city: Int = 0
     val cityName: String = ""
     val contentCount: Int = 0

@@ -156,10 +156,7 @@ class PagingPreviewItemAdapter :
         View.OnClickListener { v ->
             val activity = v.getActivity() ?: return@OnClickListener
             val intent = Intent(activity, TagActivity::class.java)
-            previewItem.creatorObj.run {
-                intent.putExtra(AuthorItemFragment.AUTHOR_UID, id)
-                intent.putExtra(AuthorItemFragment.AUTHOR_NAME, username)
-            }
+                .putExtra(AuthorItemFragment.AUTHOR, previewItem.creatorObj)
             activity.startActivity(intent)
         }.let {
             binding.avatar.setOnClickListener(it)

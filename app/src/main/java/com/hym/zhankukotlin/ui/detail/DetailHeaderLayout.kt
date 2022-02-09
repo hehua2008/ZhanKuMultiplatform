@@ -36,10 +36,7 @@ class DetailHeaderLayout @JvmOverloads constructor(
             View.OnClickListener { v ->
                 val activity = v.getActivity() ?: return@OnClickListener
                 val intent = Intent(activity, TagActivity::class.java)
-                workDetails.product.creatorObj.run {
-                    intent.putExtra(AuthorItemFragment.AUTHOR_UID, id)
-                    intent.putExtra(AuthorItemFragment.AUTHOR_NAME, username)
-                }
+                    .putExtra(AuthorItemFragment.AUTHOR, workDetails.product.creatorObj)
                 activity.startActivity(intent)
             }.let {
                 authorGroup.setOnClickListener(it)

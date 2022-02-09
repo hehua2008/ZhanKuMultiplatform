@@ -24,20 +24,17 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
-import kotlin.properties.Delegates
 
 class AuthorItemFragment : Fragment(), Observer<LifecycleOwner> {
     companion object {
         private const val TAG = "AuthorItemFragment"
-        const val AUTHOR_UID = "AUTHOR_UID"
-        const val AUTHOR_NAME = "AUTHOR_NAME"
+        const val AUTHOR = "AUTHOR"
 
         @JvmStatic
-        fun newInstance(authorUid: Int, authorName: String): AuthorItemFragment {
+        fun newInstance(author: CreatorObj): AuthorItemFragment {
             val fragment = AuthorItemFragment()
             fragment.arguments = Bundle().apply {
-                putInt(AUTHOR_UID, authorUid)
-                putString(AUTHOR_NAME, authorName)
+                putParcelable(AUTHOR, author)
             }
             return fragment
         }
@@ -46,8 +43,7 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner> {
     private val mPageViewModel: AuthorPageViewModel by viewModels(factoryProducer = { mVMFactory })
     private var mBinding: FragmentMainBinding? = null
     private val binding get() = checkNotNull(mBinding)
-    private var mAuthorUid by Delegates.notNull<Int>()
-    private lateinit var mAuthorName: String
+    private lateinit var mAuthor: CreatorObj
 
     private lateinit var mPagingPreviewItemAdapter: PagingPreviewItemAdapter
     private lateinit var mPreviewItemDecoration: RecyclerView.ItemDecoration
@@ -55,7 +51,7 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner> {
     private val mVMFactory = object : ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return if (AuthorPageViewModel::class.java.isAssignableFrom(modelClass)) {
-                AuthorPageViewModel(mAuthorUid) as T
+                AuthorPageViewModel(mAuthor.id) as T
             } else {
                 super.create(modelClass)
             }
@@ -64,8 +60,7 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner> {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(AUTHOR_UID, mAuthorUid)
-        outState.putString(AUTHOR_NAME, mAuthorName)
+        outState.putParcelable(AUTHOR, mAuthor)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,10 +69,7 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner> {
         viewLifecycleOwnerLiveData.observe(this, this)
 
         val activeBundle = savedInstanceState ?: arguments
-        mAuthorUid = activeBundle!!.getInt(AUTHOR_UID).also {
-            if (it == 0) throw IllegalArgumentException("Invalid author uid: 0")
-        }
-        mAuthorName = activeBundle.getString(AUTHOR_NAME)!!
+        mAuthor = activeBundle!!.getParcelable(AUTHOR)!!
 
         mPagingPreviewItemAdapter = PagingPreviewItemAdapter()
 
@@ -181,7 +173,7 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner> {
     }
 
     private fun updateCategoryLink() {
-        val desc = "https://www.zcool.com.cn/u/$mAuthorUid"
+        val desc = "https://www.zcool.com.cn/u/${mAuthor.id}"
         binding.previewHeader.categoryLink.isVisible = desc.isNotBlank()
         binding.previewHeader.categoryLink.text = desc
     }
