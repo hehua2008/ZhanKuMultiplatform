@@ -1,5 +1,6 @@
 package com.hym.zhankukotlin.ui.detail
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Rect
 import android.os.Handler
@@ -13,12 +14,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.ParserException
+import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.video.VideoSize
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.model.ProductVideo
 import com.hym.zhankukotlin.player.CustomPlayerView
 import com.hym.zhankukotlin.player.PlayerProvider
+import com.hym.zhankukotlin.ui.webview.WebViewActivity
 
 class DetailVideoAdapter(private val playerProvider: PlayerProvider) :
     ListAdapter<ProductVideo, DetailVideoAdapter.ViewHolder>(ITEM_CALLBACK) {
@@ -138,6 +142,7 @@ class DetailVideoAdapter(private val playerProvider: PlayerProvider) :
     inner class ViewHolder(viewGroup: ViewGroup) : RecyclerView.ViewHolder(viewGroup),
         Player.Listener {
         val playerView: CustomPlayerView = viewGroup.findViewById(R.id.player_view)
+        var productVideo: ProductVideo? = null
 
         fun bindData(productVideo: ProductVideo?) {
             unbindData()
@@ -157,6 +162,7 @@ class DetailVideoAdapter(private val playerProvider: PlayerProvider) :
                     }
                 }
             }
+            this.productVideo = productVideo
         }
 
         fun unbindData() {
@@ -166,6 +172,7 @@ class DetailVideoAdapter(private val playerProvider: PlayerProvider) :
                 playerProvider.recycle(it)
                 playerView.player = null
             }
+            productVideo = null
         }
 
         override fun onVideoSizeChanged(videoSize: VideoSize) {
@@ -173,6 +180,18 @@ class DetailVideoAdapter(private val playerProvider: PlayerProvider) :
             playerView.run {
                 layoutParams = (layoutParams as ConstraintLayout.LayoutParams).apply {
                     dimensionRatio = "${videoSize.width}:${videoSize.height}"
+                }
+            }
+        }
+
+        override fun onPlayerError(error: PlaybackException) {
+            if (error.cause is ParserException) {
+                val productVideo = productVideo ?: return
+                playerView.setOnClickListener {
+                    val intent = Intent(it.context, WebViewActivity::class.java)
+                        .putExtra(WebViewActivity.WEB_URL, productVideo.url)
+                        .putExtra(WebViewActivity.WEB_TITLE, productVideo.name)
+                    it.context.startActivity(intent)
                 }
             }
         }

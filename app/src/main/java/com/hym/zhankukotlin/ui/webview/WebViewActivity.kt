@@ -3,13 +3,11 @@ package com.hym.zhankukotlin.ui.webview
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.webkit.WebChromeClient
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityWebViewBinding
 
 open class WebViewActivity : AppCompatActivity() {
@@ -57,6 +55,29 @@ open class WebViewActivity : AppCompatActivity() {
                 customWebViewClient?.onPageFinished(view, url)
             }
 
+            override fun shouldOverrideUrlLoading(
+                view: WebView,
+                request: WebResourceRequest
+            ): Boolean {
+                val scheme = request.url.scheme
+                return when {
+                    scheme == null
+                            || scheme.equals("http", true)
+                            || scheme.equals("https", true) -> {
+                        false
+                    }
+                    else -> {
+                        val intent = Intent(Intent.ACTION_VIEW, request.url)
+                        val resolves = packageManager.queryIntentActivities(intent, 0)
+                        if (resolves.isNotEmpty()) {
+                            startActivity(
+                                Intent.createChooser(intent, getString(R.string.select_app_title))
+                            )
+                        }
+                        true
+                    }
+                }
+            }
         }
         binding.webView.webChromeClient = object : WebChromeClient() {
             val customWebChromeClient = initWebChromeClient()
