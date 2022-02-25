@@ -45,5 +45,11 @@
             android:exported="true">
         </activity>
 
+        <activity
+            android:name=".ui.webview.WebViewActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+        </activity>
+
     </application>
 </manifest>

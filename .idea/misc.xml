@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ASMIdeaPluginConfiguration">
+    <asm skipDebug="false" skipFrames="false" skipCode="false" expandFrames="false" />
+    <groovy codeStyle="LEGACY" />
+  </component>
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
@@ -7,6 +11,7 @@
         <entry key="app/src/main/res/layout/activity_detail.xml" value="0.1522248243559719" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2682291666666667" />
         <entry key="app/src/main/res/layout/activity_main2.xml" value="0.23802083333333332" />
+        <entry key="app/src/main/res/layout/activity_web_view.xml" value="0.335" />
         <entry key="app/src/main/res/layout/button_item.xml" value="0.23802083333333332" />
         <entry key="app/src/main/res/layout/detail_header_layout.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_main.xml" value="0.25" />
