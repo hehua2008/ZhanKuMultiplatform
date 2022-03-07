@@ -11,4 +11,11 @@
     <declare-styleable name="RatioConstraintLayout">
         <attr name="widthHeightRatio" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="PhotoView">
+        <attr name="allowCrop" format="boolean" />
+        <attr name="fixedHeight" format="dimension|integer" />
+        <attr name="enableImageTransforms" format="boolean" />
+        <attr name="maxInitialScale" format="float" />
+    </declare-styleable>
 </resources>

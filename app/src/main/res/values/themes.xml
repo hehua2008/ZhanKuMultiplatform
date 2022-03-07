@@ -20,6 +20,11 @@
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
 
+    <style name="Theme.ZhanKuKotlin.Fullscreen">
+        <!--<item name="android:windowFullscreen">true</item>-->
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="p">shortEdges</item>
+    </style>
+
     <style name="Theme.ZhanKuKotlin.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.ZhanKuKotlin.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

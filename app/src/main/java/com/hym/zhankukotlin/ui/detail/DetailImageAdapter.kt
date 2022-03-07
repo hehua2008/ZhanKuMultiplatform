@@ -1,5 +1,6 @@
 package com.hym.zhankukotlin.ui.detail
 
+import android.content.Intent
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
@@ -11,8 +12,11 @@ import com.hym.zhankukotlin.GlideApp
 import com.hym.zhankukotlin.GlideAppExtension
 import com.hym.zhankukotlin.GlideRequests
 import com.hym.zhankukotlin.R
+import com.hym.zhankukotlin.model.PhotoInfo
 import com.hym.zhankukotlin.model.ProductImage
 import com.hym.zhankukotlin.ui.ImageViewHeightListener
+import com.hym.zhankukotlin.ui.photoview.PhotoViewActivity
+import com.hym.zhankukotlin.util.getActivity
 
 class DetailImageAdapter : ListAdapter<ProductImage, DetailImageAdapter.ViewHolder>(ITEM_CALLBACK) {
     companion object {
@@ -68,6 +72,23 @@ class DetailImageAdapter : ListAdapter<ProductImage, DetailImageAdapter.ViewHold
         holder.imageView.run {
             layoutParams = (layoutParams as ConstraintLayout.LayoutParams).apply {
                 dimensionRatio = "${img.width}:${img.height}"
+            }
+            setOnClickListener { v ->
+                val activity = v.getActivity() ?: return@setOnClickListener
+                val photoInfos = currentList.mapTo(ArrayList()) {
+                    PhotoInfo(
+                        url = it.oriUrl,
+                        thumbUrl = it.url,
+                        width = it.width,
+                        height = it.height
+                    )
+                }
+                val intent = Intent(activity, PhotoViewActivity::class.java).apply {
+                    putParcelableArrayListExtra(PhotoViewActivity.PHOTO_INFOS, photoInfos)
+                    putExtra(PhotoViewActivity.CURRENT_POSITION, position)
+                }
+                activity.startActivity(intent)
+                activity.overridePendingTransition(0, android.R.anim.fade_out)
             }
         }
         mRequestManager?.run {
