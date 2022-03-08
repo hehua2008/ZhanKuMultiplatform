@@ -21,7 +21,7 @@ import com.hym.zhankukotlin.model.WorkDetails
 import com.hym.zhankukotlin.ui.BindingViewHolder
 import com.hym.zhankukotlin.util.PermissionUtils
 import com.hym.zhankukotlin.util.PictureUtils
-import com.hym.zhankukotlin.util.ViewUtils.getActivity
+import com.hym.zhankukotlin.util.getActivity
 
 class DetailHeaderAdapter(
     recyclerView: RecyclerView,

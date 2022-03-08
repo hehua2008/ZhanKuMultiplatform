@@ -15,7 +15,7 @@ import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.target.ViewTarget
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.util.MMCQ
-import com.hym.zhankukotlin.util.ViewUtils.getActivity
+import com.hym.zhankukotlin.util.getActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

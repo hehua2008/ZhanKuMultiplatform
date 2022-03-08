@@ -11,7 +11,6 @@ import com.hym.zhankukotlin.ui.CircleViewOutlineProvider
 import com.hym.zhankukotlin.ui.HeaderLayout
 import com.hym.zhankukotlin.ui.author.AuthorItemFragment
 import com.hym.zhankukotlin.ui.tag.TagActivity
-import com.hym.zhankukotlin.util.ViewUtils.getActivity
 
 /**
  * @author hehua2008
@@ -34,10 +33,10 @@ class DetailHeaderLayout @JvmOverloads constructor(
         binding.run {
             detailAuthor.text = workDetails.product.creatorObj.username
             View.OnClickListener { v ->
-                val activity = v.getActivity() ?: return@OnClickListener
-                val intent = Intent(activity, TagActivity::class.java)
+                val context = v.context
+                val intent = Intent(context, TagActivity::class.java)
                     .putExtra(AuthorItemFragment.AUTHOR, workDetails.product.creatorObj)
-                activity.startActivity(intent)
+                context.startActivity(intent)
             }.let {
                 authorGroup.setOnClickListener(it)
                 detailAuthor.setOnClickListener(it)

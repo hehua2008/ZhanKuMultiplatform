@@ -6,7 +6,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import com.google.android.material.button.MaterialButton
 import com.hym.zhankukotlin.MyApplication
 import com.hym.zhankukotlin.R
-import com.hym.zhankukotlin.util.ViewUtils.getDefaultLayoutParamsFrom
+import com.hym.zhankukotlin.util.createDefaultLayoutParams
 
 object ButtonFactory {
     /**
@@ -51,7 +51,7 @@ object ButtonFactory {
             text = "button"
             isAllCaps = false
             setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize)
-            layoutParams = getDefaultLayoutParamsFrom(parent).apply {
+            layoutParams = parent.createDefaultLayoutParams().apply {
                 width = ViewGroup.LayoutParams.WRAP_CONTENT
                 height = ViewGroup.LayoutParams.WRAP_CONTENT
             }

@@ -20,7 +20,7 @@ import com.hym.zhankukotlin.ui.ThemeColorRetriever
 import com.hym.zhankukotlin.ui.author.AuthorItemFragment
 import com.hym.zhankukotlin.ui.detail.DetailActivity
 import com.hym.zhankukotlin.ui.tag.TagActivity
-import com.hym.zhankukotlin.util.ViewUtils.getActivity
+import com.hym.zhankukotlin.util.getActivity
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.math.abs
@@ -154,10 +154,10 @@ class PagingPreviewItemAdapter :
             }
         }
         View.OnClickListener { v ->
-            val activity = v.getActivity() ?: return@OnClickListener
-            val intent = Intent(activity, TagActivity::class.java)
+            val context = v.context
+            val intent = Intent(context, TagActivity::class.java)
                 .putExtra(AuthorItemFragment.AUTHOR, previewItem.creatorObj)
-            activity.startActivity(intent)
+            context.startActivity(intent)
         }.let {
             binding.avatar.setOnClickListener(it)
             binding.author.setOnClickListener(it)

@@ -7,7 +7,6 @@ import com.hym.zhankukotlin.model.TopCate
 import com.hym.zhankukotlin.ui.NameValueAdapter
 import com.hym.zhankukotlin.ui.main.PreviewItemFragment
 import com.hym.zhankukotlin.ui.tag.TagActivity
-import com.hym.zhankukotlin.util.ViewUtils.getActivity
 
 class TagUrlItemAdapter : NameValueAdapter<String, Cate>() {
     override fun getOnCheckedChangeListener(holder: ViewHolder, position: Int)
@@ -18,9 +17,9 @@ class TagUrlItemAdapter : NameValueAdapter<String, Cate>() {
         holder.button.isCheckable = false
         holder.button.text = mNameValues[position].key
         holder.button.setOnClickListener { v ->
-            val activity = v.getActivity() ?: return@setOnClickListener
+            val context = v.context
             val tagCate = mNameValues[position].value
-            val intent = Intent(activity, TagActivity::class.java)
+            val intent = Intent(context, TagActivity::class.java)
             if (tagCate is TopCate) {
                 intent.putExtra(PreviewItemFragment.TOP_CATE, tagCate)
             } else {
@@ -30,7 +29,7 @@ class TagUrlItemAdapter : NameValueAdapter<String, Cate>() {
                 )
                 intent.putExtra(PreviewItemFragment.SUB_CATE, tagCate)
             }
-            activity.startActivity(intent)
+            context.startActivity(intent)
         }
     }
 
