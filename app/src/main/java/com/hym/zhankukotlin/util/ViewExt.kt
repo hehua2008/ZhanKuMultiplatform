@@ -1,8 +1,13 @@
 package com.hym.zhankukotlin.util
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import java.lang.reflect.Method
 
 private val generateDefaultLayoutParamsMethod: Method =
@@ -30,4 +35,13 @@ fun View.getActivity(): Activity? {
 
 fun View.requireActivity(): Activity {
     return getActivity() ?: throw IllegalStateException("View $this not attached to a context.")
+}
+
+fun View.copyText(): Boolean {
+    val clipboard = ContextCompat.getSystemService(context, ClipboardManager::class.java)!!
+    val text: CharSequence = if (this is TextView) text else contentDescription ?: return false
+    val clipData = ClipData.newPlainText(null, text)
+    clipboard.setPrimaryClip(clipData)
+    Toast.makeText(context, "Copied: $text", Toast.LENGTH_SHORT).show()
+    return true
 }

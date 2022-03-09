@@ -11,6 +11,7 @@ import com.hym.zhankukotlin.ui.CircleViewOutlineProvider
 import com.hym.zhankukotlin.ui.HeaderLayout
 import com.hym.zhankukotlin.ui.author.AuthorItemFragment
 import com.hym.zhankukotlin.ui.tag.TagActivity
+import com.hym.zhankukotlin.util.copyText
 
 /**
  * @author hehua2008
@@ -26,6 +27,9 @@ class DetailHeaderLayout @JvmOverloads constructor(
         binding = DetailHeaderLayoutBinding.bind(this).apply {
             detailAvatar.clipToOutline = true
             detailAvatar.outlineProvider = CircleViewOutlineProvider
+            detailAuthor.setOnLongClickListener { v ->
+                v.copyText()
+            }
         }
     }
 

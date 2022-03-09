@@ -55,7 +55,6 @@
         android:layout_height="wrap_content"
         android:selectAllOnFocus="true"
         android:text="description"
-        android:textIsSelectable="true"
         android:textSize="@dimen/common_text_size"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/time"

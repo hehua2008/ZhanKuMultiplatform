@@ -2,10 +2,12 @@ package com.hym.zhankukotlin.ui.main
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.hym.zhankukotlin.databinding.PreviewItemLayoutBinding
 import com.hym.zhankukotlin.model.Content
 import com.hym.zhankukotlin.ui.CircleViewOutlineProvider
+import com.hym.zhankukotlin.util.copyText
 
 /**
  * @author hehua2008
@@ -21,6 +23,12 @@ class PreviewItemLayout @JvmOverloads constructor(
         binding = PreviewItemLayoutBinding.bind(this).apply {
             avatar.clipToOutline = true
             avatar.outlineProvider = CircleViewOutlineProvider
+            View.OnLongClickListener { v ->
+                v.copyText()
+            }.let {
+                author.setOnLongClickListener(it)
+                description.setOnLongClickListener(it)
+            }
         }
     }
 
