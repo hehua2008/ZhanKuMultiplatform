@@ -23,20 +23,20 @@ object PictureUtils {
     private const val TAG = "PictureUtils"
 
     @JvmStatic
-    fun downloadAll(imgUrls: List<String>) {
-        downloadAll(*imgUrls.toTypedArray())
+    fun download(imgUrls: List<String>) {
+        download(*imgUrls.toTypedArray())
     }
 
     @JvmStatic
-    fun downloadAll(vararg imgUrls: String) {
+    fun download(vararg imgUrls: String) {
         if (imgUrls.isEmpty()) return
         GlobalScope.launch(Dispatchers.Main) {
             val context = MyApplication.INSTANCE
             val imgFiles = mutableListOf<File>()
+            val startMsg = "Start to download ${imgUrls.size} images"
+            Log.d(TAG, startMsg)
+            Toast.makeText(context, startMsg, Toast.LENGTH_SHORT).show()
             imgUrls.forEachIndexed { index, url ->
-                val startMsg = "start to download ${index + 1}/${imgUrls.size}: $url"
-                Log.d(TAG, startMsg)
-                Toast.makeText(context, startMsg, Toast.LENGTH_SHORT).show()
                 val futureTarget = GlideApp.with(context)
                     .download(url)
                     .submit()
@@ -146,7 +146,7 @@ object PictureUtils {
                     if (it != null) {
                         imgFiles.add(it)
                     } else {
-                        val failedMsg = "failed to download ${index + 1})/${imgUrls.size}: $url"
+                        val failedMsg = "Failed to download ${index + 1})/${imgUrls.size}: $url"
                         Log.w(TAG, failedMsg)
                         Toast.makeText(context, failedMsg, Toast.LENGTH_SHORT).show()
                     }

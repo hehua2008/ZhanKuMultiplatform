@@ -106,7 +106,7 @@ class DetailHeaderAdapter(
                     )
                     return@setOnClickListener
                 }
-                PictureUtils.downloadAll(workDetails.product.productImages.map { it.oriUrl })
+                PictureUtils.download(workDetails.product.productImages.map { it.oriUrl })
             }
 
             GlideApp.with(root)
