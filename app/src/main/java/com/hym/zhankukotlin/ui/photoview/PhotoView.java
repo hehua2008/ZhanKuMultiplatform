@@ -813,6 +813,8 @@ public class PhotoView extends View implements OnGestureListener, OnDoubleTapLis
             } else {
                 mTempDst.set(0, 0, vwidth, vheight);
             }
+            final float fillViewScale = getFillViewScale(vwidth, vheight, dwidth, dheight);
+            mMaxInitialScaleFactor = Math.max(mMaxInitialScaleFactor, fillViewScale);
             RectF scaledDestination = new RectF(
                     (vwidth / 2) - (dwidth * mMaxInitialScaleFactor / 2),
                     (vheight / 2) - (dheight * mMaxInitialScaleFactor / 2),
@@ -827,6 +829,12 @@ public class PhotoView extends View implements OnGestureListener, OnDoubleTapLis
         mOriginalMatrix.set(mMatrix);
     }
 
+    private float getFillViewScale(int vwidth, int vheight, int dwidth, int dheight) {
+        final float widthScale = (float) vwidth / (float) dwidth;
+        final float heightScale = (float) vheight / (float) dheight;
+        return Math.min(widthScale, heightScale);
+    }
+
     private void generateScale() {
         final int dwidth = mDrawable.getIntrinsicWidth();
         final int dheight = mDrawable.getIntrinsicHeight();
@@ -835,7 +843,8 @@ public class PhotoView extends View implements OnGestureListener, OnDoubleTapLis
         final int vheight = mAllowCrop ? getCropSize() : getHeight();
 
         if (dwidth < vwidth && dheight < vheight && !mAllowCrop) {
-            mMinScale = 1.0f;
+            //mMinScale = 1.0f;
+            mMinScale = getFillViewScale(vwidth, vheight, dwidth, dheight);
         } else {
             mMinScale = getScale();
         }
