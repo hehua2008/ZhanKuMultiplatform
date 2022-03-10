@@ -45,9 +45,14 @@ data class ProductImage(
     val url: String,
     val width: Int
 ) {
-    val oriUrl: String get() = url.replace(regex, "@${width}w")
+    val oriUrl: String
+        get() = regex.find(url)?.let {
+            val curWidth = it.groupValues[1].toInt()
+            if (curWidth >= width) url
+            else url.replace(regex, "@${width}w")
+        } ?: url
 
     companion object {
-        val regex = Regex("@\\d+w")
+        val regex = Regex("@(\\d+)w")
     }
 }
