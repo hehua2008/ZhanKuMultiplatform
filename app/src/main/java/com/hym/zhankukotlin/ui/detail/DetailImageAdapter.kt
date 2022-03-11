@@ -1,6 +1,5 @@
 package com.hym.zhankukotlin.ui.detail
 
-import android.content.Intent
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
@@ -15,7 +14,6 @@ import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.model.PhotoInfo
 import com.hym.zhankukotlin.model.ProductImage
 import com.hym.zhankukotlin.ui.ImageViewHeightListener
-import com.hym.zhankukotlin.ui.photoview.PhotoViewActivity
 import com.hym.zhankukotlin.util.getActivity
 
 class DetailImageAdapter : ListAdapter<ProductImage, DetailImageAdapter.ViewHolder>(ITEM_CALLBACK) {
@@ -74,8 +72,9 @@ class DetailImageAdapter : ListAdapter<ProductImage, DetailImageAdapter.ViewHold
                 dimensionRatio = "${img.width}:${img.height}"
             }
             setOnClickListener { v ->
-                val activity = v.getActivity() ?: return@setOnClickListener
-                val photoInfos = currentList.mapTo(ArrayList()) {
+                val activity = v.getActivity()
+                if (activity !is DetailActivity) return@setOnClickListener
+                val photoInfos = currentList.map {
                     PhotoInfo(
                         url = it.oriUrl,
                         thumbUrl = it.url,
@@ -83,12 +82,7 @@ class DetailImageAdapter : ListAdapter<ProductImage, DetailImageAdapter.ViewHold
                         height = it.height
                     )
                 }
-                val intent = Intent(activity, PhotoViewActivity::class.java).apply {
-                    putParcelableArrayListExtra(PhotoViewActivity.PHOTO_INFOS, photoInfos)
-                    putExtra(PhotoViewActivity.CURRENT_POSITION, position)
-                }
-                activity.startActivity(intent)
-                activity.overridePendingTransition(0, android.R.anim.fade_out)
+                activity.launchPhotoViewActivity(photoInfos, position)
             }
         }
         mRequestManager?.run {

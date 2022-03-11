@@ -1,5 +1,6 @@
 package com.hym.zhankukotlin.ui.photoview
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.ContextMenu
 import android.view.MenuItem
@@ -70,6 +71,7 @@ class PhotoViewActivity : AppCompatActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun finish() {
+        setResult(RESULT_OK, Intent().putExtra(CURRENT_POSITION, getCurrentPosition()))
         super.finish()
         overridePendingTransition(0, android.R.anim.fade_out)
     }

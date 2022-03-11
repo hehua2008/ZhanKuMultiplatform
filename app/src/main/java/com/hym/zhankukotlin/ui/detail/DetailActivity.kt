@@ -1,10 +1,15 @@
 package com.hym.zhankukotlin.ui.detail
 
+import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ConcatAdapter
@@ -13,7 +18,9 @@ import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityDetailBinding
 import com.hym.zhankukotlin.model.Content
+import com.hym.zhankukotlin.model.PhotoInfo
 import com.hym.zhankukotlin.ui.ThemeColorRetriever.setThemeColor
+import com.hym.zhankukotlin.ui.photoview.PhotoViewActivity
 import com.hym.zhankukotlin.util.MMCQ
 import com.hym.zhankukotlin.util.createOverrideContext
 import com.hym.zhankukotlin.util.isNightMode
@@ -26,6 +33,9 @@ class DetailActivity : AppCompatActivity() {
         const val KEY_COLOR = "COLOR"
     }
 
+    private lateinit var binding: ActivityDetailBinding
+    private lateinit var photoViewActivityLauncher: ActivityResultLauncher<Pair<List<PhotoInfo>, Int>>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -33,7 +43,7 @@ class DetailActivity : AppCompatActivity() {
         val mContentType = intent.getIntExtra(KEY_CONTENT_TYPE, Content.CONTENT_TYPE_WORK)
         val mContentId = intent.getStringExtra(KEY_CONTENT_ID)!!
 
-        val binding = ActivityDetailBinding.inflate(layoutInflater)
+        binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val themeColor = intent.getParcelableExtra(KEY_COLOR) as? MMCQ.ThemeColor
         setThemeColor(themeColor)
@@ -90,5 +100,39 @@ class DetailActivity : AppCompatActivity() {
         }
 
         mDetailViewModel.setDetailTypeAndId(mContentType, mContentId)
+
+        initPhotoViewActivityLauncher()
+    }
+
+    private fun initPhotoViewActivityLauncher() {
+        val contract = object : ActivityResultContract<Pair<List<PhotoInfo>, Int>, Int?>() {
+            override fun createIntent(
+                context: Context,
+                input: Pair<List<PhotoInfo>, Int>
+            ): Intent {
+                return Intent(context, PhotoViewActivity::class.java)
+                    .putParcelableArrayListExtra(
+                        PhotoViewActivity.PHOTO_INFOS,
+                        ArrayList(input.first)
+                    )
+                    .putExtra(PhotoViewActivity.CURRENT_POSITION, input.second)
+            }
+
+            override fun parseResult(resultCode: Int, intent: Intent?): Int? {
+                return intent?.getIntExtra(PhotoViewActivity.CURRENT_POSITION, 0)
+            }
+        }
+
+        photoViewActivityLauncher = registerForActivityResult(contract) {
+            it ?: return@registerForActivityResult
+            binding.detailRecycler.scrollToPosition(it + 1)
+        }
+    }
+
+    fun launchPhotoViewActivity(photoInfos: List<PhotoInfo>, position: Int) {
+        photoViewActivityLauncher.launch(
+            photoInfos to position,
+            ActivityOptionsCompat.makeCustomAnimation(this, 0, android.R.anim.fade_out)
+        )
     }
 }
