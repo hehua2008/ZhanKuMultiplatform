@@ -18,8 +18,8 @@ class DetailViewModel : ViewModel() {
         private const val TAG = "DetailViewModel"
     }
 
-    private val _workDetails = MutableLiveData<WorkDetails>()
-    val workDetails: LiveData<WorkDetails> = _workDetails
+    private val _workDetails = MutableLiveData<WorkDetails?>()
+    val workDetails: LiveData<WorkDetails?> = _workDetails
 
     val playerProvider = PlayerProvider()
 
@@ -31,16 +31,18 @@ class DetailViewModel : ViewModel() {
                         MyApplication.networkService.getWorkDetails(id).run {
                             dataContent.also {
                                 if (it == null) Log.e(TAG, "getWorkDetails $id failed: $msg")
-                                else _workDetails.postValue(it)
+                                _workDetails.postValue(it)
                             }
                         }
                     }
                     Content.CONTENT_TYPE_ARTICLE -> {
                         // TODO: 2021/12/29
+                        _workDetails.postValue(null)
                     }
                 }
             } catch (t: Throwable) {
                 Log.e(TAG, "setDetailTypeAndId $type $id failed", t)
+                _workDetails.postValue(null)
             }
         }
     }

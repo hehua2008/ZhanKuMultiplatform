@@ -33,15 +33,20 @@ class DetailActivity : AppCompatActivity() {
         const val KEY_COLOR = "COLOR"
     }
 
+    private lateinit var mTitle: String
+    private lateinit var mContentId: String
+    private var mContentType = Content.CONTENT_TYPE_WORK
+
     private lateinit var binding: ActivityDetailBinding
+    private lateinit var detailViewModel: DetailViewModel
     private lateinit var photoViewActivityLauncher: ActivityResultLauncher<Pair<List<PhotoInfo>, Int>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val mTitle = intent.getStringExtra(KEY_TITLE)!!
-        val mContentType = intent.getIntExtra(KEY_CONTENT_TYPE, Content.CONTENT_TYPE_WORK)
-        val mContentId = intent.getStringExtra(KEY_CONTENT_ID)!!
+        mTitle = intent.getStringExtra(KEY_TITLE)!!
+        mContentId = intent.getStringExtra(KEY_CONTENT_ID)!!
+        mContentType = intent.getIntExtra(KEY_CONTENT_TYPE, Content.CONTENT_TYPE_WORK)
 
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -66,6 +71,7 @@ class DetailActivity : AppCompatActivity() {
             }
             setNavigationOnClickListener { finish() }
         }
+        binding.swipeRefresh.setOnRefreshListener { loadData() }
         binding.detailRecycler.addItemDecoration(object : ItemDecoration() {
             private val mOffset = resources.getDimensionPixelSize(R.dimen.common_vertical_margin)
             private val mBottomOffset =
@@ -83,25 +89,30 @@ class DetailActivity : AppCompatActivity() {
             }
         })
 
-        val mDetailViewModel = ViewModelProvider(this)[DetailViewModel::class.java]
+        detailViewModel = ViewModelProvider(this)[DetailViewModel::class.java]
 
         val detailHeaderAdapter =
             DetailHeaderAdapter(binding.detailRecycler, mTitle, mContentType, mContentId)
-        val detailVideoAdapter = DetailVideoAdapter(mDetailViewModel.playerProvider)
+        val detailVideoAdapter = DetailVideoAdapter(detailViewModel.playerProvider)
         val detailImageAdapter = DetailImageAdapter()
         binding.detailRecycler.adapter =
             ConcatAdapter(detailHeaderAdapter, detailVideoAdapter, detailImageAdapter)
 
-        mDetailViewModel.workDetails.observe(this) { workDetails ->
+        detailViewModel.workDetails.observe(this) { workDetails ->
+            binding.swipeRefresh.isRefreshing = false
             workDetails ?: return@observe
             detailHeaderAdapter.setWorkDetails(workDetails)
             detailVideoAdapter.submitList(workDetails.product.productVideos)
             detailImageAdapter.submitList(workDetails.product.productImages)
         }
 
-        mDetailViewModel.setDetailTypeAndId(mContentType, mContentId)
-
         initPhotoViewActivityLauncher()
+
+        loadData()
+    }
+
+    private fun loadData() {
+        detailViewModel.setDetailTypeAndId(mContentType, mContentId)
     }
 
     private fun initPhotoViewActivityLauncher() {

@@ -13,15 +13,20 @@
         tools:subtitle="SUBTITLE"
         tools:title="TITLE" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/detail_recycler"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:nestedScrollingEnabled="true"
-        android:overScrollMode="always"
-        android:scrollbars="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+        android:layout_weight="1">
 
-    </androidx.recyclerview.widget.RecyclerView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/detail_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:nestedScrollingEnabled="true"
+            android:overScrollMode="always"
+            android:scrollbars="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 </androidx.appcompat.widget.LinearLayoutCompat>
