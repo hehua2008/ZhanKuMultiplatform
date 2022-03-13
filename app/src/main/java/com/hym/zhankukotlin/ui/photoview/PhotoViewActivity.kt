@@ -1,6 +1,7 @@
 package com.hym.zhankukotlin.ui.photoview
 
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.ContextMenu
 import android.view.MenuItem
@@ -20,6 +21,7 @@ class PhotoViewActivity : AppCompatActivity(), ViewPager.OnPageChangeListener,
     companion object {
         const val PHOTO_INFOS = "PHOTO_INFOS"
         const val CURRENT_POSITION = "CURRENT_POSITION"
+        const val SCREEN_LOCATION = "SCREEN_LOCATION"
 
         private const val TAG = "PhotoViewActivity"
     }
@@ -71,7 +73,16 @@ class PhotoViewActivity : AppCompatActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun finish() {
-        setResult(RESULT_OK, Intent().putExtra(CURRENT_POSITION, getCurrentPosition()))
+        val screenLocation = binding.photoViewPager.run {
+            IntArray(2).let {
+                getLocationOnScreen(it)
+                Rect(it[0], it[1], it[0] + width, it[1] + height)
+            }
+        }
+        val data = Intent()
+            .putExtra(CURRENT_POSITION, getCurrentPosition())
+            .putExtra(SCREEN_LOCATION, screenLocation)
+        setResult(RESULT_OK, data)
         super.finish()
         overridePendingTransition(0, android.R.anim.fade_out)
     }
