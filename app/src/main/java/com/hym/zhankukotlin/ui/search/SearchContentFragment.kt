@@ -20,10 +20,13 @@ import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
+import com.hym.zhankukotlin.MyAppViewModel
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.FragmentMainBinding
+import com.hym.zhankukotlin.getAppViewModel
 import com.hym.zhankukotlin.model.*
 import com.hym.zhankukotlin.ui.HeaderFooterLoadStateAdapter
+import com.hym.zhankukotlin.ui.main.MainViewModel
 import com.hym.zhankukotlin.ui.main.PagingPreviewItemAdapter
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -45,7 +48,7 @@ class SearchContentFragment : Fragment(), Observer<LifecycleOwner> {
         }
     }
 
-    private val mSearchViewModel: SearchViewModel by activityViewModels()
+    private val mMainViewModel: MainViewModel by activityViewModels()
     private val mPageViewModel: SearchContentPageViewModel by viewModels(factoryProducer = { mVMFactory })
     private var mBinding: FragmentMainBinding? = null
     private val binding get() = checkNotNull(mBinding)
@@ -236,7 +239,16 @@ class SearchContentFragment : Fragment(), Observer<LifecycleOwner> {
 
     override fun onChanged(viewLifecycleOwner: LifecycleOwner) {
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            mSearchViewModel.word.observe(viewLifecycleOwner) {
+            getAppViewModel<MyAppViewModel>().categoryItems.observe(viewLifecycleOwner) { topCates ->
+                val titleUrlMap: MutableMap<String, TopCate?> = LinkedHashMap(1 + topCates.size)
+                titleUrlMap["全部"] = null
+                topCates.forEach {
+                    titleUrlMap[it.name] = it
+                }
+                mCategoryItemAdapter.setNameValueMap(titleUrlMap)
+            }
+
+            mMainViewModel.word.observe(viewLifecycleOwner) {
                 mPageViewModel.setWord(it)
             }
             mPageViewModel.page.observe(viewLifecycleOwner) {

@@ -1,6 +1,5 @@
 package com.hym.zhankukotlin.ui.main
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -8,7 +7,6 @@ import com.hym.zhankukotlin.MyAppViewModel
 import com.hym.zhankukotlin.databinding.ActivityMainBinding
 import com.hym.zhankukotlin.getAppViewModel
 import com.hym.zhankukotlin.model.TopCate
-import com.hym.zhankukotlin.ui.search.SearchActivity
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -28,10 +26,6 @@ class MainActivity : AppCompatActivity() {
 
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.searchButton.setOnClickListener {
-            val intent = Intent(this, SearchActivity::class.java)
-            startActivity(intent)
-        }
         val sectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
         binding.viewPager.adapter = sectionsPagerAdapter
         binding.tabs.setupWithViewPager(binding.viewPager)
@@ -39,8 +33,9 @@ class MainActivity : AppCompatActivity() {
         getAppViewModel<MyAppViewModel>().categoryItems.observe(this) { categoryItems ->
             mTopCates.clear()
             mTopCates.addAll(categoryItems)
-            binding.viewPager.offscreenPageLimit = mTopCates.size
+            binding.viewPager.offscreenPageLimit = 1 + mTopCates.size
             sectionsPagerAdapter.setCategoryItems(mTopCates)
+            binding.viewPager.currentItem = if (mTopCates.isEmpty()) 0 else 1
         }
     }
 }

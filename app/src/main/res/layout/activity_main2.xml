@@ -11,30 +11,16 @@
         android:layout_height="wrap_content"
         android:theme="@style/Theme.ZhanKuKotlin.AppBarOverlay">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:background="?attr/colorSurface"
-            android:orientation="horizontal">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/search_button"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:paddingHorizontal="10dp"
-                app:srcCompat="@drawable/ic_keyword_search" />
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tabs"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                app:tabGravity="center"
-                app:tabIndicatorColor="?attr/colorPrimary"
-                app:tabMode="scrollable"
-                app:tabSelectedTextColor="?attr/colorPrimary"
-                app:tabTextColor="?attr/colorOnSurface" />
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
+            app:tabGravity="center"
+            app:tabIndicatorColor="?attr/colorPrimary"
+            app:tabMode="scrollable"
+            app:tabSelectedTextColor="?attr/colorPrimary"
+            app:tabTextColor="?attr/colorOnSurface" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager2.widget.ViewPager2

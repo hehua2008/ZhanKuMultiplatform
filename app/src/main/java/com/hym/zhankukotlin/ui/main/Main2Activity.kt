@@ -1,21 +1,21 @@
 package com.hym.zhankukotlin.ui.main
 
-import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.Gravity
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.tabs.TabLayoutMediator.TabConfigurationStrategy
 import com.hym.zhankukotlin.MyAppViewModel
+import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityMain2Binding
 import com.hym.zhankukotlin.getAppViewModel
 import com.hym.zhankukotlin.model.TopCate
-import com.hym.zhankukotlin.ui.search.SearchActivity
 import com.hym.zhankukotlin.util.createTextColorStateListByColorAttr
 
 class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
@@ -41,10 +41,6 @@ class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
             colorFilter = ColorMatrixColorFilter(ColorMatrix().apply { setSaturation(0F) })
         })
         */
-        binding.searchButton.setOnClickListener {
-            val intent = Intent(this, SearchActivity::class.java)
-            startActivity(intent)
-        }
         val sectionsPagerAdapter = SectionsPager2Adapter(this)
         binding.viewPager.adapter = sectionsPagerAdapter
         binding.viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
@@ -69,17 +65,24 @@ class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
         getAppViewModel<MyAppViewModel>().categoryItems.observe(this) { categoryItems ->
             mTopCates.clear()
             mTopCates.addAll(categoryItems)
-            binding.viewPager.offscreenPageLimit = mTopCates.size
+            binding.viewPager.offscreenPageLimit = 1 + mTopCates.size
             sectionsPagerAdapter.setCategoryItems(mTopCates)
+            binding.viewPager.currentItem = if (mTopCates.isEmpty()) 0 else 1
             tabLayoutMediator.detach()
             tabLayoutMediator.attach()
         }
     }
 
     override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
+        if (position == 0) {
+            val tabView = AppCompatImageView(this)
+            tabView.setImageResource(R.drawable.ic_keyword_search)
+            tab.customView = tabView
+            return
+        }
         if (mTopCates.isEmpty()) return
         val tabView = AppCompatTextView(this)
-        tabView.text = mTopCates[position].name
+        tabView.text = mTopCates[position - 1].name
         tabView.textSize = 16f
         tabView.gravity = Gravity.CENTER_HORIZONTAL
         tabView.setTextColor(createTextColorStateListByColorAttr())

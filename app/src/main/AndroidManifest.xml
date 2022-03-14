@@ -57,10 +57,5 @@
             android:theme="@style/Theme.ZhanKuKotlin.Fullscreen">
         </activity>
 
-        <activity
-            android:name=".ui.search.SearchActivity"
-            android:exported="true">
-        </activity>
-
     </application>
 </manifest>
