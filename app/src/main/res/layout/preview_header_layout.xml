@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.hym.zhankukotlin.ui.main.PreviewHeaderLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/preview_header"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -55,7 +56,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@id/paged"
+        app:layout_constraintBottom_toTopOf="@id/second_order_group"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cat_recrcler">
@@ -88,6 +89,49 @@
             android:layout_height="wrap_content"
             android:minHeight="@dimen/button_min_height"
             android:text="最新发布" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/second_order_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/paged"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/order_group"
+        tools:visibility="visible">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/second_order_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:minHeight="@dimen/button_min_height"
+            android:text="最佳匹配" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/second_order_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/button_min_height"
+            android:text="时间最新" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/second_order_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/button_min_height"
+            android:text="推荐最多" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/second_order_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/button_min_height"
+            android:text="评论最多" />
     </RadioGroup>
 
     <include

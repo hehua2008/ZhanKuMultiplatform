@@ -16,4 +16,5 @@
     <string name="swipe_to_retry">Swipe down to retry loading</string>
     <string name="save_current_photo">Save this photo</string>
     <string name="save_all_photos">Save all photos</string>
+    <string name="input_keyword">Input keyword</string>
 </resources>

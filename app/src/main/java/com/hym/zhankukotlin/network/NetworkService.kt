@@ -54,6 +54,31 @@ interface NetworkService {
         @Query("app") app: String = "android"
     ): WorkDetailsResponse
 
+    //https://api.zcool.com.cn/v2/api/search/contentList?app=android&p=1&ps=10&type=3&word=
+    //https://api.zcool.com.cn/v2/api/search/contentList?app=android&p=1&ps=10&type=8&word=
+    //https://api.zcool.com.cn/v2/api/search/contentList?app=android&p=1&ps=10&field=0&recommendLevel=0&sort=5&type=3&word=
+    //https://api.zcool.com.cn/v2/api/search/contentList?app=android&p=1&ps=10&field=0&recommendLevel=0&sort=5&type=8&word=
+    @GET("${Constants.API_URL}search/contentList")
+    suspend fun getSearchContent(
+        @Query("app") app: String = "android",
+        @Query("p") page: Int = 1,
+        @Query("ps") pageSize: Int = 10,
+        @Query("field") topCate: Int? = null,
+        @Query("recommendLevel") recommendLevel: RecommendLevel = RecommendLevel.ALL_LEVEL,
+        @Query("sort") sort: SortOrder = SortOrder.BEST_MATCH,
+        @Query("type") type: ContentType = ContentType.WORK,
+        @Query("word") word: String
+    ): SearchContentResponse
+
+    //https://api.zcool.com.cn/v2/api/search/designer/v3?app=android&p=1&ps=10&word=
+    @GET("${Constants.API_URL}search/designer/v3")
+    suspend fun getSearchDesigner(
+        @Query("app") app: String = "android",
+        @Query("p") page: Int = 1,
+        @Query("ps") pageSize: Int = 10,
+        @Query("word") word: String
+    ): SearchDesignerResponse
+
     companion object {
         @JvmStatic
         fun main(vararg args: String) {
@@ -112,6 +137,14 @@ interface NetworkService {
                     println(product.productImages)
                     println(product.productTags)
                     println(product.productVideos)
+                }
+                val searchContentResultResponse = networkService.getSearchContent(word = "春天和花")
+                searchContentResultResponse.dataContent?.run {
+                    println(content.firstOrNull()?.content)
+                }
+                val searchDesignerResponse = networkService.getSearchDesigner(word = "ARTLee小杰")
+                searchDesignerResponse.dataContent?.run {
+                    println(content.firstOrNull())
                 }
             }
         }

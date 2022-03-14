@@ -50,4 +50,6 @@ data class CreatorObj(
     val recommend: Int = 0
     val recommendTime: Long = 0L
     val signature: String = ""
+
+    val contentCards: List<Content> = emptyList()
 }

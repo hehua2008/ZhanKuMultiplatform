@@ -1,5 +1,6 @@
 package com.hym.zhankukotlin.ui.main
 
+import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.Gravity
@@ -14,6 +15,7 @@ import com.hym.zhankukotlin.MyAppViewModel
 import com.hym.zhankukotlin.databinding.ActivityMain2Binding
 import com.hym.zhankukotlin.getAppViewModel
 import com.hym.zhankukotlin.model.TopCate
+import com.hym.zhankukotlin.ui.search.SearchActivity
 import com.hym.zhankukotlin.util.createTextColorStateListByColorAttr
 
 class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
@@ -39,6 +41,10 @@ class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
             colorFilter = ColorMatrixColorFilter(ColorMatrix().apply { setSaturation(0F) })
         })
         */
+        binding.searchButton.setOnClickListener {
+            val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
+        }
         val sectionsPagerAdapter = SectionsPager2Adapter(this)
         binding.viewPager.adapter = sectionsPagerAdapter
         binding.viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
