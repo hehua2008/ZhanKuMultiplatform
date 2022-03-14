@@ -16,7 +16,7 @@ import com.hym.zhankukotlin.GlideApp
 import com.hym.zhankukotlin.MyApplication
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.DetailHeaderLayoutBinding
-import com.hym.zhankukotlin.model.Content
+import com.hym.zhankukotlin.model.ContentType
 import com.hym.zhankukotlin.model.WorkDetails
 import com.hym.zhankukotlin.ui.BindingViewHolder
 import com.hym.zhankukotlin.util.PermissionUtils
@@ -37,8 +37,8 @@ class DetailHeaderAdapter(
         detailTitle.text = mTitle
         detailLink.text = StringBuilder("https://www.zcool.com.cn/").apply {
             when (mContentType) {
-                Content.CONTENT_TYPE_ARTICLE -> append("article/")
-                Content.CONTENT_TYPE_WORK -> append("work/")
+                ContentType.ARTICLE.value -> append("article/")
+                ContentType.WORK.value -> append("work/")
             }
             append(mContentId)
         }

@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityDetailBinding
-import com.hym.zhankukotlin.model.Content
+import com.hym.zhankukotlin.model.ContentType
 import com.hym.zhankukotlin.model.PhotoInfo
 import com.hym.zhankukotlin.ui.ThemeColorRetriever.setThemeColor
 import com.hym.zhankukotlin.ui.photoview.PhotoViewActivity
@@ -36,7 +36,7 @@ class DetailActivity : AppCompatActivity() {
 
     private lateinit var mTitle: String
     private lateinit var mContentId: String
-    private var mContentType = Content.CONTENT_TYPE_WORK
+    private var mContentType = ContentType.WORK.value
 
     private lateinit var binding: ActivityDetailBinding
     private lateinit var detailViewModel: DetailViewModel
@@ -49,7 +49,7 @@ class DetailActivity : AppCompatActivity() {
 
         mTitle = intent.getStringExtra(KEY_TITLE)!!
         mContentId = intent.getStringExtra(KEY_CONTENT_ID)!!
-        mContentType = intent.getIntExtra(KEY_CONTENT_TYPE, Content.CONTENT_TYPE_WORK)
+        mContentType = intent.getIntExtra(KEY_CONTENT_TYPE, mContentType)
 
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)

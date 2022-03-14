@@ -86,11 +86,6 @@ data class Content(
     val viewCount: Int,
     val viewCountStr: String
 ) {
-    companion object {
-        const val CONTENT_TYPE_WORK = 3
-        const val CONTENT_TYPE_ARTICLE = 8
-    }
-
     val contentId: String get() = pageUrl.split('/').last()
 
     val formatTitle get() = HtmlCompat.fromHtml(title, HtmlCompat.FROM_HTML_MODE_COMPACT).toString()

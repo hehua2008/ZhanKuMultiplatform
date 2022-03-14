@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hym.zhankukotlin.MyApplication
-import com.hym.zhankukotlin.model.Content
+import com.hym.zhankukotlin.model.ContentType
 import com.hym.zhankukotlin.model.WorkDetails
 import com.hym.zhankukotlin.player.PlayerProvider
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +27,7 @@ class DetailViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 when (type) {
-                    Content.CONTENT_TYPE_WORK -> {
+                    ContentType.WORK.value -> {
                         MyApplication.networkService.getWorkDetails(id).run {
                             dataContent.also {
                                 if (it == null) Log.e(TAG, "getWorkDetails $id failed: $msg")
@@ -35,7 +35,7 @@ class DetailViewModel : ViewModel() {
                             }
                         }
                     }
-                    Content.CONTENT_TYPE_ARTICLE -> {
+                    ContentType.ARTICLE.value -> {
                         // TODO: 2021/12/29
                         _workDetails.postValue(null)
                     }
