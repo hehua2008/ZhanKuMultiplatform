@@ -996,6 +996,8 @@ public class PhotoView extends View implements OnGestureListener, OnDoubleTapLis
             }
         }
 
+        if (translateX == 0.0f && translateY == 0.0f) return TRANSLATE_NONE;
+
         // Do the translation
         mMatrix.postTranslate(translateX, translateY);
         invalidate();
@@ -1061,7 +1063,7 @@ public class PhotoView extends View implements OnGestureListener, OnDoubleTapLis
 
         if (Math.abs(translateX) > SNAP_THRESHOLD || Math.abs(translateY) > SNAP_THRESHOLD) {
             mSnapRunnable.start(translateX, translateY);
-        } else {
+        } else if (translateX != 0.0f || translateY != 0.0f) {
             mMatrix.postTranslate(translateX, translateY);
             invalidate();
         }
