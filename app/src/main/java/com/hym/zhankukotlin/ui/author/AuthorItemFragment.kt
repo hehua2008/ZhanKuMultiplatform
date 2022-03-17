@@ -19,13 +19,14 @@ import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.FragmentMainBinding
 import com.hym.zhankukotlin.model.*
 import com.hym.zhankukotlin.ui.HeaderFooterLoadStateAdapter
+import com.hym.zhankukotlin.ui.TabReselectedCallback
 import com.hym.zhankukotlin.ui.main.PagingPreviewItemAdapter
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
 
-class AuthorItemFragment : Fragment(), Observer<LifecycleOwner> {
+class AuthorItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCallback {
     companion object {
         private const val TAG = "AuthorItemFragment"
         const val AUTHOR = "AUTHOR"
@@ -166,10 +167,23 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner> {
         }
         binding.fab.hide()
         binding.fab.setOnClickListener {
-            binding.previewRecycler.scrollToPosition(0)
+            scrollToTop()
         }
 
         return binding.root
+    }
+
+    override fun onTabReselected() {
+        scrollToTop()
+    }
+
+    private fun scrollToTop() {
+        binding.previewRecycler.run {
+            scrollToPosition(0)
+            post {
+                nestedScrollBy(0, -binding.previewHeader.root.height)
+            }
+        }
     }
 
     private fun updateCategoryLink() {

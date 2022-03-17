@@ -11,10 +11,13 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.hym.zhankukotlin.databinding.FragmentSearchBinding
+import com.hym.zhankukotlin.ui.TabReselectedCallback
 import com.hym.zhankukotlin.ui.main.MainViewModel
 
-class SearchFragment : Fragment() {
+class SearchFragment : Fragment(), OnTabSelectedListener, TabReselectedCallback {
     companion object {
         private const val TAG = "SearchFragment"
     }
@@ -37,6 +40,7 @@ class SearchFragment : Fragment() {
         mBinding = FragmentSearchBinding.inflate(inflater, container, false).apply {
             viewPager.adapter = searchPagerAdapter
             tabs.setupWithViewPager(viewPager)
+            tabs.addOnTabSelectedListener(this@SearchFragment)
             searchLayout.run {
                 keywordEdit.doAfterTextChanged {
                     val word = (it?.trim() ?: "").toString()
@@ -63,7 +67,26 @@ class SearchFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding.viewPager.adapter = null
+        binding.tabs.removeOnTabSelectedListener(this)
         mBinding = null
+    }
+
+    override fun onTabSelected(tab: TabLayout.Tab) {
+    }
+
+    override fun onTabUnselected(tab: TabLayout.Tab) {
+    }
+
+    override fun onTabReselected(tab: TabLayout.Tab) {
+        onTabReselected()
+    }
+
+    override fun onTabReselected() {
+        searchPagerAdapter.currentFragment?.let {
+            if (it is TabReselectedCallback) {
+                it.onTabReselected()
+            }
+        }
     }
 
     private fun clearEditFocusAndHideSoftInput() {

@@ -3,16 +3,21 @@ package com.hym.zhankukotlin.ui.main
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.hym.zhankukotlin.MyAppViewModel
 import com.hym.zhankukotlin.databinding.ActivityMainBinding
 import com.hym.zhankukotlin.getAppViewModel
 import com.hym.zhankukotlin.model.TopCate
+import com.hym.zhankukotlin.ui.TabReselectedCallback
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnTabSelectedListener {
     companion object {
         private const val TAG = "MainActivity"
     }
 
+    private lateinit var binding: ActivityMainBinding
+    private val sectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
     private val mTopCates: MutableList<TopCate> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,11 +29,11 @@ class MainActivity : AppCompatActivity() {
         })
         super.onCreate(savedInstanceState)
 
-        val binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val sectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
         binding.viewPager.adapter = sectionsPagerAdapter
         binding.tabs.setupWithViewPager(binding.viewPager)
+        binding.tabs.addOnTabSelectedListener(this)
 
         getAppViewModel<MyAppViewModel>().categoryItems.observe(this) { categoryItems ->
             mTopCates.clear()
@@ -36,6 +41,20 @@ class MainActivity : AppCompatActivity() {
             binding.viewPager.offscreenPageLimit = 1 + mTopCates.size
             sectionsPagerAdapter.setCategoryItems(mTopCates)
             binding.viewPager.currentItem = if (mTopCates.isEmpty()) 0 else 1
+        }
+    }
+
+    override fun onTabSelected(tab: TabLayout.Tab) {
+    }
+
+    override fun onTabUnselected(tab: TabLayout.Tab) {
+    }
+
+    override fun onTabReselected(tab: TabLayout.Tab) {
+        sectionsPagerAdapter.currentFragment?.let {
+            if (it is TabReselectedCallback) {
+                it.onTabReselected()
+            }
         }
     }
 }

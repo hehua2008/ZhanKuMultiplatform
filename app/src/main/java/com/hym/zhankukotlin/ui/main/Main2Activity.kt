@@ -9,6 +9,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.tabs.TabLayoutMediator.TabConfigurationStrategy
 import com.hym.zhankukotlin.MyAppViewModel
@@ -16,13 +17,16 @@ import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityMain2Binding
 import com.hym.zhankukotlin.getAppViewModel
 import com.hym.zhankukotlin.model.TopCate
+import com.hym.zhankukotlin.ui.TabReselectedCallback
 import com.hym.zhankukotlin.util.createTextColorStateListByColorAttr
 
-class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
+class Main2Activity : AppCompatActivity(), TabConfigurationStrategy, OnTabSelectedListener {
     companion object {
         private const val TAG = "Main2Activity"
     }
 
+    private lateinit var binding: ActivityMain2Binding
+    private val sectionsPagerAdapter = SectionsPager2Adapter(this)
     private val mTopCates: MutableList<TopCate> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,14 +38,13 @@ class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
         })
         super.onCreate(savedInstanceState)
 
-        val binding = ActivityMain2Binding.inflate(layoutInflater)
+        binding = ActivityMain2Binding.inflate(layoutInflater)
         setContentView(binding.root)
         /*
         binding.root.setLayerType(View.LAYER_TYPE_HARDWARE, Paint().apply {
             colorFilter = ColorMatrixColorFilter(ColorMatrix().apply { setSaturation(0F) })
         })
         */
-        val sectionsPagerAdapter = SectionsPager2Adapter(this)
         binding.viewPager.adapter = sectionsPagerAdapter
         binding.viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -60,6 +63,7 @@ class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
                 }
             }
         })
+        binding.tabs.addOnTabSelectedListener(this)
 
         val tabLayoutMediator = TabLayoutMediator(binding.tabs, binding.viewPager, this)
         getAppViewModel<MyAppViewModel>().categoryItems.observe(this) { categoryItems ->
@@ -70,6 +74,19 @@ class Main2Activity : AppCompatActivity(), TabConfigurationStrategy {
             binding.viewPager.currentItem = if (mTopCates.isEmpty()) 0 else 1
             tabLayoutMediator.detach()
             tabLayoutMediator.attach()
+        }
+    }
+
+    override fun onTabSelected(tab: TabLayout.Tab) {
+    }
+
+    override fun onTabUnselected(tab: TabLayout.Tab) {
+    }
+
+    override fun onTabReselected(tab: TabLayout.Tab) {
+        val fragment = sectionsPagerAdapter.getFragmentAt(binding.viewPager.currentItem)
+        if (fragment is TabReselectedCallback) {
+            fragment.onTabReselected()
         }
     }
 

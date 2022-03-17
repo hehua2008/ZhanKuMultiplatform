@@ -27,12 +27,13 @@ import com.hym.zhankukotlin.model.RecommendLevel
 import com.hym.zhankukotlin.model.SubCate
 import com.hym.zhankukotlin.model.TopCate
 import com.hym.zhankukotlin.ui.HeaderFooterLoadStateAdapter
+import com.hym.zhankukotlin.ui.TabReselectedCallback
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
 
-class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
+class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCallback {
     companion object {
         private const val TAG = "PreviewItemFragment"
         const val TOP_CATE = "TOP_CATE"
@@ -209,10 +210,23 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner> {
 
         binding.fab.hide()
         binding.fab.setOnClickListener {
-            binding.previewRecycler.scrollToPosition(0)
+            scrollToTop()
         }
 
         return binding.root
+    }
+
+    override fun onTabReselected() {
+        scrollToTop()
+    }
+
+    private fun scrollToTop() {
+        binding.previewRecycler.run {
+            scrollToPosition(0)
+            post {
+                nestedScrollBy(0, -binding.previewHeader.root.height)
+            }
+        }
     }
 
     private fun updateBackgroundImage() {
