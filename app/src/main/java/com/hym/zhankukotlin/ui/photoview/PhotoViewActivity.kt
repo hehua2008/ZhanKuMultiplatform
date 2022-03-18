@@ -7,16 +7,16 @@ import android.view.ContextMenu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.*
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.viewpager.widget.ViewPager
+import com.hym.zhankukotlin.BaseActivity
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityPhotoViewBinding
 import com.hym.zhankukotlin.model.PhotoInfo
 import com.hym.zhankukotlin.util.PictureUtils
 
-class PhotoViewActivity : AppCompatActivity(), ViewPager.OnPageChangeListener,
+class PhotoViewActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     PhotoViewPager.OnInterceptTouchListener, PhotoViewCallback {
     companion object {
         const val PHOTO_INFOS = "PHOTO_INFOS"

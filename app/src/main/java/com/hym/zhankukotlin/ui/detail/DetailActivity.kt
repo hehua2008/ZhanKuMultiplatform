@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.ViewModelProvider
@@ -16,6 +15,7 @@ import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import com.hym.zhankukotlin.BaseActivity
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityDetailBinding
 import com.hym.zhankukotlin.model.ContentType
@@ -26,7 +26,7 @@ import com.hym.zhankukotlin.util.MMCQ
 import com.hym.zhankukotlin.util.createOverrideContext
 import com.hym.zhankukotlin.util.isNightMode
 
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : BaseActivity() {
     companion object {
         const val KEY_TITLE = "TITLE"
         const val KEY_CONTENT_TYPE = "CONTENT_TYPE"

@@ -2,16 +2,16 @@ package com.hym.zhankukotlin.ui.main
 
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
+import com.hym.zhankukotlin.BaseActivity
 import com.hym.zhankukotlin.MyAppViewModel
 import com.hym.zhankukotlin.databinding.ActivityMainBinding
 import com.hym.zhankukotlin.getAppViewModel
 import com.hym.zhankukotlin.model.TopCate
 import com.hym.zhankukotlin.ui.TabReselectedCallback
 
-class MainActivity : AppCompatActivity(), OnTabSelectedListener {
+class MainActivity : BaseActivity(), OnTabSelectedListener {
     companion object {
         private const val TAG = "MainActivity"
     }

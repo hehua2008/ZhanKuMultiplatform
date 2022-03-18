@@ -2,10 +2,10 @@ package com.hym.zhankukotlin.ui.tag
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commitNow
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.hym.zhankukotlin.BaseActivity
 import com.hym.zhankukotlin.GlideApp
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.TagActivityBinding
@@ -15,7 +15,7 @@ import com.hym.zhankukotlin.model.TopCate
 import com.hym.zhankukotlin.ui.author.AuthorItemFragment
 import com.hym.zhankukotlin.ui.main.PreviewItemFragment
 
-class TagActivity : AppCompatActivity() {
+class TagActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

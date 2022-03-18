@@ -4,7 +4,6 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.view.Gravity
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
@@ -12,6 +11,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.tabs.TabLayoutMediator.TabConfigurationStrategy
+import com.hym.zhankukotlin.BaseActivity
 import com.hym.zhankukotlin.MyAppViewModel
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityMain2Binding
@@ -20,7 +20,7 @@ import com.hym.zhankukotlin.model.TopCate
 import com.hym.zhankukotlin.ui.TabReselectedCallback
 import com.hym.zhankukotlin.util.createTextColorStateListByColorAttr
 
-class Main2Activity : AppCompatActivity(), TabConfigurationStrategy, OnTabSelectedListener {
+class Main2Activity : BaseActivity(), TabConfigurationStrategy, OnTabSelectedListener {
     companion object {
         private const val TAG = "Main2Activity"
     }

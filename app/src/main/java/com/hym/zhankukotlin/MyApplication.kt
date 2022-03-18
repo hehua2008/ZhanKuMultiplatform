@@ -34,6 +34,8 @@ class MyApplication : Application(), ViewModelStoreOwner, HasDefaultViewModelPro
         theme.applyStyle(R.style.Theme_ZhanKuKotlin, true)
         INSTANCE = this
 
+        registerActivityLifecycleCallbacks(MyActivityLifecycleCallbacks)
+
         /*
         mainLooper.setMessageLogging(object : Printer {
             private val TIME_OUT = 30

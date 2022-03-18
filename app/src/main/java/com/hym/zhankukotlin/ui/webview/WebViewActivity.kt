@@ -5,12 +5,12 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.webkit.*
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import com.hym.zhankukotlin.BaseActivity
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityWebViewBinding
 
-open class WebViewActivity : AppCompatActivity() {
+open class WebViewActivity : BaseActivity() {
     companion object {
         const val WEB_URL = "WEB_URL"
         const val WEB_TITLE = "WEB_TITLE"
