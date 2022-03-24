@@ -15,7 +15,7 @@ import com.hym.zhankukotlin.databinding.DetailHeaderLayoutBinding
 import com.hym.zhankukotlin.model.ContentType
 import com.hym.zhankukotlin.model.WorkDetails
 import com.hym.zhankukotlin.ui.BindingViewHolder
-import com.hym.zhankukotlin.util.PictureUtils
+import com.hym.zhankukotlin.work.DownloadWorker
 
 class DetailHeaderAdapter(
     recyclerView: RecyclerView,
@@ -81,8 +81,10 @@ class DetailHeaderAdapter(
                 listOf(fieldCateObj, subCateObj)
             })
 
-            downloadAll.setOnClickListener {
-                PictureUtils.download(workDetails.product.productImages.map { it.oriUrl })
+            downloadAll.setOnClickListener { v ->
+                DownloadWorker.enqueue(
+                    v.context,
+                    workDetails.product.productImages.map { it.oriUrl })
             }
 
             GlideApp.with(root)

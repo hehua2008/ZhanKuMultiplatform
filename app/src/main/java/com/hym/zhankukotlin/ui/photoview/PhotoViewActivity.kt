@@ -14,7 +14,7 @@ import com.hym.zhankukotlin.BaseActivity
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityPhotoViewBinding
 import com.hym.zhankukotlin.model.PhotoInfo
-import com.hym.zhankukotlin.util.PictureUtils
+import com.hym.zhankukotlin.work.DownloadWorker
 
 class PhotoViewActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     PhotoViewPager.OnInterceptTouchListener, PhotoViewCallback {
@@ -178,11 +178,11 @@ class PhotoViewActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     override fun onContextItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.save_current -> {
-                PictureUtils.download(pagerAdapter.photoInfos[getCurrentPosition()].url)
+                DownloadWorker.enqueue(this, pagerAdapter.photoInfos[getCurrentPosition()].url)
                 true
             }
             R.id.save_all -> {
-                PictureUtils.download(pagerAdapter.photoInfos.map { it.url })
+                DownloadWorker.enqueue(this, pagerAdapter.photoInfos.map { it.url })
                 true
             }
             else -> super.onContextItemSelected(item)

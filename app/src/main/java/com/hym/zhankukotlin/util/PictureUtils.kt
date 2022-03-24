@@ -9,10 +9,7 @@ import android.util.Log
 import android.widget.Toast
 import com.hym.zhankukotlin.GlideApp
 import com.hym.zhankukotlin.MyApplication
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -20,9 +17,11 @@ import java.io.OutputStream
 
 object PictureUtils {
     private const val TAG = "PictureUtils"
+    private const val DIR_NAME = "ZhanKu"
 
     @JvmStatic
     fun download(imgUrls: List<String>) {
+        if (imgUrls.isEmpty()) return
         download(*imgUrls.toTypedArray())
     }
 
@@ -30,11 +29,24 @@ object PictureUtils {
     fun download(vararg imgUrls: String) {
         if (imgUrls.isEmpty()) return
         GlobalScope.launch(Dispatchers.Main) {
+            downloadCoroutine(*imgUrls)
+        }
+    }
+
+    suspend fun downloadCoroutine(imgUrls: List<String>): List<String> {
+        if (imgUrls.isEmpty()) return emptyList()
+        return downloadCoroutine(*imgUrls.toTypedArray())
+    }
+
+    suspend fun downloadCoroutine(vararg imgUrls: String): List<String> {
+        if (imgUrls.isEmpty()) return emptyList()
+        return withContext(Dispatchers.Main) {
             val context = MyApplication.INSTANCE
             val imgFiles = mutableListOf<File>()
             val startMsg = "Start to download ${imgUrls.size} images"
             Log.d(TAG, startMsg)
             Toast.makeText(context, startMsg, Toast.LENGTH_SHORT).show()
+            val failedUrls = mutableListOf<String>()
             imgUrls.forEachIndexed { index, url ->
                 val futureTarget = GlideApp.with(context)
                     .download(url)
@@ -65,7 +77,7 @@ object PictureUtils {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         values.put(
                             MediaStore.Images.Media.RELATIVE_PATH,
-                            Environment.DIRECTORY_PICTURES
+                            Environment.DIRECTORY_PICTURES + File.separatorChar + DIR_NAME
                         )
                     }
                     val externalContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -105,6 +117,7 @@ object PictureUtils {
                     if (it != null) {
                         imgFiles.add(it)
                     } else {
+                        failedUrls.add(url)
                         val failedMsg = "Failed to download ${index + 1})/${imgUrls.size}: $url"
                         Log.w(TAG, failedMsg)
                         Toast.makeText(context, failedMsg, Toast.LENGTH_SHORT).show()
@@ -115,6 +128,7 @@ object PictureUtils {
             val completeMsg = "Saved ${imgFiles.size} images"
             Log.d(TAG, completeMsg)
             Toast.makeText(context, completeMsg, Toast.LENGTH_LONG).show()
+            failedUrls
         }
     }
 }
