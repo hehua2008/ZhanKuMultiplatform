@@ -1,5 +1,6 @@
 package com.hym.zhankukotlin.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
@@ -8,6 +9,10 @@ import android.os.Build
  * @author hehua2008
  * @date 2021/12/31
  */
+
+val Context.themeResId: Int
+    @SuppressLint("DiscouragedPrivateApi")
+    get() = Context::class.java.getDeclaredMethod("getThemeResId").invoke(this) as Int
 
 fun Configuration.isNightMode(): Boolean {
     return uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
