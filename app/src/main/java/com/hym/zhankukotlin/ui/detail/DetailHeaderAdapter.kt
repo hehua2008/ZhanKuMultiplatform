@@ -1,27 +1,21 @@
 package com.hym.zhankukotlin.ui.detail
 
-import android.Manifest
 import android.graphics.Rect
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.hym.zhankukotlin.GlideApp
-import com.hym.zhankukotlin.MyApplication
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.DetailHeaderLayoutBinding
 import com.hym.zhankukotlin.model.ContentType
 import com.hym.zhankukotlin.model.WorkDetails
 import com.hym.zhankukotlin.ui.BindingViewHolder
-import com.hym.zhankukotlin.util.PermissionUtils
 import com.hym.zhankukotlin.util.PictureUtils
-import com.hym.zhankukotlin.util.getActivity
 
 class DetailHeaderAdapter(
     recyclerView: RecyclerView,
@@ -88,24 +82,6 @@ class DetailHeaderAdapter(
             })
 
             downloadAll.setOnClickListener {
-                val activity = root.getActivity()
-                if (activity == null) {
-                    Toast.makeText(
-                        MyApplication.INSTANCE, R.string.download_failed, Toast.LENGTH_LONG
-                    ).show()
-                    return@setOnClickListener
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                    && !PermissionUtils.checkSelfPermission(
-                        activity, Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    )
-                ) {
-                    Toast.makeText(activity, R.string.permission_denied, Toast.LENGTH_LONG).show()
-                    PermissionUtils.requestPermissions(
-                        activity, Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    )
-                    return@setOnClickListener
-                }
                 PictureUtils.download(workDetails.product.productImages.map { it.oriUrl })
             }
 
