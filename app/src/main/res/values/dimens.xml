@@ -14,7 +14,4 @@
     <dimen name="button_min_height">14dp</dimen>
     <dimen name="common_text_size">15sp</dimen>
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="photo_crop_width">280dp</dimen>
-    <dimen name="photo_crop_stroke_width">1dp</dimen>
-    <dimen name="photo_page_margin">32dp</dimen>
 </resources>

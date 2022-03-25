@@ -7,12 +7,12 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.hym.photoviewer.UrlPhotoInfo
 import com.hym.zhankukotlin.GlideApp
 import com.hym.zhankukotlin.GlideAppExtension
 import com.hym.zhankukotlin.GlideRequests
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.model.ProductImage
-import com.hym.zhankukotlin.model.UrlPhotoInfo
 import com.hym.zhankukotlin.ui.ImageViewHeightListener
 import com.hym.zhankukotlin.util.getActivity
 

@@ -1,2 +1,4 @@
 include ':app'
 rootProject.name = "ZhanKuKotlin"
+include ':photoviewer'
+include ':photoviewerdemo'

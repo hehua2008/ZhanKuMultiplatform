@@ -15,13 +15,13 @@ import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import com.hym.photoviewer.PhotoViewActivity
+import com.hym.photoviewer.UrlPhotoInfo
 import com.hym.zhankukotlin.BaseActivity
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityDetailBinding
 import com.hym.zhankukotlin.model.ContentType
-import com.hym.zhankukotlin.model.UrlPhotoInfo
 import com.hym.zhankukotlin.ui.ThemeColorRetriever.setThemeColor
-import com.hym.zhankukotlin.ui.photoview.PhotoViewActivity
 import com.hym.zhankukotlin.util.MMCQ
 import com.hym.zhankukotlin.util.createOverrideContext
 import com.hym.zhankukotlin.util.isNightMode

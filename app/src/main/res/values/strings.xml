@@ -12,10 +12,6 @@
     <string name="download_failed">Download failed</string>
     <string name="permission_denied">Permission denied! Please try again after permission is granted</string>
     <string name="select_app_title">Select an app to open</string>
-    <string name="photo_view_count">%1$d of %2$d</string>
-    <string name="swipe_to_retry">Swipe down to retry loading</string>
-    <string name="save_current_photo">Save this photo</string>
-    <string name="save_all_photos">Save all photos</string>
     <string name="input_keyword">Input keyword</string>
     <string name="title_search">Search</string>
 </resources>

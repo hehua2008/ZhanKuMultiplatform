@@ -7,8 +7,12 @@ import android.os.AsyncTask
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import com.google.gson.GsonBuilder
+import com.hym.photoviewer.PhotoInfo
+import com.hym.photoviewer.PhotoSaver
+import com.hym.photoviewer.UrlPhotoInfo
 import com.hym.zhankukotlin.model.ZkTypeAdapterFactory
 import com.hym.zhankukotlin.network.*
+import com.hym.zhankukotlin.work.DownloadWorker
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
@@ -83,6 +87,14 @@ class MyApplication : Application(), ViewModelStoreOwner, HasDefaultViewModelPro
             .build()
         networkService = retrofit.create(NetworkService::class.java)
         transparentDrawable = ContextCompat.getDrawable(this, R.drawable.transparent)!!
+
+        PhotoSaver.setInstance(object : PhotoSaver {
+            override fun onSave(vararg photoInfos: PhotoInfo<*>) {
+                DownloadWorker.enqueue(
+                    this@MyApplication,
+                    photoInfos.filterIsInstance<UrlPhotoInfo>().map { it.original })
+            }
+        })
 
         val deferredList: MutableList<Deferred<*>> = mutableListOf()
         deferredList.add(getAppViewModel<MyAppViewModel>().getCategoryItemsFromNetworkAsync())
