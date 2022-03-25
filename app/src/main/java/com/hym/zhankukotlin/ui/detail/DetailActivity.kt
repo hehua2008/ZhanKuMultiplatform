@@ -19,7 +19,7 @@ import com.hym.zhankukotlin.BaseActivity
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityDetailBinding
 import com.hym.zhankukotlin.model.ContentType
-import com.hym.zhankukotlin.model.PhotoInfo
+import com.hym.zhankukotlin.model.UrlPhotoInfo
 import com.hym.zhankukotlin.ui.ThemeColorRetriever.setThemeColor
 import com.hym.zhankukotlin.ui.photoview.PhotoViewActivity
 import com.hym.zhankukotlin.util.MMCQ
@@ -42,7 +42,7 @@ class DetailActivity : BaseActivity() {
     private lateinit var detailViewModel: DetailViewModel
     private lateinit var detailVideoAdapter: DetailVideoAdapter
     private lateinit var detailImageAdapter: DetailImageAdapter
-    private lateinit var photoViewActivityLauncher: ActivityResultLauncher<Pair<List<PhotoInfo>, Int>>
+    private lateinit var photoViewActivityLauncher: ActivityResultLauncher<Pair<List<UrlPhotoInfo>, Int>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -125,10 +125,10 @@ class DetailActivity : BaseActivity() {
 
     private fun initPhotoViewActivityLauncher() {
         val contract =
-            object : ActivityResultContract<Pair<List<PhotoInfo>, Int>, Pair<Int, Rect?>?>() {
+            object : ActivityResultContract<Pair<List<UrlPhotoInfo>, Int>, Pair<Int, Rect?>?>() {
                 override fun createIntent(
                     context: Context,
-                    input: Pair<List<PhotoInfo>, Int>
+                    input: Pair<List<UrlPhotoInfo>, Int>
                 ): Intent {
                     return Intent(context, PhotoViewActivity::class.java)
                         .putParcelableArrayListExtra(
@@ -173,7 +173,7 @@ class DetailActivity : BaseActivity() {
         }
     }
 
-    fun launchPhotoViewActivity(photoInfos: List<PhotoInfo>, position: Int) {
+    fun launchPhotoViewActivity(photoInfos: List<UrlPhotoInfo>, position: Int) {
         photoViewActivityLauncher.launch(
             photoInfos to position,
             ActivityOptionsCompat.makeCustomAnimation(this, 0, android.R.anim.fade_out)

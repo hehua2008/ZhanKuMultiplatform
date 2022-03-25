@@ -11,8 +11,8 @@ import com.hym.zhankukotlin.GlideApp
 import com.hym.zhankukotlin.GlideAppExtension
 import com.hym.zhankukotlin.GlideRequests
 import com.hym.zhankukotlin.R
-import com.hym.zhankukotlin.model.PhotoInfo
 import com.hym.zhankukotlin.model.ProductImage
+import com.hym.zhankukotlin.model.UrlPhotoInfo
 import com.hym.zhankukotlin.ui.ImageViewHeightListener
 import com.hym.zhankukotlin.util.getActivity
 
@@ -75,9 +75,9 @@ class DetailImageAdapter : ListAdapter<ProductImage, DetailImageAdapter.ViewHold
                 val activity = v.getActivity()
                 if (activity !is DetailActivity) return@setOnClickListener
                 val photoInfos = currentList.map {
-                    PhotoInfo(
-                        url = it.oriUrl,
-                        thumbUrl = it.url,
+                    UrlPhotoInfo(
+                        original = it.oriUrl,
+                        thumb = it.url,
                         width = it.width,
                         height = it.height
                     )

@@ -86,7 +86,7 @@ class PhotoViewFragment : Fragment(), OnScreenListener, RequestListener<Bitmap> 
     /**
      * The info of a photo to display
      */
-    private lateinit var mPhotoInfo: PhotoInfo
+    private lateinit var mPhotoInfo: PhotoInfo<*>
 
     /**
      * True if the PhotoViewFragment should watch the network state in order to restart loaders.
@@ -276,10 +276,10 @@ class PhotoViewFragment : Fragment(), OnScreenListener, RequestListener<Bitmap> 
         mRequestManager
             .asBitmap()
             .thumbnail(
-                if (mPhotoInfo.thumbUrl == mPhotoInfo.url) null
-                else mRequestManager.asBitmap().load(mPhotoInfo.thumbUrl).addListener(this)
+                if (mPhotoInfo.thumb == mPhotoInfo.original) null
+                else mRequestManager.asBitmap().load(mPhotoInfo.thumb).addListener(this)
             )
-            .load(mPhotoInfo.url)
+            .load(mPhotoInfo.original)
             .originalSize()
             .priority(if (isActivated()) Priority.IMMEDIATE else Priority.LOW)
             .addListener(this)

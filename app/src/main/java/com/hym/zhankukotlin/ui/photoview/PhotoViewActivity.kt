@@ -13,7 +13,7 @@ import androidx.viewpager.widget.ViewPager
 import com.hym.zhankukotlin.BaseActivity
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityPhotoViewBinding
-import com.hym.zhankukotlin.model.PhotoInfo
+import com.hym.zhankukotlin.model.UrlPhotoInfo
 import com.hym.zhankukotlin.work.DownloadWorker
 
 class PhotoViewActivity : BaseActivity(), ViewPager.OnPageChangeListener,
@@ -36,7 +36,7 @@ class PhotoViewActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val photoInfos: List<PhotoInfo> = intent.getParcelableArrayListExtra(PHOTO_INFOS)!!
+        val photoInfos: List<UrlPhotoInfo> = intent.getParcelableArrayListExtra(PHOTO_INFOS)!!
         val currentPosition = intent.getIntExtra(CURRENT_POSITION, 0)
 
         binding = ActivityPhotoViewBinding.inflate(layoutInflater)
@@ -178,11 +178,11 @@ class PhotoViewActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     override fun onContextItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.save_current -> {
-                DownloadWorker.enqueue(this, pagerAdapter.photoInfos[getCurrentPosition()].url)
+                DownloadWorker.enqueue(this, pagerAdapter.photoInfos[getCurrentPosition()].original)
                 true
             }
             R.id.save_all -> {
-                DownloadWorker.enqueue(this, pagerAdapter.photoInfos.map { it.url })
+                DownloadWorker.enqueue(this, pagerAdapter.photoInfos.map { it.original })
                 true
             }
             else -> super.onContextItemSelected(item)
