@@ -18,8 +18,10 @@ import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.PreloadTarget
 import com.bumptech.glide.request.target.Target
 import com.hym.photoviewer.databinding.FragmentPhotoViewBinding
+import java.io.File
 import kotlin.math.absoluteValue
 
 /**
@@ -62,6 +64,7 @@ class PhotoViewFragment : Fragment(), OnScreenListener, RequestListener<Bitmap> 
 
     private var mPhotoProgressBar: ProgressBarWrapper? = null
     private var mPhotoViewTarget: PhotoViewTarget? = null
+    private var mPreloadTarget: PreloadTarget<File>? = null
     private var mLoadingModel: Any? = null
 
     private lateinit var mRequestManager: RequestManager
@@ -168,9 +171,11 @@ class PhotoViewFragment : Fragment(), OnScreenListener, RequestListener<Bitmap> 
         unregisterForContextMenu(binding.photoView)
         binding.photoView.clear()
         mRequestManager.clear(mPhotoViewTarget)
+        mRequestManager.clear(mPreloadTarget)
         mBinding = null
         mPhotoProgressBar = null
         mPhotoViewTarget = null
+        mPreloadTarget = null
         mLoadingModel = null
         super.onDestroyView()
     }
@@ -199,6 +204,8 @@ class PhotoViewFragment : Fragment(), OnScreenListener, RequestListener<Bitmap> 
             else -> {
                 resetViews()
                 mRequestManager.clear(mPhotoViewTarget)
+                mRequestManager.clear(mPreloadTarget)
+                mPreloadTarget = null
                 mLoadingModel = null
             }
         }
@@ -251,6 +258,14 @@ class PhotoViewFragment : Fragment(), OnScreenListener, RequestListener<Bitmap> 
             retryText.isVisible = false
         }
         mPhotoProgressBar?.setVisibility(View.GONE)
+        if (mPreloadTarget == null && model === mPhotoInfo.thumb && model === mLoadingModel && mPhotoInfo.hasThumb()) {
+            mPreloadTarget = mRequestManager
+                .download(mPhotoInfo.original)
+                .priority(Priority.LOW)
+                .into(
+                    PreloadTarget.obtain(mRequestManager, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                )
+        }
         return false
     }
 
