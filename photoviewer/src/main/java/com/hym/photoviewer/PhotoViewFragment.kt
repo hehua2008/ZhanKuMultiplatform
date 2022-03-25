@@ -62,6 +62,7 @@ class PhotoViewFragment : Fragment(), OnScreenListener, RequestListener<Bitmap> 
 
     private var mPhotoProgressBar: ProgressBarWrapper? = null
     private var mPhotoViewTarget: PhotoViewTarget? = null
+    private var mLoadingModel: Any? = null
 
     private lateinit var mRequestManager: RequestManager
 
@@ -170,6 +171,7 @@ class PhotoViewFragment : Fragment(), OnScreenListener, RequestListener<Bitmap> 
         mBinding = null
         mPhotoProgressBar = null
         mPhotoViewTarget = null
+        mLoadingModel = null
         super.onDestroyView()
     }
 
@@ -197,6 +199,7 @@ class PhotoViewFragment : Fragment(), OnScreenListener, RequestListener<Bitmap> 
             else -> {
                 resetViews()
                 mRequestManager.clear(mPhotoViewTarget)
+                mLoadingModel = null
             }
         }
     }
@@ -266,19 +269,27 @@ class PhotoViewFragment : Fragment(), OnScreenListener, RequestListener<Bitmap> 
     private fun loadPhoto() {
         val binding = mBinding ?: return
         val photoViewTarget = mPhotoViewTarget ?: return
-        if ((mCallback.getCurrentPosition() - mPosition).absoluteValue > 1) return
-        if (isPhotoLoading() || isPhotoLoaded()) return
+        val hasThumb = mPhotoInfo.hasThumb()
+        val isThumb = when ((mCallback.getCurrentPosition() - mPosition).absoluteValue) {
+            0 -> false
+            1 -> hasThumb
+            else -> return
+        }
+        val originalToThumb = mLoadingModel === mPhotoInfo.original && isThumb
+        val thumbToOriginal = hasThumb && mLoadingModel === mPhotoInfo.thumb && !isThumb
+        if (!originalToThumb && !thumbToOriginal && (isPhotoLoading() || isPhotoLoaded())) return
         binding.run {
             root.postDelayed(mShowProgressRunnable, PROGRESS_SHOW_DELAY)
             retryText.isVisible = false
         }
+        mLoadingModel = if (isThumb) mPhotoInfo.thumb else mPhotoInfo.original
         mRequestManager
             .asBitmap()
             .thumbnail(
-                if (mPhotoInfo.thumb == mPhotoInfo.original) null
+                if (isThumb || thumbToOriginal || !hasThumb) null
                 else mRequestManager.asBitmap().load(mPhotoInfo.thumb).addListener(this)
             )
-            .load(mPhotoInfo.original)
+            .load(mLoadingModel)
             .override(Target.SIZE_ORIGINAL)
             .priority(if (isActivated()) Priority.IMMEDIATE else Priority.LOW)
             .addListener(this)
