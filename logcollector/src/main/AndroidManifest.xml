@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.hym.logcollector">
+
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <application android:requestLegacyExternalStorage="true">
+        <service
+            android:name=".LogcatService"
+            android:exported="false"
+            android:process=":logcollector">
+        </service>
+
+        <activity
+            android:name=".LogCollectorActivity"
+            android:exported="true"
+            android:label="@string/log_collector_name"
+            android:launchMode="singleInstance"
+            android:process=":logcollector"
+            android:taskAffinity="${applicationId}.logcollector"
+            android:theme="@style/Theme.LogCollector">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name=".LogCollectorStarter"
+            android:authorities="${applicationId}.logcollector-starter"
+            android:exported="false">
+        </provider>
+    </application>
+
+</manifest>

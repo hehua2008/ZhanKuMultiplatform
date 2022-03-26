@@ -1,0 +1,18 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.LogCollector" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/log_secondary</item>
+        <item name="colorPrimaryVariant">@color/log_secondary_variant</item>
+        <item name="colorOnPrimary">@android:color/black</item>
+        <item name="colorAccent">@color/log_primary</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/log_primary</item>
+        <item name="colorSecondaryVariant">@color/log_primary_variant</item>
+        <item name="colorOnSecondary">@android:color/white</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <!-- Customize your theme here. -->
+    </style>
+</resources>

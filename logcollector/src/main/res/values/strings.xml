@@ -1,0 +1,18 @@
+<resources>
+    <string name="log_collector_name">LogCollector</string>
+    <string name="tab_logcat">Logcat</string>
+    <string name="tab_log_file">Log File</string>
+    <string name="log_input_keyword">Input keyword</string>
+    <string name="log_input_keyword_and_search">Input keyword and press SEARCH</string>
+    <string name="select_log_file">Select file</string>
+    <string name="select_log_parser">Select parser</string>
+    <string name="select_log_level">Select level</string>
+    <string name="select_log_decoder">Select decoder</string>
+    <string name="cancel_log_loading">Cancel</string>
+    <string name="log_retry_load">Retry</string>
+    <string name="log_toast_regex_error">%s</string>
+    <string name="log_toast_wait_log_file_load">Please wait for the log file to load</string>
+    <string name="notification_collecting">Collecting logcat</string>
+    <string name="notification_foreground_text">LogCollector is working</string>
+    <string name="request_permission_failed">Request permission failed: %s</string>
+</resources>

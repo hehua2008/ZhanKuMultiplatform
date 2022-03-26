@@ -88,6 +88,7 @@ dependencies {
     implementation "com.google.android.exoplayer:exoplayer-rtsp:$exoplayer_version"
     implementation "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
     implementation project(path: ':ssiv:library')
+    debugImplementation project(path: ':logcollector')
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

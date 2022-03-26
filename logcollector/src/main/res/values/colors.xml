@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="log_primary">#FF03DAC5</color>
+    <color name="log_primary_variant">#FF03DAC5</color>
+    <color name="log_secondary">#FFBB86FC</color>
+    <color name="log_secondary_variant">#FFBB86FC</color>
+    <color name="log_button_color">#FFCCCCCC</color>
+    <color name="log_gray_bg">#FFDDDDDD</color>
+    <color name="log_error">#FF5370</color>
+</resources>

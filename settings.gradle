@@ -3,3 +3,4 @@ rootProject.name = "ZhanKuKotlin"
 include ':photoviewer'
 include ':photoviewerdemo'
 include ':ssiv:library'
+include ':logcollector'
