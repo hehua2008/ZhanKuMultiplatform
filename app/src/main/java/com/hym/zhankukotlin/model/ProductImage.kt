@@ -49,10 +49,15 @@ data class ProductImage(
         get() = regex.find(url)?.let {
             val curWidth = it.groupValues[1].toInt()
             if (curWidth >= width) url
+            else if (width >= MAX_SIZE && width >= height) url.replace(regex, "@${MAX_SIZE}w")
+            else if (height >= MAX_SIZE && height >= width) url.replace(regex, "@${MAX_SIZE}h")
             else url.replace(regex, "@${width}w")
         } ?: url
 
     companion object {
+        // Width or Height should be less than 16384
+        const val MAX_SIZE = 16384
+
         val regex = Regex("@(\\d+)w")
     }
 }
