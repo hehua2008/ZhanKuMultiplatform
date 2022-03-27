@@ -2,12 +2,14 @@ package com.hym.photoviewer
 
 import android.app.Activity
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.Size
 import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -119,6 +121,14 @@ class PhotoViewFragment : Fragment(), OnScreenListener, RequestListener<Bitmap> 
             photoView.contentDescription = mPhotoInfo.description
             photoView.setOnClickListener {
                 mCallback.toggleFullScreen()
+            }
+            photoView.setOnCannotDrawListener {
+                if (it !is BitmapDrawable) return@setOnCannotDrawListener
+                if (it.bitmap === mPhotoViewTarget?.resource && !isPhotoLoading() && isPhotoLoaded()) {
+                    mRequestManager.clear(mPhotoViewTarget)
+                    val size = Size(it.bitmap.width / 2, it.bitmap.height / 2)
+                    loadPhoto(size)
+                }
             }
             registerForContextMenu(photoView)
             swipeRefresh.setOnRefreshListener {
@@ -281,7 +291,7 @@ class PhotoViewFragment : Fragment(), OnScreenListener, RequestListener<Bitmap> 
 
     private fun isActivated(): Boolean = mCallback.getCurrentPosition() == mPosition
 
-    private fun loadPhoto() {
+    private fun loadPhoto(size: Size? = null) {
         val binding = mBinding ?: return
         val photoViewTarget = mPhotoViewTarget ?: return
         val hasThumb = mPhotoInfo.hasThumb()
@@ -302,10 +312,14 @@ class PhotoViewFragment : Fragment(), OnScreenListener, RequestListener<Bitmap> 
             .asBitmap()
             .thumbnail(
                 if (isThumb || thumbToOriginal || !hasThumb) null
-                else mRequestManager.asBitmap().load(mPhotoInfo.thumb).addListener(this)
+                else mRequestManager
+                    .asBitmap()
+                    .load(mPhotoInfo.thumb)
+                    .override(Target.SIZE_ORIGINAL)
+                    .addListener(this)
             )
             .load(mLoadingModel)
-            .override(Target.SIZE_ORIGINAL)
+            .override(size?.width ?: Target.SIZE_ORIGINAL, size?.height ?: Target.SIZE_ORIGINAL)
             .priority(if (isActivated()) Priority.IMMEDIATE else Priority.LOW)
             .addListener(this)
             .into(photoViewTarget)

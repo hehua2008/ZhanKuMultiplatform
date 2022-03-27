@@ -175,6 +175,9 @@ public class PhotoView extends View implements OnGestureListener, OnDoubleTapLis
      */
     private boolean mQuickScaleEnabled;
 
+    @Nullable
+    private OnCannotDrawListener mOnCannotDrawListener;
+
     public PhotoView(@NonNull Context context) {
         this(context, null);
     }
@@ -653,7 +656,20 @@ public class PhotoView extends View implements OnGestureListener, OnDoubleTapLis
             if (mDrawMatrix != null) {
                 canvas.concat(mDrawMatrix);
             }
-            mDrawable.draw(canvas);
+            try {
+                mDrawable.draw(canvas);
+            } catch (RuntimeException e) {
+                // RuntimeException: Canvas: trying to draw too large bitmap.
+                OnCannotDrawListener onCannotDrawListener = mOnCannotDrawListener;
+                if (onCannotDrawListener != null) {
+                    Drawable drawable = mDrawable;
+                    post(() -> {
+                        if (onCannotDrawListener == mOnCannotDrawListener && drawable == mDrawable) {
+                            onCannotDrawListener.onCannotDraw(drawable);
+                        }
+                    });
+                }
+            }
 
             canvas.restoreToCount(saveCount);
 
@@ -1470,7 +1486,15 @@ public class PhotoView extends View implements OnGestureListener, OnDoubleTapLis
         }
     }
 
+    interface OnCannotDrawListener {
+        void onCannotDraw(@NonNull Drawable drawable);
+    }
+
     public void setMaxInitialScale(float f) {
         mMaxInitialScaleFactor = f;
+    }
+
+    public void setOnCannotDrawListener(@Nullable OnCannotDrawListener onCannotDrawListener) {
+        mOnCannotDrawListener = onCannotDrawListener;
     }
 }
