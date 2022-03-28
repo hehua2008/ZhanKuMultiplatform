@@ -25,22 +25,17 @@ class PreviewPageViewModel(private val topCate: TopCate? = null) : ViewModel() {
     private val _totalPages = MutableLiveData<Int>(2)
     val totalPages: LiveData<Int> = _totalPages
 
-    private val _pageSize = MutableLiveData<Int>(25)
-    val pageSize: LiveData<Int> = _pageSize
+    private var pageSize: Int = 25
 
     private val _subCate = MutableLiveData<SubCate?>()
     val subCate: LiveData<SubCate?> = _subCate
 
     private var recommendLevel = RecommendLevel.EDITOR_CHOICE
 
-    private val _contentType = MutableLiveData<Int>(0)
-    val contentType: LiveData<Int> = _contentType
+    private var contentType: Int = 0
 
     private val _mediatorLiveData = MediatorLiveData<Unit>().apply {
         addSource(page) { value = Unit }
-        addSource(pageSize) { value = Unit }
-        addSource(subCate) { value = Unit }
-        addSource(contentType) { value = Unit }
     }
     val mediatorLiveData: LiveData<Unit> = _mediatorLiveData
 
@@ -50,13 +45,15 @@ class PreviewPageViewModel(private val topCate: TopCate? = null) : ViewModel() {
     }
 
     fun setPageSize(pageSize: Int) {
-        if (_pageSize.value == pageSize) return
-        _pageSize.value = pageSize
+        if (this.pageSize == pageSize) return
+        this.pageSize = pageSize
+        _page.value = 1
     }
 
     fun setSubCate(subCate: SubCate?) {
         if (_subCate.value?.id == subCate?.id) return
         _subCate.value = subCate
+        _page.value = 1
     }
 
     fun setRecommendLevel(recommendLevel: RecommendLevel) {
@@ -66,14 +63,15 @@ class PreviewPageViewModel(private val topCate: TopCate? = null) : ViewModel() {
     }
 
     fun setContentType(contentType: Int) {
-        if (_contentType.value == contentType) return
-        _contentType.value = contentType
+        if (this.contentType == contentType) return
+        this.contentType = contentType
+        _page.value = 1
     }
 
     val pagingFlow: Flow<PagingData<Content>> = Pager(
         // Configure how data is loaded by passing additional properties to
         // PagingConfig, such as prefetchDistance.
-        config = PagingConfig(pageSize = pageSize.value ?: 25),
+        config = PagingConfig(pageSize = pageSize),
         initialKey = LoadParamsHolder.INITIAL,
         pagingSourceFactory = {
             PreviewPagingSource(
@@ -81,9 +79,9 @@ class PreviewPageViewModel(private val topCate: TopCate? = null) : ViewModel() {
                 topCate = topCate,
                 subCate = subCate.value,
                 initialPage = page.value ?: 1,
-                pageSize = pageSize.value ?: 25,
+                pageSize = pageSize,
                 recommendLevel = recommendLevel,
-                contentType = contentType.value ?: 0
+                contentType = contentType
             ) {
                 _totalPages.postValue(it)
             }

@@ -23,14 +23,12 @@ class AuthorPageViewModel(private val authorUid: Int) : ViewModel() {
     private val _totalPages = MutableLiveData<Int>(2)
     val totalPages: LiveData<Int> = _totalPages
 
-    private val _pageSize = MutableLiveData<Int>(25)
-    val pageSize: LiveData<Int> = _pageSize
+    private var pageSize: Int = 25
 
     private var sortOrder = SortOrder.LATEST_PUBLISH
 
     private val _mediatorLiveData = MediatorLiveData<Unit>().apply {
         addSource(page) { value = Unit }
-        addSource(pageSize) { value = Unit }
     }
     val mediatorLiveData: LiveData<Unit> = _mediatorLiveData
 
@@ -40,8 +38,9 @@ class AuthorPageViewModel(private val authorUid: Int) : ViewModel() {
     }
 
     fun setPageSize(pageSize: Int) {
-        if (_pageSize.value == pageSize) return
-        _pageSize.value = pageSize
+        if (this.pageSize == pageSize) return
+        this.pageSize = pageSize
+        _page.value = 1
     }
 
     fun setSortOrder(sortOrder: SortOrder) {
@@ -53,14 +52,14 @@ class AuthorPageViewModel(private val authorUid: Int) : ViewModel() {
     val pagingFlow: Flow<PagingData<Content>> = Pager(
         // Configure how data is loaded by passing additional properties to
         // PagingConfig, such as prefetchDistance.
-        config = PagingConfig(pageSize = pageSize.value ?: 25),
+        config = PagingConfig(pageSize = pageSize),
         initialKey = LoadParamsHolder.INITIAL,
         pagingSourceFactory = {
             AuthorPagingSource(
                 networkService = MyApplication.networkService,
                 authorUid = authorUid,
                 initialPage = page.value ?: 1,
-                pageSize = pageSize.value ?: 25,
+                pageSize = pageSize,
                 sortOrder = sortOrder
             ) {
                 _totalPages.postValue(it)

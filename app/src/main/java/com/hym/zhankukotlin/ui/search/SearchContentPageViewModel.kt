@@ -22,8 +22,7 @@ class SearchContentPageViewModel(private val contentType: ContentType) : ViewMod
     private val _totalPages = MutableLiveData<Int>(2)
     val totalPages: LiveData<Int> = _totalPages
 
-    private val _pageSize = MutableLiveData<Int>(10)
-    val pageSize: LiveData<Int> = _pageSize
+    private var pageSize: Int = 10
 
     private var word = ""
 
@@ -35,7 +34,6 @@ class SearchContentPageViewModel(private val contentType: ContentType) : ViewMod
 
     private val _mediatorLiveData = MediatorLiveData<Unit>().apply {
         addSource(page) { value = Unit }
-        addSource(pageSize) { value = Unit }
     }
     val mediatorLiveData: LiveData<Unit> = _mediatorLiveData
 
@@ -49,8 +47,9 @@ class SearchContentPageViewModel(private val contentType: ContentType) : ViewMod
      * I have no idea why the server always considers the page size as 10 when returning a response.
      */
     fun setPageSize(pageSize: Int) {
-        if (_pageSize.value == pageSize) return
-        _pageSize.value = pageSize
+        if (this.pageSize == pageSize) return
+        this.pageSize = pageSize
+        _page.value = 1
     }
 
     fun setWord(word: String) {
@@ -81,13 +80,13 @@ class SearchContentPageViewModel(private val contentType: ContentType) : ViewMod
     val pagingFlow: Flow<PagingData<Content>> = Pager(
         // Configure how data is loaded by passing additional properties to
         // PagingConfig, such as prefetchDistance.
-        config = PagingConfig(pageSize = pageSize.value ?: 10),
+        config = PagingConfig(pageSize = pageSize),
         initialKey = LoadParamsHolder.INITIAL,
         pagingSourceFactory = {
             SearchContentPagingSource(
                 networkService = MyApplication.networkService,
                 initialPage = page.value ?: 1,
-                pageSize = pageSize.value ?: 10,
+                pageSize = pageSize,
                 word = word,
                 contentType = contentType,
                 topCate = topCate,
