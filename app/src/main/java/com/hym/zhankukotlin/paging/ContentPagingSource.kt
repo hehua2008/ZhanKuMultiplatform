@@ -22,12 +22,17 @@ abstract class ContentPagingSource(
             var paramsKey =
                 params.key ?: return LoadResult.Error(IllegalArgumentException("Empty params key!"))
             if (paramsKey === LoadParamsHolder.INITIAL) {
-                paramsKey = LoadParamsHolder.INITIAL.copy(page = initialPage)
+                paramsKey = getContentPageResponse(LoadParamsHolder.INITIAL.copy(page = 10000))
+                    .dataContent?.run {
+                        if (numberOfElements <= 0) null
+                        else LoadParamsHolder.INITIAL.copy(page = initialPage, totalPages = number)
+                    } ?: LoadParamsHolder.INITIAL.copy(page = initialPage)
             }
             val response = getContentPageResponse(paramsKey)
             val contentPage = response.dataContent
                 ?: return LoadResult.Error(IllegalArgumentException(response.msg))
-            val totalPages = contentPage.totalPages
+            val totalPages = paramsKey.totalPages.takeIf { it != Int.MAX_VALUE }
+                ?: contentPage.totalPages
             totalPagesCallback?.invoke(totalPages)
             val contentList = contentPage.content
             val nextKey = if (paramsKey.page >= totalPages || contentList.isEmpty()) null

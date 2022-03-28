@@ -33,7 +33,6 @@ class PagedLayout @JvmOverloads constructor(
     }
 
     private fun onUpdatePage() {
-        isVisible = !(activePage == 1 && lastPage == 1)
         binding.prePage.isVisible = (activePage > 1)
         binding.nextPage.isVisible = (activePage != lastPage)
         binding.numberEdit.setText("${(activePage + 1).coerceAtMost(lastPage)}")

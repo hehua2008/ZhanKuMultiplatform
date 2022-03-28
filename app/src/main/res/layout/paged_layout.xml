@@ -63,4 +63,25 @@
         style="@style/Widget.Button.Common"
         android:text="跳转" />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/page_size_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="每页"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/page_size_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/box_common_bg"
+        android:entries="@array/page_sizes"
+        android:spinnerMode="dropdown"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
 </com.hym.zhankukotlin.ui.PagedLayout>

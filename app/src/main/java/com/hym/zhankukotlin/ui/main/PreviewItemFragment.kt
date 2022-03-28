@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.AdapterView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
@@ -207,6 +209,22 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
             if (numberEdit.isEmpty()) return@setOnClickListener
             mPageViewModel.setPage(numberEdit.toInt())
         }
+        binding.previewHeader.paged.pageSizeTitle.isVisible = true
+        binding.previewHeader.paged.pageSizeSpinner.isVisible = true
+        binding.previewHeader.paged.pageSizeSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                private val pageSizes = resources.getStringArray(R.array.page_sizes).map {
+                    it.toInt()
+                }
+
+                override fun onItemSelected(parent: AdapterView<*>, v: View?, pos: Int, id: Long) {
+                    if (pos >= 0 && pos < pageSizes.size) {
+                        mPageViewModel.setPageSize(pageSizes[pos])
+                    }
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>) = Unit
+            }
 
         binding.fab.hide()
         binding.fab.setOnClickListener {
