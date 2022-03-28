@@ -46,7 +46,7 @@ class DetailHeaderLayout @JvmOverloads constructor(
                 detailAuthor.setOnClickListener(it)
             }
             downloadAll.isVisible = workDetails.product.productImages.isNotEmpty()
-            detailTime.text = workDetails.product.publishTimeDiffStr
+            detailTime.text = workDetails.product.updateTimeStr
             detailViews.text = "${workDetails.product.viewCount}"
             detailComments.text = "${workDetails.product.commentCount}"
             detailFavorites.text = "${workDetails.product.favoriteCount}"

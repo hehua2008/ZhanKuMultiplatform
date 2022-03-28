@@ -1,6 +1,7 @@
 package com.hym.zhankukotlin.model
 
 import androidx.annotation.Keep
+import com.hym.zhankukotlin.util.getRelativeOrActualDateString
 
 /**
 {
@@ -126,4 +127,6 @@ data class Product(
     val viewCountStr: String,
     val viewed: Int,
     val zteamId: Int
-)
+) {
+    val updateTimeStr get() = updateTime.getRelativeOrActualDateString()
+}

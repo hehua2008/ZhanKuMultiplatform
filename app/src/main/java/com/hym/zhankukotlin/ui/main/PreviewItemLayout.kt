@@ -37,7 +37,7 @@ class PreviewItemLayout @JvmOverloads constructor(
             previewImg.contentDescription = content.cover
             author.text = content.creatorObj.username
             description.text = content.formatTitle
-            time.text = content.publishTimeDiffStr
+            time.text = content.updateTimeStr
             viewCount.text = content.viewCountStr
             comments.text = content.commentCountStr
         }

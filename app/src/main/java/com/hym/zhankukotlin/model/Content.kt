@@ -2,6 +2,8 @@ package com.hym.zhankukotlin.model
 
 import androidx.annotation.Keep
 import androidx.core.text.HtmlCompat
+import com.hym.zhankukotlin.util.getDateTime
+import com.hym.zhankukotlin.util.getRelativeOrActualDateString
 
 /**
 {
@@ -89,4 +91,7 @@ data class Content(
     val contentId: String get() = pageUrl.split('/').last()
 
     val formatTitle get() = HtmlCompat.fromHtml(title, HtmlCompat.FROM_HTML_MODE_COMPACT).toString()
+
+    val updateTimeStr
+        get() = (timeTitleStr.getDateTime() ?: publishTime).getRelativeOrActualDateString()
 }
