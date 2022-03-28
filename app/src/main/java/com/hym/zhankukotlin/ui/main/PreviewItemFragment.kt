@@ -1,6 +1,7 @@
 package com.hym.zhankukotlin.ui.main
 
 import android.graphics.Rect
+import android.graphics.drawable.StateListDrawable
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -28,6 +30,7 @@ import com.hym.zhankukotlin.databinding.FragmentMainBinding
 import com.hym.zhankukotlin.model.RecommendLevel
 import com.hym.zhankukotlin.model.SubCate
 import com.hym.zhankukotlin.model.TopCate
+import com.hym.zhankukotlin.ui.FastScroller
 import com.hym.zhankukotlin.ui.HeaderFooterLoadStateAdapter
 import com.hym.zhankukotlin.ui.TabReselectedCallback
 import kotlinx.coroutines.flow.collect
@@ -147,6 +150,16 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
         requireContext().theme.resolveAttribute(R.attr.colorAccent, typedValue, true)
         binding.swipeRefresh.setColorSchemeColors(typedValue.data)
         binding.swipeRefresh.setOnRefreshListener { mPagingPreviewItemAdapter.refresh() }
+
+        val theme = requireContext().theme
+        val thumbDrawable =
+            ResourcesCompat.getDrawable(resources, R.drawable.fast_scrollbar_thumb_bg, theme)
+                    as StateListDrawable
+        val trackDrawable =
+            ResourcesCompat.getDrawable(resources, android.R.color.transparent, null)
+        FastScroller(
+            binding.previewRecycler, thumbDrawable, trackDrawable, thumbDrawable, trackDrawable
+        )
 
         binding.previewRecycler.addItemDecoration(mPreviewItemDecoration)
         binding.previewRecycler.adapter = mPagingPreviewItemAdapter.withLoadStateFooter(
