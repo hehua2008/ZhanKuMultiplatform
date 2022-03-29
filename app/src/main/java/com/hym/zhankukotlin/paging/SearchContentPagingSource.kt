@@ -12,7 +12,7 @@ class SearchContentPagingSource(
     private val sortOrder: SortOrder,
     private val pageSize: Int,
     initialPage: Int,
-    totalPagesCallback: ((Int) -> Unit)? = null
+    totalPagesCallback: TotalPagesCallback? = null
 ) : ContentPagingSource(initialPage, totalPagesCallback) {
 
     override suspend fun getContentPageResponse(paramsKey: LoadParamsHolder): ContentPageResponse {

@@ -14,7 +14,7 @@ class PreviewPagingSource(
     private val recommendLevel: RecommendLevel,
     private val contentType: Int,
     initialPage: Int,
-    totalPagesCallback: ((Int) -> Unit)? = null
+    totalPagesCallback: TotalPagesCallback? = null
 ) : ContentPagingSource(initialPage, totalPagesCallback) {
 
     override suspend fun getContentPageResponse(paramsKey: LoadParamsHolder): ContentPageResponse {

@@ -9,6 +9,7 @@ import com.hym.zhankukotlin.MyApplication
 import com.hym.zhankukotlin.model.*
 import com.hym.zhankukotlin.paging.LoadParamsHolder
 import com.hym.zhankukotlin.paging.SearchContentPagingSource
+import com.hym.zhankukotlin.paging.TotalPagesCallback
 import kotlinx.coroutines.flow.Flow
 
 class SearchContentPageViewModel(private val contentType: ContentType) : ViewModel() {
@@ -21,6 +22,12 @@ class SearchContentPageViewModel(private val contentType: ContentType) : ViewMod
 
     private val _totalPages = MutableLiveData<Int>(2)
     val totalPages: LiveData<Int> = _totalPages
+
+    private val totalPagesCallback = object : TotalPagesCallback() {
+        override fun onUpdate(totalPages: Int) {
+            _totalPages.value = totalPages
+        }
+    }
 
     private var pageSize: Int = 10
 
@@ -49,6 +56,7 @@ class SearchContentPageViewModel(private val contentType: ContentType) : ViewMod
     fun setPageSize(pageSize: Int) {
         if (this.pageSize == pageSize) return
         this.pageSize = pageSize
+        totalPagesCallback.invalidate()
         _page.value = 1
     }
 
@@ -56,24 +64,28 @@ class SearchContentPageViewModel(private val contentType: ContentType) : ViewMod
         val word = word.trim()
         if (this.word == word) return
         this.word = word
+        totalPagesCallback.invalidate()
         _page.value = 1
     }
 
     fun setTopCate(topCate: TopCate?) {
         if (this.topCate == topCate) return
         this.topCate = topCate
+        totalPagesCallback.invalidate()
         _page.value = 1
     }
 
     fun setRecommendLevel(recommendLevel: RecommendLevel) {
         if (this.recommendLevel == recommendLevel) return
         this.recommendLevel = recommendLevel
+        totalPagesCallback.invalidate()
         _page.value = 1
     }
 
     fun setSortOrder(sortOrder: SortOrder) {
         if (this.sortOrder == sortOrder) return
         this.sortOrder = sortOrder
+        totalPagesCallback.invalidate()
         _page.value = 1
     }
 
@@ -91,10 +103,9 @@ class SearchContentPageViewModel(private val contentType: ContentType) : ViewMod
                 contentType = contentType,
                 topCate = topCate,
                 recommendLevel = recommendLevel,
-                sortOrder = sortOrder
-            ) {
-                _totalPages.postValue(it)
-            }
+                sortOrder = sortOrder,
+                totalPagesCallback = totalPagesCallback
+            )
         }
     )
         .flow

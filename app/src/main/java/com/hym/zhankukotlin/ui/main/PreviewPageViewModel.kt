@@ -12,6 +12,7 @@ import com.hym.zhankukotlin.model.SubCate
 import com.hym.zhankukotlin.model.TopCate
 import com.hym.zhankukotlin.paging.LoadParamsHolder
 import com.hym.zhankukotlin.paging.PreviewPagingSource
+import com.hym.zhankukotlin.paging.TotalPagesCallback
 import kotlinx.coroutines.flow.Flow
 
 class PreviewPageViewModel(private val topCate: TopCate? = null) : ViewModel() {
@@ -24,6 +25,12 @@ class PreviewPageViewModel(private val topCate: TopCate? = null) : ViewModel() {
 
     private val _totalPages = MutableLiveData<Int>(2)
     val totalPages: LiveData<Int> = _totalPages
+
+    private val totalPagesCallback = object : TotalPagesCallback() {
+        override fun onUpdate(totalPages: Int) {
+            _totalPages.value = totalPages
+        }
+    }
 
     private var pageSize: Int = 25
 
@@ -47,24 +54,28 @@ class PreviewPageViewModel(private val topCate: TopCate? = null) : ViewModel() {
     fun setPageSize(pageSize: Int) {
         if (this.pageSize == pageSize) return
         this.pageSize = pageSize
+        totalPagesCallback.invalidate()
         _page.value = 1
     }
 
     fun setSubCate(subCate: SubCate?) {
         if (_subCate.value?.id == subCate?.id) return
         _subCate.value = subCate
+        totalPagesCallback.invalidate()
         _page.value = 1
     }
 
     fun setRecommendLevel(recommendLevel: RecommendLevel) {
         if (this.recommendLevel == recommendLevel) return
         this.recommendLevel = recommendLevel
+        totalPagesCallback.invalidate()
         _page.value = 1
     }
 
     fun setContentType(contentType: Int) {
         if (this.contentType == contentType) return
         this.contentType = contentType
+        totalPagesCallback.invalidate()
         _page.value = 1
     }
 
@@ -81,10 +92,9 @@ class PreviewPageViewModel(private val topCate: TopCate? = null) : ViewModel() {
                 initialPage = page.value ?: 1,
                 pageSize = pageSize,
                 recommendLevel = recommendLevel,
-                contentType = contentType
-            ) {
-                _totalPages.postValue(it)
-            }
+                contentType = contentType,
+                totalPagesCallback = totalPagesCallback
+            )
         }
     )
         .flow

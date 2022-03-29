@@ -10,6 +10,7 @@ import com.hym.zhankukotlin.model.Content
 import com.hym.zhankukotlin.model.SortOrder
 import com.hym.zhankukotlin.paging.AuthorPagingSource
 import com.hym.zhankukotlin.paging.LoadParamsHolder
+import com.hym.zhankukotlin.paging.TotalPagesCallback
 import kotlinx.coroutines.flow.Flow
 
 class AuthorPageViewModel(private val authorUid: Int) : ViewModel() {
@@ -22,6 +23,12 @@ class AuthorPageViewModel(private val authorUid: Int) : ViewModel() {
 
     private val _totalPages = MutableLiveData<Int>(2)
     val totalPages: LiveData<Int> = _totalPages
+
+    private val totalPagesCallback = object : TotalPagesCallback() {
+        override fun onUpdate(totalPages: Int) {
+            _totalPages.value = totalPages
+        }
+    }
 
     private var pageSize: Int = 25
 
@@ -40,12 +47,14 @@ class AuthorPageViewModel(private val authorUid: Int) : ViewModel() {
     fun setPageSize(pageSize: Int) {
         if (this.pageSize == pageSize) return
         this.pageSize = pageSize
+        totalPagesCallback.invalidate()
         _page.value = 1
     }
 
     fun setSortOrder(sortOrder: SortOrder) {
         if (this.sortOrder == sortOrder) return
         this.sortOrder = sortOrder
+        totalPagesCallback.invalidate()
         _page.value = 1
     }
 
@@ -60,10 +69,9 @@ class AuthorPageViewModel(private val authorUid: Int) : ViewModel() {
                 authorUid = authorUid,
                 initialPage = page.value ?: 1,
                 pageSize = pageSize,
-                sortOrder = sortOrder
-            ) {
-                _totalPages.postValue(it)
-            }
+                sortOrder = sortOrder,
+                totalPagesCallback = totalPagesCallback
+            )
         }
     )
         .flow

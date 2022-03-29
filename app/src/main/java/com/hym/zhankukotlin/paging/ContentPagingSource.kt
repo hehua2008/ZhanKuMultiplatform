@@ -6,7 +6,7 @@ import com.hym.zhankukotlin.model.*
 
 abstract class ContentPagingSource(
     private val initialPage: Int,
-    private val totalPagesCallback: ((Int) -> Unit)? = null
+    private val totalPagesCallback: TotalPagesCallback? = null
 ) : PagingSource<LoadParamsHolder, Content>() {
     companion object {
         private const val TAG = "ContentPagingSource"
@@ -22,7 +22,9 @@ abstract class ContentPagingSource(
             var paramsKey =
                 params.key ?: return LoadResult.Error(IllegalArgumentException("Empty params key!"))
             if (paramsKey === LoadParamsHolder.INITIAL) {
-                paramsKey = getContentPageResponse(LoadParamsHolder.INITIAL.copy(page = 10000))
+                paramsKey = totalPagesCallback?.totalPages?.let {
+                    LoadParamsHolder.INITIAL.copy(page = initialPage, totalPages = it)
+                } ?: getContentPageResponse(LoadParamsHolder.INITIAL.copy(page = 10000))
                     .dataContent?.run {
                         if (numberOfElements <= 0) null
                         else LoadParamsHolder.INITIAL.copy(page = initialPage, totalPages = number)
@@ -33,7 +35,7 @@ abstract class ContentPagingSource(
                 ?: return LoadResult.Error(IllegalArgumentException(response.msg))
             val totalPages = paramsKey.totalPages.takeIf { it != Int.MAX_VALUE }
                 ?: contentPage.totalPages
-            totalPagesCallback?.invoke(totalPages)
+            totalPagesCallback?.setTotalPages(totalPages)
             val contentList = contentPage.content
             val nextKey = if (paramsKey.page >= totalPages || contentList.isEmpty()) null
             else LoadParamsHolder(paramsKey.page + 1, totalPages, contentList.last().id)
