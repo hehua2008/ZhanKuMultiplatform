@@ -16,11 +16,13 @@ import com.hym.zhankukotlin.GlideRequests
 import com.hym.zhankukotlin.databinding.PreviewItemLayoutBinding
 import com.hym.zhankukotlin.model.Content
 import com.hym.zhankukotlin.ui.BindingViewHolder
+import com.hym.zhankukotlin.ui.FastScroller
 import com.hym.zhankukotlin.ui.ThemeColorRetriever
 import com.hym.zhankukotlin.ui.author.AuthorItemFragment
 import com.hym.zhankukotlin.ui.detail.DetailActivity
 import com.hym.zhankukotlin.ui.tag.TagActivity
 import com.hym.zhankukotlin.util.getActivity
+import com.hym.zhankukotlin.util.getFastScroller
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.math.abs
@@ -45,9 +47,13 @@ class PagingPreviewItemAdapter :
 
     private var mRequestManager: GlideRequests? = null
 
-    private val mOnScrollListener = object : RecyclerView.OnScrollListener() {
+    private val mScrollDragListener = ScrollDragListener()
+
+    private inner class ScrollDragListener : RecyclerView.OnScrollListener(),
+        FastScroller.OnDragListener {
         var mScrolledY = 0F
         var mLastScrollState = RecyclerView.SCROLL_STATE_IDLE
+        var mLastDragState = FastScroller.DRAG_NONE
         val mVelocityTracker: VelocityTracker = VelocityTracker.obtain()
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -58,6 +64,7 @@ class PagingPreviewItemAdapter :
             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                 mScrolledY = 0F
                 mVelocityTracker.clear()
+                if (mLastDragState != FastScroller.DRAG_NONE) return
                 mRequestManager?.let {
                     if (it.isPaused) {
                         //Log.w(TAG, "resumeRequestsRecursive")
@@ -67,7 +74,9 @@ class PagingPreviewItemAdapter :
             } else if (mLastScrollState == RecyclerView.SCROLL_STATE_IDLE) {
                 Choreographer.getInstance().postFrameCallback(object : Choreographer.FrameCallback {
                     override fun doFrame(frameTimeNanos: Long) {
-                        if (mLastScrollState == RecyclerView.SCROLL_STATE_IDLE) return
+                        if (mLastScrollState == RecyclerView.SCROLL_STATE_IDLE
+                            || mLastDragState != FastScroller.DRAG_NONE
+                        ) return
 
                         val now = frameTimeNanos / 1000000
                         val ev =
@@ -97,6 +106,26 @@ class PagingPreviewItemAdapter :
                 })
             }
             mLastScrollState = newState
+        }
+
+        override fun onDragStateChanged(newDragState: Int) {
+            if (mLastDragState == newDragState) return
+            if (newDragState == FastScroller.DRAG_Y) {
+                mRequestManager?.let {
+                    if (!it.isPaused) {
+                        //Log.w(TAG, "pauseRequestsRecursive newDragState=DRAG_Y")
+                        it.pauseRequestsRecursive()
+                    }
+                }
+            } else if (newDragState == FastScroller.DRAG_NONE) {
+                mRequestManager?.let {
+                    if (it.isPaused) {
+                        //Log.w(TAG, "resumeRequestsRecursive newDragState=DRAG_NONE")
+                        it.resumeRequestsRecursive()
+                    }
+                }
+            }
+            mLastDragState = newDragState
         }
     }
 
@@ -187,12 +216,14 @@ class PagingPreviewItemAdapter :
             is FlexboxLayoutManager -> layoutManager.recycleChildrenOnDetach = true
         }
         */
-        recyclerView.addOnScrollListener(mOnScrollListener)
+        recyclerView.addOnScrollListener(mScrollDragListener)
+        recyclerView.getFastScroller()?.addOnDragStateChangedListener(mScrollDragListener)
         mRequestManager = GlideApp.with(recyclerView)
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.removeOnScrollListener(mOnScrollListener)
+        recyclerView.removeOnScrollListener(mScrollDragListener)
+        recyclerView.getFastScroller()?.removeOnDragStateChangedListener(mScrollDragListener)
         mRequestManager = null
     }
 }

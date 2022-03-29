@@ -37,6 +37,8 @@ import com.hym.zhankukotlin.R;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class responsible to animate and provide a fast scroller.
@@ -56,9 +58,9 @@ public class FastScroller extends RecyclerView.ItemDecoration implements Recycle
     @IntDef({DRAG_X, DRAG_Y, DRAG_NONE})
     @Retention(RetentionPolicy.SOURCE)
     private @interface DragState{ }
-    private static final int DRAG_NONE = 0;
-    private static final int DRAG_X = 1;
-    private static final int DRAG_Y = 2;
+    public static final int DRAG_NONE = 0;
+    public static final int DRAG_X = 1;
+    public static final int DRAG_Y = 2;
 
     @IntDef({ANIMATION_STATE_OUT, ANIMATION_STATE_FADING_IN, ANIMATION_STATE_IN,
         ANIMATION_STATE_FADING_OUT})
@@ -137,6 +139,8 @@ public class FastScroller extends RecyclerView.ItemDecoration implements Recycle
         }
     };
 
+    private final List<OnDragListener> mOnDragListeners = new ArrayList<>();
+
     public FastScroller(RecyclerView recyclerView, StateListDrawable verticalThumbDrawable,
             Drawable verticalTrackDrawable, StateListDrawable horizontalThumbDrawable,
             Drawable horizontalTrackDrawable) {
@@ -213,6 +217,15 @@ public class FastScroller extends RecyclerView.ItemDecoration implements Recycle
             resetHideDelay(HIDE_DELAY_AFTER_VISIBLE_MS);
         }
         mState = state;
+    }
+
+    private void setDragState(@DragState int newDragState) {
+        if (mDragState == newDragState) return;
+        mDragState = newDragState;
+        mRecyclerView.requestDisallowInterceptTouchEvent(newDragState != DRAG_NONE);
+        for (OnDragListener listener : mOnDragListeners) {
+            listener.onDragStateChanged(newDragState);
+        }
     }
 
     private boolean isLayoutRTL() {
@@ -393,10 +406,10 @@ public class FastScroller extends RecyclerView.ItemDecoration implements Recycle
             if (ev.getAction() == MotionEvent.ACTION_DOWN
                     && (insideVerticalThumb || insideHorizontalThumb)) {
                 if (insideHorizontalThumb) {
-                    mDragState = DRAG_X;
+                    setDragState(DRAG_X);
                     mHorizontalDragX = (int) ev.getX();
                 } else if (insideVerticalThumb) {
-                    mDragState = DRAG_Y;
+                    setDragState(DRAG_Y);
                     mVerticalDragY = (int) ev.getY();
                 }
 
@@ -424,19 +437,21 @@ public class FastScroller extends RecyclerView.ItemDecoration implements Recycle
             boolean insideHorizontalThumb = isPointInsideHorizontalThumb(me.getX(), me.getY());
             if (insideVerticalThumb || insideHorizontalThumb) {
                 if (insideHorizontalThumb) {
-                    mDragState = DRAG_X;
+                    setDragState(DRAG_X);
                     mHorizontalDragX = (int) me.getX();
                 } else if (insideVerticalThumb) {
-                    mDragState = DRAG_Y;
+                    setDragState(DRAG_Y);
                     mVerticalDragY = (int) me.getY();
                 }
                 setState(STATE_DRAGGING);
             }
-        } else if (me.getAction() == MotionEvent.ACTION_UP && mState == STATE_DRAGGING) {
+        } else if ((me.getAction() == MotionEvent.ACTION_UP
+                || me.getAction() == MotionEvent.ACTION_CANCEL)
+                && mState == STATE_DRAGGING) {
             mVerticalDragY = 0;
             mHorizontalDragX = 0;
             setState(STATE_VISIBLE);
-            mDragState = DRAG_NONE;
+            setDragState(DRAG_NONE);
         } else if (me.getAction() == MotionEvent.ACTION_MOVE && mState == STATE_DRAGGING) {
             show();
             if (mDragState == DRAG_X) {
@@ -593,5 +608,17 @@ public class FastScroller extends RecyclerView.ItemDecoration implements Recycle
             mVerticalTrackDrawable.setAlpha(alpha);
             requestRedraw();
         }
+    }
+
+    public void addOnDragStateChangedListener(@NonNull OnDragListener listener) {
+        mOnDragListeners.add(listener);
+    }
+
+    public void removeOnDragStateChangedListener(@NonNull OnDragListener listener) {
+        mOnDragListeners.remove(listener);
+    }
+
+    public interface OnDragListener {
+        void onDragStateChanged(@DragState int newDragState);
     }
 }

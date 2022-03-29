@@ -151,6 +151,7 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
         binding.swipeRefresh.setColorSchemeColors(typedValue.data)
         binding.swipeRefresh.setOnRefreshListener { mPagingPreviewItemAdapter.refresh() }
 
+        // Setting fastScroller should be before setting adapter
         val theme = requireContext().theme
         val thumbDrawable =
             ResourcesCompat.getDrawable(resources, R.drawable.fast_scrollbar_thumb_bg, theme)
