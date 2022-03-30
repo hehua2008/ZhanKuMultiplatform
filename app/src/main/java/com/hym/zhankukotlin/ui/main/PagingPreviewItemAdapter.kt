@@ -16,19 +16,18 @@ import com.hym.zhankukotlin.GlideRequests
 import com.hym.zhankukotlin.databinding.PreviewItemLayoutBinding
 import com.hym.zhankukotlin.model.Content
 import com.hym.zhankukotlin.ui.BindingViewHolder
-import com.hym.zhankukotlin.ui.FastScroller
+import com.hym.zhankukotlin.ui.FastScrollListener
 import com.hym.zhankukotlin.ui.ThemeColorRetriever
 import com.hym.zhankukotlin.ui.author.AuthorItemFragment
 import com.hym.zhankukotlin.ui.detail.DetailActivity
 import com.hym.zhankukotlin.ui.tag.TagActivity
 import com.hym.zhankukotlin.util.getActivity
-import com.hym.zhankukotlin.util.getFastScroller
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
-import kotlin.math.abs
 
 class PagingPreviewItemAdapter :
-    PagingDataAdapter<Content, BindingViewHolder<PreviewItemLayoutBinding>>(PreviewItemCallback) {
+    PagingDataAdapter<Content, BindingViewHolder<PreviewItemLayoutBinding>>(PreviewItemCallback),
+    FastScrollListener.FastScrollCallback {
     object PreviewItemCallback : DiffUtil.ItemCallback<Content>() {
         override fun areItemsTheSame(oldItem: Content, newItem: Content): Boolean {
             return oldItem.id == newItem.id
@@ -47,87 +46,7 @@ class PagingPreviewItemAdapter :
 
     private var mRequestManager: GlideRequests? = null
 
-    private val mScrollDragListener = ScrollDragListener()
-
-    private inner class ScrollDragListener : RecyclerView.OnScrollListener(),
-        FastScroller.OnDragListener {
-        var mScrolledY = 0F
-        var mLastScrollState = RecyclerView.SCROLL_STATE_IDLE
-        var mLastDragState = FastScroller.DRAG_NONE
-        val mVelocityTracker: VelocityTracker = VelocityTracker.obtain()
-
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            mScrolledY += dy
-        }
-
-        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                mScrolledY = 0F
-                mVelocityTracker.clear()
-                if (mLastDragState != FastScroller.DRAG_NONE) return
-                mRequestManager?.let {
-                    if (it.isPaused) {
-                        //Log.w(TAG, "resumeRequestsRecursive")
-                        it.resumeRequestsRecursive()
-                    }
-                }
-            } else if (mLastScrollState == RecyclerView.SCROLL_STATE_IDLE) {
-                Choreographer.getInstance().postFrameCallback(object : Choreographer.FrameCallback {
-                    override fun doFrame(frameTimeNanos: Long) {
-                        if (mLastScrollState == RecyclerView.SCROLL_STATE_IDLE
-                            || mLastDragState != FastScroller.DRAG_NONE
-                        ) return
-
-                        val now = frameTimeNanos / 1000000
-                        val ev =
-                            MotionEvent.obtain(now, now, MotionEvent.ACTION_MOVE, 0F, mScrolledY, 0)
-                        mVelocityTracker.addMovement(ev)
-                        ev.recycle()
-
-                        mVelocityTracker.computeCurrentVelocity(
-                            1000,
-                            recyclerView.maxFlingVelocity.toFloat()
-                        )
-                        val velocityY = mVelocityTracker.yVelocity
-                        //Log.w(TAG, "mVelocityTracker.yVelocity=$velocityY")
-                        mRequestManager?.let {
-                            val isPaused = it.isPaused
-                            if (!isPaused && abs(velocityY) >= recyclerView.resources.displayMetrics.density * 6000) {
-                                //Log.w(TAG, "pauseRequestsRecursive velocityY=$velocityY")
-                                it.pauseRequestsRecursive()
-                            } else if (isPaused && abs(velocityY) < recyclerView.resources.displayMetrics.density * 2000) {
-                                //Log.w(TAG, "resumeRequestsRecursive velocityY=$velocityY")
-                                it.resumeRequestsRecursive()
-                            }
-                        }
-
-                        Choreographer.getInstance().postFrameCallback(this)
-                    }
-                })
-            }
-            mLastScrollState = newState
-        }
-
-        override fun onDragStateChanged(newDragState: Int) {
-            if (mLastDragState == newDragState) return
-            if (newDragState == FastScroller.DRAG_Y) {
-                mRequestManager?.let {
-                    if (!it.isPaused) {
-                        //Log.w(TAG, "pauseRequestsRecursive newDragState=DRAG_Y")
-                        it.pauseRequestsRecursive()
-                    }
-                }
-            } else if (newDragState == FastScroller.DRAG_NONE) {
-                mRequestManager?.let {
-                    if (it.isPaused) {
-                        //Log.w(TAG, "resumeRequestsRecursive newDragState=DRAG_NONE")
-                        it.resumeRequestsRecursive()
-                    }
-                }
-            }
-            mLastDragState = newDragState
-        }
-    }
+    private val mFastScrollListener = FastScrollListener(this)
 
     override fun getItemViewType(position: Int): Int {
         return PREVIEW_ITEM_TYPE
@@ -216,14 +135,30 @@ class PagingPreviewItemAdapter :
             is FlexboxLayoutManager -> layoutManager.recycleChildrenOnDetach = true
         }
         */
-        recyclerView.addOnScrollListener(mScrollDragListener)
-        recyclerView.getFastScroller()?.addOnDragStateChangedListener(mScrollDragListener)
+        mFastScrollListener.attachToRecyclerView(recyclerView)
         mRequestManager = GlideApp.with(recyclerView)
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.removeOnScrollListener(mScrollDragListener)
-        recyclerView.getFastScroller()?.removeOnDragStateChangedListener(mScrollDragListener)
+        mFastScrollListener.detachFromRecyclerView()
         mRequestManager = null
+    }
+
+    override fun onStartFastScroll() {
+        mRequestManager?.run {
+            if (!isPaused) {
+                Log.w(TAG, "pauseRequestsRecursive")
+                pauseRequestsRecursive()
+            }
+        }
+    }
+
+    override fun onStopFastScroll() {
+        mRequestManager?.run {
+            if (isPaused) {
+                Log.w(TAG, "resumeRequestsRecursive")
+                resumeRequestsRecursive()
+            }
+        }
     }
 }
