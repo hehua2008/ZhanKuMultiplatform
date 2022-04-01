@@ -6,15 +6,12 @@ import android.graphics.drawable.Drawable
 import android.os.AsyncTask
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
-import com.bumptech.glide.GlideBuilder
-import com.bumptech.glide.load.engine.executor.GlideExecutor
 import com.google.gson.GsonBuilder
 import com.hym.photoviewer.PhotoInfo
 import com.hym.photoviewer.PhotoSaver
 import com.hym.photoviewer.UrlPhotoInfo
 import com.hym.zhankukotlin.model.ZkTypeAdapterFactory
 import com.hym.zhankukotlin.network.*
-import com.hym.zhankukotlin.util.setIdleExecutorService
 import com.hym.zhankukotlin.work.DownloadWorker
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
@@ -90,13 +87,6 @@ class MyApplication : Application(), ViewModelStoreOwner, HasDefaultViewModelPro
             .build()
         networkService = retrofit.create(NetworkService::class.java)
         transparentDrawable = ContextCompat.getDrawable(this, R.drawable.transparent)!!
-
-        GlideApp.init(
-            this,
-            GlideBuilder()
-                .setSourceExecutor(GlideExecutor.newSourceExecutor().setIdleExecutorService())
-                .setDiskCacheExecutor(GlideExecutor.newDiskCacheExecutor().setIdleExecutorService())
-        )
 
         PhotoSaver.setInstance(object : PhotoSaver {
             override fun onSave(vararg photoInfos: PhotoInfo<*>) {
