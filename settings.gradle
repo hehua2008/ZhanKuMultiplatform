@@ -2,3 +2,4 @@ include ':app'
 rootProject.name = "ZhanKuKotlin"
 include ':photoviewer'
 include ':photoviewerdemo'
+include ':ssiv:library'

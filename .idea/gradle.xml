@@ -14,6 +14,8 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/photoviewer" />
             <option value="$PROJECT_DIR$/photoviewerdemo" />
+            <option value="$PROJECT_DIR$/ssiv" />
+            <option value="$PROJECT_DIR$/ssiv/library" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

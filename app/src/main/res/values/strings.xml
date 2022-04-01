@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">ZhanKuKotlin</string>
     <!-- Strings related to login -->
     <string name="prompt_userId">User Id</string>
@@ -14,4 +14,9 @@
     <string name="select_app_title">Select an app to open</string>
     <string name="input_keyword">Input keyword</string>
     <string name="title_search">Search</string>
+    <!-- Photo viewer sub-title for current photo position [CHAR LIMIT=10] -->
+    <string name="photo_viewer_count"><xliff:g id="current_pos">%1$d</xliff:g> of <xliff:g id="count">%2$d</xliff:g></string>
+    <string name="swipe_to_retry_load">Swipe down to retry loading</string>
+    <string name="save_current_photo">Save this photo</string>
+    <string name="save_all_photos">Save all photos</string>
 </resources>

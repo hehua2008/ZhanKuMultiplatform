@@ -2,6 +2,7 @@ package com.hym.zhankukotlin.model
 
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
+import kotlin.math.roundToInt
 
 /**
 {
@@ -45,6 +46,22 @@ data class ProductImage(
     val url: String,
     val width: Int
 ) {
+    val oriWidth: Int
+        get() {
+            if (width >= MAX_SIZE && width >= height) return MAX_SIZE
+            return if (height >= MAX_SIZE && height >= width) {
+                (width * MAX_SIZE / height.toFloat()).roundToInt()
+            } else width
+        }
+
+    val oriHeight: Int
+        get() {
+            if (height >= MAX_SIZE && height >= width) return MAX_SIZE
+            return if (width >= MAX_SIZE && width >= height) {
+                (height * MAX_SIZE / width.toFloat()).roundToInt()
+            } else height
+        }
+
     val oriUrl: String
         get() = regex.find(url)?.let {
             val curWidth = it.groupValues[1].toInt()

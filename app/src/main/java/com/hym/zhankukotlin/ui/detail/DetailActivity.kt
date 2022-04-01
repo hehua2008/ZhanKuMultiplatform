@@ -15,13 +15,13 @@ import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
-import com.hym.photoviewer.PhotoViewActivity
-import com.hym.photoviewer.UrlPhotoInfo
 import com.hym.zhankukotlin.BaseActivity
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityDetailBinding
 import com.hym.zhankukotlin.model.ContentType
 import com.hym.zhankukotlin.ui.ThemeColorRetriever.setThemeColor
+import com.hym.zhankukotlin.ui.photoviewer.PhotoViewerActivity
+import com.hym.zhankukotlin.ui.photoviewer.UrlPhotoInfo
 import com.hym.zhankukotlin.util.MMCQ
 import com.hym.zhankukotlin.util.createOverrideContext
 import com.hym.zhankukotlin.util.isNightMode
@@ -42,7 +42,7 @@ class DetailActivity : BaseActivity() {
     private lateinit var detailViewModel: DetailViewModel
     private lateinit var detailVideoAdapter: DetailVideoAdapter
     private lateinit var detailImageAdapter: DetailImageAdapter
-    private lateinit var photoViewActivityLauncher: ActivityResultLauncher<Pair<List<UrlPhotoInfo>, Int>>
+    private lateinit var photoViewerActivityLauncher: ActivityResultLauncher<Pair<List<UrlPhotoInfo>, Int>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,7 +114,7 @@ class DetailActivity : BaseActivity() {
             detailImageAdapter.submitList(workDetails.product.productImages)
         }
 
-        initPhotoViewActivityLauncher()
+        initPhotoViewerActivityLauncher()
 
         loadData()
     }
@@ -123,31 +123,31 @@ class DetailActivity : BaseActivity() {
         detailViewModel.setDetailTypeAndId(mContentType, mContentId)
     }
 
-    private fun initPhotoViewActivityLauncher() {
+    private fun initPhotoViewerActivityLauncher() {
         val contract =
             object : ActivityResultContract<Pair<List<UrlPhotoInfo>, Int>, Pair<Int, Rect?>?>() {
                 override fun createIntent(
                     context: Context,
                     input: Pair<List<UrlPhotoInfo>, Int>
                 ): Intent {
-                    return Intent(context, PhotoViewActivity::class.java)
+                    return Intent(context, PhotoViewerActivity::class.java)
                         .putParcelableArrayListExtra(
-                            PhotoViewActivity.PHOTO_INFOS,
+                            PhotoViewerActivity.PHOTO_INFOS,
                             ArrayList(input.first)
                         )
-                        .putExtra(PhotoViewActivity.CURRENT_POSITION, input.second)
+                        .putExtra(PhotoViewerActivity.CURRENT_POSITION, input.second)
                 }
 
                 override fun parseResult(resultCode: Int, intent: Intent?): Pair<Int, Rect?>? {
                     intent ?: return null
-                    val position = intent.getIntExtra(PhotoViewActivity.CURRENT_POSITION, 0)
+                    val position = intent.getIntExtra(PhotoViewerActivity.CURRENT_POSITION, 0)
                     val screenLocation =
-                        intent.getParcelableExtra<Rect>(PhotoViewActivity.SCREEN_LOCATION)
+                        intent.getParcelableExtra<Rect>(PhotoViewerActivity.SCREEN_LOCATION)
                     return position to screenLocation
                 }
             }
 
-        photoViewActivityLauncher = registerForActivityResult(contract) { result ->
+        photoViewerActivityLauncher = registerForActivityResult(contract) { result ->
             result ?: return@registerForActivityResult
             val image = detailImageAdapter.currentList.getOrNull(result.first)
                 ?: return@registerForActivityResult
@@ -173,8 +173,8 @@ class DetailActivity : BaseActivity() {
         }
     }
 
-    fun launchPhotoViewActivity(photoInfos: List<UrlPhotoInfo>, position: Int) {
-        photoViewActivityLauncher.launch(
+    fun launchPhotoViewerActivity(photoInfos: List<UrlPhotoInfo>, position: Int) {
+        photoViewerActivityLauncher.launch(
             photoInfos to position,
             ActivityOptionsCompat.makeCustomAnimation(this, 0, android.R.anim.fade_out)
         )

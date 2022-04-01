@@ -51,7 +51,7 @@
         </activity>
 
         <activity
-            android:name="com.hym.photoviewer.PhotoViewActivity"
+            android:name=".ui.photoviewer.PhotoViewerActivity"
             android:exported="true"
             android:theme="@style/Theme.ZhanKuKotlin.Fullscreen">
         </activity>

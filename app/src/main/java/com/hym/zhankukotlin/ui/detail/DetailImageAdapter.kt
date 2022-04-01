@@ -7,13 +7,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.hym.photoviewer.UrlPhotoInfo
 import com.hym.zhankukotlin.GlideApp
 import com.hym.zhankukotlin.GlideAppExtension
 import com.hym.zhankukotlin.GlideRequests
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.model.ProductImage
 import com.hym.zhankukotlin.ui.ImageViewHeightListener
+import com.hym.zhankukotlin.ui.photoviewer.UrlPhotoInfo
 import com.hym.zhankukotlin.util.getActivity
 
 class DetailImageAdapter : ListAdapter<ProductImage, DetailImageAdapter.ViewHolder>(ITEM_CALLBACK) {
@@ -78,11 +78,11 @@ class DetailImageAdapter : ListAdapter<ProductImage, DetailImageAdapter.ViewHold
                     UrlPhotoInfo(
                         original = it.oriUrl,
                         thumb = it.url,
-                        width = it.width,
-                        height = it.height
+                        width = it.oriWidth,
+                        height = it.oriHeight
                     )
                 }
-                activity.launchPhotoViewActivity(photoInfos, position)
+                activity.launchPhotoViewerActivity(photoInfos, position)
             }
         }
         mRequestManager?.run {
