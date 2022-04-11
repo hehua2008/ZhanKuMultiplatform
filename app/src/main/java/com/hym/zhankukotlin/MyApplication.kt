@@ -1,7 +1,6 @@
 package com.hym.zhankukotlin
 
 import android.app.Application
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.AsyncTask
@@ -14,7 +13,6 @@ import com.hym.zhankukotlin.network.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
-import me.weishu.reflection.Reflection
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -23,11 +21,6 @@ import java.io.File
 
 class MyApplication : Application(), ViewModelStoreOwner, HasDefaultViewModelProviderFactory {
     private val viewModelStore = ViewModelStore()
-
-    override fun attachBaseContext(base: Context) {
-        super.attachBaseContext(base)
-        Reflection.unseal(base)
-    }
 
     override fun onCreate() {
         super.onCreate()
