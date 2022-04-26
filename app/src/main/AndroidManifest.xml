@@ -37,6 +37,30 @@
             android:name=".ui.detail.DetailActivity"
             android:exported="true"
             android:theme="@style/Theme.ZhanKuKotlin.Detail">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="www.zcool.com.cn"
+                    android:pathPrefix="/work"
+                    android:scheme="https" />
+                <data android:scheme="http" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="m.zcool.com.cn"
+                    android:pathPrefix="/work"
+                    android:scheme="https" />
+                <data android:scheme="http" />
+            </intent-filter>
         </activity>
 
         <activity

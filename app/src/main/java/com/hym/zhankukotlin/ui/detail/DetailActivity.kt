@@ -3,7 +3,9 @@ package com.hym.zhankukotlin.ui.detail
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
@@ -11,20 +13,26 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.hym.zhankukotlin.BaseActivity
+import com.hym.zhankukotlin.GlideApp
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.ActivityDetailBinding
 import com.hym.zhankukotlin.model.ContentType
+import com.hym.zhankukotlin.ui.ThemeColorRetriever
 import com.hym.zhankukotlin.ui.ThemeColorRetriever.setThemeColor
 import com.hym.zhankukotlin.ui.photoviewer.PhotoViewerActivity
 import com.hym.zhankukotlin.ui.photoviewer.UrlPhotoInfo
 import com.hym.zhankukotlin.util.MMCQ
 import com.hym.zhankukotlin.util.createOverrideContext
 import com.hym.zhankukotlin.util.isNightMode
+import kotlinx.coroutines.launch
 
 class DetailActivity : BaseActivity() {
     companion object {
@@ -37,6 +45,7 @@ class DetailActivity : BaseActivity() {
     private lateinit var mTitle: String
     private lateinit var mContentId: String
     private var mContentType = ContentType.WORK.value
+    private var mThemeColor: MMCQ.ThemeColor? = null
 
     private lateinit var binding: ActivityDetailBinding
     private lateinit var detailViewModel: DetailViewModel
@@ -47,31 +56,24 @@ class DetailActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mTitle = intent.getStringExtra(KEY_TITLE)!!
-        mContentId = intent.getStringExtra(KEY_CONTENT_ID)!!
-        mContentType = intent.getIntExtra(KEY_CONTENT_TYPE, mContentType)
+        if (intent.action == Intent.ACTION_VIEW) {
+            val data = intent.data!!
+            mTitle = ""
+            mContentId = data.lastPathSegment!!
+            mContentType =
+                if (data.pathSegments[0] == "work") ContentType.WORK.value else ContentType.ARTICLE.value
+        } else {
+            mTitle = intent.getStringExtra(KEY_TITLE)!!
+            mContentId = intent.getStringExtra(KEY_CONTENT_ID)!!
+            mContentType = intent.getIntExtra(KEY_CONTENT_TYPE, mContentType)
+        }
 
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val themeColor = intent.getParcelableExtra(KEY_COLOR) as? MMCQ.ThemeColor
-        setThemeColor(themeColor)
-        themeColor?.isDarkText?.let {
-            ViewCompat.getWindowInsetsController(window.decorView)?.isAppearanceLightStatusBars = it
-        }
+        (intent.getParcelableExtra(KEY_COLOR) as? MMCQ.ThemeColor)?.let { updateThemeColor(it) }
         binding.actionBar.run {
             title = mTitle
-            val isNightMode = resources.configuration.isNightMode()
-            if (isNightMode == themeColor?.isDarkText) {
-                val overrideContext = createOverrideContext(Configuration().apply {
-                    uiMode = (uiMode and Configuration.UI_MODE_NIGHT_MASK.inv()) or
-                            (if (isNightMode) Configuration.UI_MODE_NIGHT_NO else Configuration.UI_MODE_NIGHT_YES)
-                })
-                val a = overrideContext.theme.obtainStyledAttributes(
-                    R.style.Widget_ZhanKuKotlin_Toolbar, R.styleable.Toolbar
-                )
-                navigationIcon = a.getDrawable(R.styleable.Toolbar_navigationIcon)
-                a.recycle()
-            }
+            updateNavigationIcon()
             setNavigationOnClickListener { finish() }
         }
         binding.swipeRefresh.setOnRefreshListener { loadData() }
@@ -109,14 +111,63 @@ class DetailActivity : BaseActivity() {
         detailViewModel.workDetails.observe(this) { workDetails ->
             binding.swipeRefresh.isRefreshing = false
             workDetails ?: return@observe
+            mTitle = workDetails.product.title
+            binding.actionBar.title = mTitle
+            detailHeaderAdapter.updateTitle(mTitle)
             detailHeaderAdapter.setWorkDetails(workDetails)
             detailVideoAdapter.submitList(workDetails.product.productVideos)
             detailImageAdapter.submitList(workDetails.product.productImages)
+            if (mThemeColor != null) return@observe
+            val firstImage = workDetails.product.productImages.firstOrNull() ?: return@observe
+            GlideApp.with(this).run {
+                asBitmap()
+                    .load(firstImage.url)
+                    .into(object : CustomTarget<Bitmap>() {
+                        override fun onResourceReady(
+                            resource: Bitmap,
+                            transition: Transition<in Bitmap>?
+                        ) {
+                            val target = this
+                            lifecycleScope.launch {
+                                ThemeColorRetriever.getMainThemeColor(resource)?.let {
+                                    updateThemeColor(it)
+                                    updateNavigationIcon()
+                                }
+                                clear(target)
+                            }
+                        }
+
+                        override fun onLoadCleared(placeholder: Drawable?) = Unit
+                    })
+            }
         }
 
         initPhotoViewerActivityLauncher()
 
         loadData()
+    }
+
+    private fun updateThemeColor(themeColor: MMCQ.ThemeColor) {
+        mThemeColor = themeColor
+        setThemeColor(themeColor)
+        ViewCompat.getWindowInsetsController(window.decorView)?.isAppearanceLightStatusBars =
+            themeColor.isDarkText
+    }
+
+    private fun updateNavigationIcon() {
+        binding.actionBar.run {
+            val isNightMode = resources.configuration.isNightMode()
+            if (isNightMode != mThemeColor?.isDarkText) return@run
+            val overrideContext = createOverrideContext(Configuration().apply {
+                uiMode = (uiMode and Configuration.UI_MODE_NIGHT_MASK.inv()) or
+                        (if (isNightMode) Configuration.UI_MODE_NIGHT_NO else Configuration.UI_MODE_NIGHT_YES)
+            })
+            val a = overrideContext.theme.obtainStyledAttributes(
+                R.style.Widget_ZhanKuKotlin_Toolbar, R.styleable.Toolbar
+            )
+            navigationIcon = a.getDrawable(R.styleable.Toolbar_navigationIcon)
+            a.recycle()
+        }
     }
 
     private fun loadData() {

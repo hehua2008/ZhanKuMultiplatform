@@ -19,7 +19,7 @@ import com.hym.zhankukotlin.work.DownloadWorker
 
 class DetailHeaderAdapter(
     recyclerView: RecyclerView,
-    private val mTitle: String,
+    private var mTitle: String,
     private val mContentType: Int,
     private val mContentId: String
 ) : RecyclerView.Adapter<BindingViewHolder<DetailHeaderLayoutBinding>>() {
@@ -72,6 +72,11 @@ class DetailHeaderAdapter(
         holder: BindingViewHolder<DetailHeaderLayoutBinding>,
         position: Int
     ) = Unit
+
+    fun updateTitle(title: String) {
+        mTitle = title
+        binding.detailTitle.text = title
+    }
 
     fun setWorkDetails(workDetails: WorkDetails) {
         binding.run {
