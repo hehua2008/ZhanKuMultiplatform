@@ -1,23 +1,18 @@
-buildscript {
-    ext.glide_version = "4.13.1"
-    ext.exoplayer_version = "2.17.1"
-}
-
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
+    id 'compose.track'
 }
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion "31.0.0"
+    compileSdk Versions.COMPILE_SDK
 
     defaultConfig {
         applicationId "com.hym.zhankukotlin"
-        minSdkVersion 21
-        targetSdkVersion 31
+        minSdkVersion Versions.MIN_SDK
+        targetSdkVersion Versions.TARGET_SDK
         versionCode 1
         versionName "1.0"
 
@@ -56,40 +51,40 @@ android {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'androidx.fragment:fragment-ktx:1.4.1'
-    implementation 'com.google.android.material:material:1.5.0'
-    implementation 'androidx.annotation:annotation:1.3.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
-    implementation 'androidx.work:work-runtime-ktx:2.7.1'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.2'
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${Versions.KOTLIN}"
+    implementation "androidx.core:core-ktx:${Versions.ANDROID_CORE}"
+    implementation "androidx.appcompat:appcompat:${Versions.ANDROID_APPCOMPAT}"
+    implementation "androidx.fragment:fragment-ktx:${Versions.ANDROID_FRAGMENT}"
+    implementation "com.google.android.material:material:${Versions.GOOGLE_MATERIAL}"
+    implementation "androidx.annotation:annotation:${Versions.ANDROID_ANNOTATION}"
+    implementation "androidx.constraintlayout:constraintlayout:${Versions.ANDROID_CONSTRAINTLAYOUT}"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.ANDROID_LIFECYCLE}"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.ANDROID_LIFECYCLE}"
+    implementation "androidx.work:work-runtime-ktx:${Versions.ANDROID_WORK}"
+    implementation "com.squareup.okhttp3:okhttp:${Versions.OKHTTP3}"
+    implementation "com.squareup.retrofit2:retrofit:${Versions.RETROFIT2}"
+    implementation "com.squareup.retrofit2:converter-gson:${Versions.RETROFIT2}"
     implementation 'android.arch.lifecycle:common-java8:1.1.1'
-    implementation 'androidx.paging:paging-runtime-ktx:3.1.1'
-    implementation 'com.google.android:flexbox:2.0.1'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation "com.github.bumptech.glide:glide:$glide_version"
-    implementation("com.github.bumptech.glide:recyclerview-integration:$glide_version") {
+    implementation "androidx.paging:paging-runtime-ktx:${Versions.ANDROID_PAGING}"
+    implementation "com.google.android:flexbox:${Versions.GOOGLE_FLEXBOX}"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.ANDROID_SWIPEREFRESHLAYOUT}"
+    implementation "com.github.bumptech.glide:glide:${Versions.GLIDE}"
+    implementation("com.github.bumptech.glide:recyclerview-integration:${Versions.GLIDE}") {
         transitive = false
     }
-    implementation "com.github.bumptech.glide:okhttp3-integration:$glide_version"
-    implementation 'jp.wasabeef:glide-transformations:4.3.0'
-    implementation 'jp.co.cyberagent.android:gpuimage:2.1.0'
-    kapt "com.github.bumptech.glide:compiler:$glide_version"
-    //annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
-    implementation "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
-    implementation "com.google.android.exoplayer:exoplayer-dash:$exoplayer_version"
-    implementation "com.google.android.exoplayer:exoplayer-hls:$exoplayer_version"
-    implementation "com.google.android.exoplayer:exoplayer-rtsp:$exoplayer_version"
-    implementation "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
+    implementation "com.github.bumptech.glide:okhttp3-integration:${Versions.GLIDE}"
+    implementation "jp.wasabeef:glide-transformations:${Versions.GLIDE_TRANSFORMATIONS}"
+    implementation "jp.co.cyberagent.android:gpuimage:${Versions.GPUIMAGE}"
+    kapt "com.github.bumptech.glide:compiler:${Versions.GLIDE}"
+    //annotationProcessor "com.github.bumptech.glide:compiler:${Versions.GLIDE}"
+    implementation "com.google.android.exoplayer:exoplayer-core:${Versions.GOOGLE_EXO_PLAYER}"
+    implementation "com.google.android.exoplayer:exoplayer-dash:${Versions.GOOGLE_EXO_PLAYER}"
+    implementation "com.google.android.exoplayer:exoplayer-hls:${Versions.GOOGLE_EXO_PLAYER}"
+    implementation "com.google.android.exoplayer:exoplayer-rtsp:${Versions.GOOGLE_EXO_PLAYER}"
+    implementation "com.google.android.exoplayer:exoplayer-ui:${Versions.GOOGLE_EXO_PLAYER}"
     implementation project(path: ':ssiv:library')
     debugImplementation project(path: ':logcollector')
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:${Versions.LEAKCANARY}"
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
