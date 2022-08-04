@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
+    id 'dagger.hilt.android.plugin'
     id 'compose.track'
 }
 
@@ -50,6 +51,14 @@ android {
     }
 }
 
+hilt {
+    enableAggregatingTask = true
+}
+
+kapt {
+    correctErrorTypes true
+}
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${Versions.KOTLIN}"
     implementation "androidx.core:core-ktx:${Versions.ANDROID_CORE}"
@@ -77,6 +86,8 @@ dependencies {
     implementation "jp.co.cyberagent.android:gpuimage:${Versions.GPUIMAGE}"
     kapt "com.github.bumptech.glide:compiler:${Versions.GLIDE}"
     //annotationProcessor "com.github.bumptech.glide:compiler:${Versions.GLIDE}"
+    implementation "com.google.dagger:hilt-android:${Versions.GOOGLE_HILT}"
+    kapt "com.google.dagger:hilt-android-compiler:${Versions.GOOGLE_HILT}"
     implementation "com.google.android.exoplayer:exoplayer-core:${Versions.GOOGLE_EXO_PLAYER}"
     implementation "com.google.android.exoplayer:exoplayer-dash:${Versions.GOOGLE_EXO_PLAYER}"
     implementation "com.google.android.exoplayer:exoplayer-hls:${Versions.GOOGLE_EXO_PLAYER}"

@@ -28,6 +28,7 @@ object Versions {
     const val GOOGLE_FLEXBOX = "2.0.1"
     const val GOOGLE_EXO_PLAYER = "2.18.1"
     const val GOOGLE_GSON = "2.9.1"
+    const val GOOGLE_HILT = "2.38.1"
     // endregion
 
     // region square

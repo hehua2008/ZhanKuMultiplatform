@@ -19,7 +19,9 @@ import com.hym.zhankukotlin.getAppViewModel
 import com.hym.zhankukotlin.model.TopCate
 import com.hym.zhankukotlin.ui.TabReselectedCallback
 import com.hym.zhankukotlin.util.createTextColorStateListByColorAttr
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class Main2Activity : BaseActivity(), TabConfigurationStrategy, OnTabSelectedListener {
     companion object {
         private const val TAG = "Main2Activity"

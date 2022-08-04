@@ -6,12 +6,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.hym.zhankukotlin.hilt.NetworkModule
 import com.hym.zhankukotlin.model.TopCate
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 
-class MyAppViewModel(app: Application) : AndroidViewModel(app) {
+class MyAppViewModel(private val app: Application) : AndroidViewModel(app) {
     companion object {
         private const val TAG = "MyAppViewModel"
     }
@@ -21,7 +23,9 @@ class MyAppViewModel(app: Application) : AndroidViewModel(app) {
 
     fun getCategoryItemsFromNetworkAsync(): Deferred<Unit> = viewModelScope.async(Dispatchers.IO) {
         try {
-            MyApplication.networkService.getAllCategoryListContainArticle().run {
+            val accessor =
+                EntryPointAccessors.fromApplication(app, NetworkModule.Accessor::class.java)
+            accessor.networkService().getAllCategoryListContainArticle().run {
                 dataContent.also {
                     if (it == null) Log.e(TAG, "getCategoryItemList failed: $msg")
                     else _categoryItems.postValue(it)

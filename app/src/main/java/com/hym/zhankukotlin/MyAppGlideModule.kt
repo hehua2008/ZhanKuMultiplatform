@@ -11,6 +11,8 @@ import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
+import com.hym.zhankukotlin.hilt.NetworkModule
+import dagger.hilt.android.EntryPointAccessors
 import java.io.InputStream
 
 @GlideModule
@@ -29,7 +31,10 @@ class MyAppGlideModule : AppGlideModule() {
     }
 
     override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
-        val factory: OkHttpUrlLoader.Factory = OkHttpUrlLoader.Factory(MyApplication.okHttpClient)
+        val appContext = context.applicationContext
+        val accessor =
+            EntryPointAccessors.fromApplication(appContext, NetworkModule.Accessor::class.java)
+        val factory: OkHttpUrlLoader.Factory = OkHttpUrlLoader.Factory(accessor.okHttpClient())
         registry.replace(GlideUrl::class.java, InputStream::class.java, factory)
     }
 }

@@ -5,20 +5,26 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.hym.zhankukotlin.MyApplication
 import com.hym.zhankukotlin.model.Content
 import com.hym.zhankukotlin.model.RecommendLevel
 import com.hym.zhankukotlin.model.SubCate
 import com.hym.zhankukotlin.model.TopCate
+import com.hym.zhankukotlin.network.NetworkService
 import com.hym.zhankukotlin.paging.LoadParamsHolder
 import com.hym.zhankukotlin.paging.PreviewPagingSource
 import com.hym.zhankukotlin.paging.TotalPagesCallback
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class PreviewPageViewModel(private val topCate: TopCate? = null) : ViewModel() {
+@HiltViewModel
+class PreviewPageViewModel @Inject constructor(private val networkService: NetworkService) :
+    ViewModel() {
     companion object {
         private const val TAG = "PreviewPageViewModel"
     }
+
+    var topCate: TopCate? = null
 
     private val _page = MutableLiveData<Int>(1)
     val page: LiveData<Int> = _page
@@ -86,7 +92,7 @@ class PreviewPageViewModel(private val topCate: TopCate? = null) : ViewModel() {
         initialKey = LoadParamsHolder.INITIAL,
         pagingSourceFactory = {
             PreviewPagingSource(
-                networkService = MyApplication.networkService,
+                networkService = networkService,
                 topCate = topCate,
                 subCate = subCate.value,
                 initialPage = page.value ?: 1,

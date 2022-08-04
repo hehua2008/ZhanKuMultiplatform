@@ -5,17 +5,23 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.hym.zhankukotlin.MyApplication
 import com.hym.zhankukotlin.model.*
+import com.hym.zhankukotlin.network.NetworkService
 import com.hym.zhankukotlin.paging.LoadParamsHolder
 import com.hym.zhankukotlin.paging.SearchContentPagingSource
 import com.hym.zhankukotlin.paging.TotalPagesCallback
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class SearchContentPageViewModel(private val contentType: ContentType) : ViewModel() {
+@HiltViewModel
+class SearchContentPageViewModel @Inject constructor(private val networkService: NetworkService) :
+    ViewModel() {
     companion object {
         private const val TAG = "SearchContentPageViewModel"
     }
+
+    lateinit var contentType: ContentType
 
     private val _page = MutableLiveData<Int>(1)
     val page: LiveData<Int> = _page
@@ -96,7 +102,7 @@ class SearchContentPageViewModel(private val contentType: ContentType) : ViewMod
         initialKey = LoadParamsHolder.INITIAL,
         pagingSourceFactory = {
             SearchContentPagingSource(
-                networkService = MyApplication.networkService,
+                networkService = networkService,
                 initialPage = page.value ?: 1,
                 pageSize = pageSize,
                 word = word,

@@ -10,7 +10,9 @@ import com.hym.zhankukotlin.databinding.ActivityMainBinding
 import com.hym.zhankukotlin.getAppViewModel
 import com.hym.zhankukotlin.model.TopCate
 import com.hym.zhankukotlin.ui.TabReselectedCallback
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : BaseActivity(), OnTabSelectedListener {
     companion object {
         private const val TAG = "MainActivity"

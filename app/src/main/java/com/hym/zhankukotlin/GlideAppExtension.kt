@@ -9,6 +9,8 @@ import com.bumptech.glide.request.BaseRequestOptions
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
+import com.hym.zhankukotlin.hilt.NetworkModule
+import dagger.hilt.android.EntryPointAccessors
 import jp.wasabeef.glide.transformations.BlurTransformation
 
 @GlideExtension
@@ -41,7 +43,9 @@ object GlideAppExtension {
     @JvmStatic
     @GlideOption
     fun transparentPlaceHolder(options: BaseRequestOptions<*>): BaseRequestOptions<*> {
-        return options.placeholder(MyApplication.transparentDrawable)
+        val app = MyApplication.INSTANCE
+        val accessor = EntryPointAccessors.fromApplication(app, NetworkModule.Accessor::class.java)
+        return options.placeholder(accessor.transparentDrawable())
     }
 
     @JvmStatic

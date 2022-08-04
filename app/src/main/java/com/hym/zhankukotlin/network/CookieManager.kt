@@ -1,19 +1,21 @@
 package com.hym.zhankukotlin.network
 
-import android.annotation.SuppressLint
-import android.app.Application
 import android.content.Context
 import android.util.Log
 import com.hym.zhankukotlin.util.HexDump
 import com.hym.zhankukotlin.util.StringUtils
+import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
 import java.io.*
 import java.util.concurrent.ConcurrentHashMap
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class CookieManager private constructor(
-    private val mContext: Context
+@Singleton
+class CookieManager @Inject constructor(
+    @ApplicationContext private val mContext: Context
 ) : CookieJar {
     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
         val host = url.toUrl().host
@@ -119,17 +121,6 @@ class CookieManager private constructor(
         private const val TAG = "CookieManager"
         private val COOKIE_MAP: MutableMap<String, CookieSerialize?> = ConcurrentHashMap()
         private const val COOKIE_DIR_NAME = "cookies"
-
-        @SuppressLint("StaticFieldLeak")
-        lateinit var INSTANCE: CookieManager
-
-        fun newInstance(context: Context) {
-            var ctx = context
-            if (ctx !is Application) {
-                ctx = ctx.applicationContext
-            }
-            INSTANCE = CookieManager(ctx)
-        }
 
         fun hostStringToFileName(hostStr: String): String {
             return HexDump.toHexString(hostStr.toByteArray())

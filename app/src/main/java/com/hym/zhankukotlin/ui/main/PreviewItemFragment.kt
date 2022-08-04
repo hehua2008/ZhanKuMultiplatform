@@ -15,7 +15,9 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.*
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
@@ -33,11 +35,12 @@ import com.hym.zhankukotlin.model.TopCate
 import com.hym.zhankukotlin.ui.FastScroller
 import com.hym.zhankukotlin.ui.HeaderFooterLoadStateAdapter
 import com.hym.zhankukotlin.ui.TabReselectedCallback
-import kotlinx.coroutines.flow.collect
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
 
+@AndroidEntryPoint
 class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCallback {
     companion object {
         private const val TAG = "PreviewItemFragment"
@@ -58,7 +61,7 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
     var topCate: TopCate? = null
         private set
     private var mSubCate: SubCate? = null
-    private val mPageViewModel: PreviewPageViewModel by viewModels(factoryProducer = { mVMFactory })
+    private val mPageViewModel: PreviewPageViewModel by viewModels()
     private var mBinding: FragmentMainBinding? = null
     private val binding get() = checkNotNull(mBinding)
     private lateinit var mRequestManager: GlideRequests
@@ -68,16 +71,6 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
     private lateinit var mCategoryItemAdapter: CategoryItemAdapter
     private lateinit var mButtonItemDecoration: RecyclerView.ItemDecoration
     private lateinit var mPreviewItemDecoration: RecyclerView.ItemDecoration
-
-    private val mVMFactory = object : ViewModelProvider.NewInstanceFactory() {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return if (PreviewPageViewModel::class.java.isAssignableFrom(modelClass)) {
-                PreviewPageViewModel(topCate).apply { setSubCate(mSubCate) } as T
-            } else {
-                super.create(modelClass)
-            }
-        }
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -93,6 +86,8 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
         val activeBundle = savedInstanceState ?: arguments
         topCate = activeBundle!!.getParcelable(TOP_CATE)
         mSubCate = activeBundle.getParcelable(SUB_CATE)
+        mPageViewModel.topCate = topCate
+        mPageViewModel.setSubCate(mSubCate)
 
         mPagingPreviewItemAdapter = PagingPreviewItemAdapter()
         mCategoryItemLayoutManager = FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)

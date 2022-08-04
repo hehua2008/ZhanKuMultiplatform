@@ -14,7 +14,9 @@ import com.hym.zhankukotlin.model.SubCate
 import com.hym.zhankukotlin.model.TopCate
 import com.hym.zhankukotlin.ui.author.AuthorItemFragment
 import com.hym.zhankukotlin.ui.main.PreviewItemFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class TagActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

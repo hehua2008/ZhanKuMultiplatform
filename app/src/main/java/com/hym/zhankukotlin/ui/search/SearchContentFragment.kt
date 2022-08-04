@@ -13,7 +13,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.*
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
@@ -24,16 +26,21 @@ import com.hym.zhankukotlin.MyAppViewModel
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.FragmentMainBinding
 import com.hym.zhankukotlin.getAppViewModel
-import com.hym.zhankukotlin.model.*
+import com.hym.zhankukotlin.model.ContentType
+import com.hym.zhankukotlin.model.RecommendLevel
+import com.hym.zhankukotlin.model.SortOrder
+import com.hym.zhankukotlin.model.TopCate
 import com.hym.zhankukotlin.ui.HeaderFooterLoadStateAdapter
 import com.hym.zhankukotlin.ui.TabReselectedCallback
 import com.hym.zhankukotlin.ui.main.MainViewModel
 import com.hym.zhankukotlin.ui.main.PagingPreviewItemAdapter
-import kotlinx.coroutines.flow.collect
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
+import kotlin.collections.set
 
+@AndroidEntryPoint
 class SearchContentFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCallback {
     companion object {
         private const val TAG = "SearchContentFragment"
@@ -50,7 +57,7 @@ class SearchContentFragment : Fragment(), Observer<LifecycleOwner>, TabReselecte
     }
 
     private val mMainViewModel: MainViewModel by activityViewModels()
-    private val mPageViewModel: SearchContentPageViewModel by viewModels(factoryProducer = { mVMFactory })
+    private val mPageViewModel: SearchContentPageViewModel by viewModels()
     private var mBinding: FragmentMainBinding? = null
     private val binding get() = checkNotNull(mBinding)
     private lateinit var mContentType: ContentType
@@ -60,16 +67,6 @@ class SearchContentFragment : Fragment(), Observer<LifecycleOwner>, TabReselecte
     private lateinit var mCategoryItemAdapter: TopCateItemAdapter
     private lateinit var mButtonItemDecoration: RecyclerView.ItemDecoration
     private lateinit var mPreviewItemDecoration: RecyclerView.ItemDecoration
-
-    private val mVMFactory = object : ViewModelProvider.NewInstanceFactory() {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return if (SearchContentPageViewModel::class.java.isAssignableFrom(modelClass)) {
-                SearchContentPageViewModel(mContentType) as T
-            } else {
-                super.create(modelClass)
-            }
-        }
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -83,6 +80,7 @@ class SearchContentFragment : Fragment(), Observer<LifecycleOwner>, TabReselecte
 
         val activeBundle = savedInstanceState ?: arguments
         mContentType = ContentType.valueOf(activeBundle!!.getString(CONTENT_TYPE)!!)
+        mPageViewModel.contentType = mContentType
 
         mPagingPreviewItemAdapter = PagingPreviewItemAdapter()
         mCategoryItemLayoutManager = FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)

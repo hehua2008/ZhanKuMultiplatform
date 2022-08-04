@@ -5,15 +5,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hym.zhankukotlin.MyApplication
 import com.hym.zhankukotlin.model.ContentType
 import com.hym.zhankukotlin.model.WorkDetails
+import com.hym.zhankukotlin.network.NetworkService
 import com.hym.zhankukotlin.player.PlayerProvider
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DetailViewModel : ViewModel() {
+@HiltViewModel
+class DetailViewModel @Inject constructor(private val networkService: NetworkService) :
+    ViewModel() {
     companion object {
         private const val TAG = "DetailViewModel"
     }
@@ -28,7 +32,7 @@ class DetailViewModel : ViewModel() {
             try {
                 when (type) {
                     ContentType.WORK.value -> {
-                        MyApplication.networkService.getWorkDetails(id).run {
+                        networkService.getWorkDetails(id).run {
                             dataContent.also {
                                 if (it == null) Log.e(TAG, "getWorkDetails $id failed: $msg")
                                 _workDetails.postValue(it)

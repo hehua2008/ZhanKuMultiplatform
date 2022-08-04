@@ -32,8 +32,10 @@ import com.hym.zhankukotlin.ui.photoviewer.UrlPhotoInfo
 import com.hym.zhankukotlin.util.MMCQ
 import com.hym.zhankukotlin.util.createOverrideContext
 import com.hym.zhankukotlin.util.isNightMode
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class DetailActivity : BaseActivity() {
     companion object {
         const val KEY_TITLE = "TITLE"

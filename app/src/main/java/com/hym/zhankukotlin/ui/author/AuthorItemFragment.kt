@@ -12,20 +12,24 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.*
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.FragmentMainBinding
-import com.hym.zhankukotlin.model.*
+import com.hym.zhankukotlin.model.CreatorObj
+import com.hym.zhankukotlin.model.SortOrder
 import com.hym.zhankukotlin.ui.HeaderFooterLoadStateAdapter
 import com.hym.zhankukotlin.ui.TabReselectedCallback
 import com.hym.zhankukotlin.ui.main.PagingPreviewItemAdapter
-import kotlinx.coroutines.flow.collect
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
 
+@AndroidEntryPoint
 class AuthorItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCallback {
     companion object {
         private const val TAG = "AuthorItemFragment"
@@ -41,23 +45,13 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCa
         }
     }
 
-    private val mPageViewModel: AuthorPageViewModel by viewModels(factoryProducer = { mVMFactory })
+    private val mPageViewModel: AuthorPageViewModel by viewModels()
     private var mBinding: FragmentMainBinding? = null
     private val binding get() = checkNotNull(mBinding)
     private lateinit var mAuthor: CreatorObj
 
     private lateinit var mPagingPreviewItemAdapter: PagingPreviewItemAdapter
     private lateinit var mPreviewItemDecoration: RecyclerView.ItemDecoration
-
-    private val mVMFactory = object : ViewModelProvider.NewInstanceFactory() {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return if (AuthorPageViewModel::class.java.isAssignableFrom(modelClass)) {
-                AuthorPageViewModel(mAuthor.id) as T
-            } else {
-                super.create(modelClass)
-            }
-        }
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -71,6 +65,7 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCa
 
         val activeBundle = savedInstanceState ?: arguments
         mAuthor = activeBundle!!.getParcelable(AUTHOR)!!
+        mPageViewModel.authorUid = mAuthor.id
 
         mPagingPreviewItemAdapter = PagingPreviewItemAdapter()
 

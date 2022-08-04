@@ -2,23 +2,14 @@ package com.hym.zhankukotlin
 
 import android.app.Application
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import android.os.AsyncTask
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-import com.google.gson.GsonBuilder
-import com.hym.zhankukotlin.model.ZkTypeAdapterFactory
-import com.hym.zhankukotlin.network.*
+import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
-import okhttp3.Cache
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.io.File
 
+@HiltAndroidApp
 class MyApplication : Application(), ViewModelStoreOwner, HasDefaultViewModelProviderFactory {
     private val viewModelStore = ViewModelStore()
 
@@ -54,31 +45,6 @@ class MyApplication : Application(), ViewModelStoreOwner, HasDefaultViewModelPro
         })
         */
 
-        CookieManager.newInstance(this)
-        val clientCacheDir = File(cacheDir, CLIENT_CACHE_DIR_NAME)
-        if (!clientCacheDir.isDirectory) {
-            clientCacheDir.mkdirs()
-        }
-        okHttpClient = OkHttpClient.Builder()
-            .cookieJar(CookieManager.INSTANCE)
-            .addInterceptor(HeaderInterceptor())
-            .addNetworkInterceptor(LogInterceptor())
-            .cache(Cache(clientCacheDir, 100 * 1024 * 1024))
-            //.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 8888)))
-            .build()
-        retrofit = Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl(Constants.API_URL)
-            .addConverterFactory(
-                GsonConverterFactory.create(
-                    GsonBuilder().registerTypeAdapterFactory(ZkTypeAdapterFactory).create()
-                )
-            )
-            .callbackExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
-            .build()
-        networkService = retrofit.create(NetworkService::class.java)
-        transparentDrawable = ContextCompat.getDrawable(this, R.drawable.transparent)!!
-
         SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
 
         val deferredList: MutableList<Deferred<*>> = mutableListOf()
@@ -95,22 +61,8 @@ class MyApplication : Application(), ViewModelStoreOwner, HasDefaultViewModelPro
 
     companion object {
         private const val TAG = "MyApplication"
-        private const val CLIENT_CACHE_DIR_NAME = "retrofit"
 
         lateinit var INSTANCE: MyApplication
-
-        @JvmStatic
-        lateinit var okHttpClient: OkHttpClient
-
-        @JvmStatic
-        lateinit var retrofit: Retrofit
-
-        @JvmStatic
-        lateinit var networkService: NetworkService
-            private set
-
-        @JvmStatic
-        lateinit var transparentDrawable: Drawable
             private set
     }
 }

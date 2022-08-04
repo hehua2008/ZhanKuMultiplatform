@@ -5,18 +5,25 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.hym.zhankukotlin.MyApplication
 import com.hym.zhankukotlin.model.Content
 import com.hym.zhankukotlin.model.SortOrder
+import com.hym.zhankukotlin.network.NetworkService
 import com.hym.zhankukotlin.paging.AuthorPagingSource
 import com.hym.zhankukotlin.paging.LoadParamsHolder
 import com.hym.zhankukotlin.paging.TotalPagesCallback
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
+import kotlin.properties.Delegates
 
-class AuthorPageViewModel(private val authorUid: Int) : ViewModel() {
+@HiltViewModel
+class AuthorPageViewModel @Inject constructor(private val networkService: NetworkService) :
+    ViewModel() {
     companion object {
         private const val TAG = "AuthorPageViewModel"
     }
+
+    var authorUid by Delegates.notNull<Int>()
 
     private val _page = MutableLiveData<Int>(1)
     val page: LiveData<Int> = _page
@@ -65,7 +72,7 @@ class AuthorPageViewModel(private val authorUid: Int) : ViewModel() {
         initialKey = LoadParamsHolder.INITIAL,
         pagingSourceFactory = {
             AuthorPagingSource(
-                networkService = MyApplication.networkService,
+                networkService = networkService,
                 authorUid = authorUid,
                 initialPage = page.value ?: 1,
                 pageSize = pageSize,
