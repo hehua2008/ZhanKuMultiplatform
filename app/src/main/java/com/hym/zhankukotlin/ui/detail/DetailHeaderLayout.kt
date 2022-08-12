@@ -6,6 +6,8 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.view.isVisible
 import com.hym.zhankukotlin.databinding.DetailHeaderLayoutBinding
+import com.hym.zhankukotlin.model.ArticleDetails
+import com.hym.zhankukotlin.model.ProductImage
 import com.hym.zhankukotlin.model.WorkDetails
 import com.hym.zhankukotlin.ui.CircleViewOutlineProvider
 import com.hym.zhankukotlin.ui.HeaderLayout
@@ -51,6 +53,30 @@ class DetailHeaderLayout @JvmOverloads constructor(
             detailComments.text = "${workDetails.product.commentCount}"
             detailFavorites.text = "${workDetails.product.favoriteCount}"
             workDetails.sharewords.let {
+                detailShareWords.isVisible = it.isNotBlank()
+                detailShareWords.text = it
+            }
+        }
+    }
+
+    fun setArticleDetails(articleDetails: ArticleDetails, images: List<ProductImage>) {
+        binding.run {
+            detailAuthor.text = articleDetails.articledata.creatorObj.username
+            View.OnClickListener { v ->
+                val context = v.context
+                val intent = Intent(context, TagActivity::class.java)
+                    .putExtra(AuthorItemFragment.AUTHOR, articleDetails.articledata.creatorObj)
+                context.startActivity(intent)
+            }.let {
+                authorGroup.setOnClickListener(it)
+                detailAuthor.setOnClickListener(it)
+            }
+            downloadAll.isVisible = images.isNotEmpty()
+            detailTime.text = articleDetails.articledata.updateTimeStr
+            detailViews.text = "${articleDetails.articledata.viewCount}"
+            detailComments.text = "${articleDetails.articledata.commentCount}"
+            detailFavorites.text = "${articleDetails.articledata.favoriteCount}"
+            articleDetails.articledata.summary.let {
                 detailShareWords.isVisible = it.isNotBlank()
                 detailShareWords.text = it
             }

@@ -9,7 +9,9 @@ import androidx.annotation.Keep
 "name": "站酷认证",
 "nameEn": "",
 "status": 1,
-"url": "https://www.zcool.com.cn/company/about"
+"url": "https://www.zcool.com.cn/company/about",
+"description": "站酷认证团队",
+"sort": 7
 }
  */
 @Keep
@@ -20,4 +22,8 @@ data class MemberHonor(
     val nameEn: String,
     val status: Int,
     val url: String
-)
+) {
+    val description: String = ""
+
+    val sort: Int = 0
+}

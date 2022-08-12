@@ -12,8 +12,7 @@ import com.google.android.flexbox.JustifyContent
 import com.hym.zhankukotlin.GlideApp
 import com.hym.zhankukotlin.R
 import com.hym.zhankukotlin.databinding.DetailHeaderLayoutBinding
-import com.hym.zhankukotlin.model.ContentType
-import com.hym.zhankukotlin.model.WorkDetails
+import com.hym.zhankukotlin.model.*
 import com.hym.zhankukotlin.ui.BindingViewHolder
 import com.hym.zhankukotlin.work.DownloadWorker
 
@@ -94,6 +93,29 @@ class DetailHeaderAdapter(
 
             GlideApp.with(root)
                 .load(workDetails.product.creatorObj.avatar1x)
+                .into(detailAvatar)
+        }
+    }
+
+    fun setArticleDetails(articleDetails: ArticleDetails, images: List<ProductImage>) {
+        binding.run {
+            root.setArticleDetails(articleDetails, images)
+
+            (tagItemRecycler.adapter as TagUrlItemAdapter).setTagItems(articleDetails.articledata.run {
+                mutableListOf<Cate>().apply {
+                    category?.let { add(it) }
+                    addAll(articleCates)
+                }
+            })
+
+            downloadAll.setOnClickListener { v ->
+                DownloadWorker.enqueue(
+                    v.context,
+                    images.map { it.url })
+            }
+
+            GlideApp.with(root)
+                .load(articleDetails.articledata.creatorObj.avatar1x)
                 .into(detailAvatar)
         }
     }

@@ -54,6 +54,13 @@ interface NetworkService {
         @Query("app") app: String = "android"
     ): WorkDetailsResponse
 
+    // https://api.zcool.com.cn/v2/api/article/ZMTQ0MDY4NA==.html?app=android
+    @GET("${Constants.API_URL}article/{articleId}")
+    suspend fun getArticleDetails(
+        @Path("articleId") articleId: String,
+        @Query("app") app: String = "android"
+    ): ArticleDetailsResponse
+
     //https://api.zcool.com.cn/v2/api/search/contentList?app=android&p=1&ps=10&type=3&word=
     //https://api.zcool.com.cn/v2/api/search/contentList?app=android&p=1&ps=10&type=8&word=
     //https://api.zcool.com.cn/v2/api/search/contentList?app=android&p=1&ps=10&field=0&recommendLevel=0&sort=5&type=3&word=
@@ -137,6 +144,12 @@ interface NetworkService {
                     println(product.productImages)
                     println(product.productTags)
                     println(product.productVideos)
+                }
+                val articleDetailsResponse = networkService.getArticleDetails("ZMTQ0MDY4NA==.html")
+                articleDetailsResponse.dataContent?.run {
+                    println(qrcode)
+                    println(sharewords)
+                    println(articledata.memo)
                 }
                 val searchContentResultResponse = networkService.getSearchContent(word = "春天和花")
                 searchContentResultResponse.dataContent?.run {

@@ -42,4 +42,6 @@ object Versions {
     const val GLIDE_TRANSFORMATIONS = "4.3.0"
     const val GPUIMAGE = "2.1.0"
     // endregion
+
+    const val JSOUP = "1.15.2"
 }

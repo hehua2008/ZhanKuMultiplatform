@@ -93,6 +93,7 @@ dependencies {
     implementation "com.google.android.exoplayer:exoplayer-hls:${Versions.GOOGLE_EXO_PLAYER}"
     implementation "com.google.android.exoplayer:exoplayer-rtsp:${Versions.GOOGLE_EXO_PLAYER}"
     implementation "com.google.android.exoplayer:exoplayer-ui:${Versions.GOOGLE_EXO_PLAYER}"
+    implementation "org.jsoup:jsoup:${Versions.JSOUP}"
     implementation project(path: ':ssiv:library')
     debugImplementation project(path: ':logcollector')
     debugImplementation "com.squareup.leakcanary:leakcanary-android:${Versions.LEAKCANARY}"

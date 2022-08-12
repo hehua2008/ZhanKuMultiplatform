@@ -51,8 +51,7 @@ class DetailActivity : BaseActivity() {
 
     private lateinit var binding: ActivityDetailBinding
     private lateinit var detailViewModel: DetailViewModel
-    private lateinit var detailVideoAdapter: DetailVideoAdapter
-    private lateinit var detailImageAdapter: DetailImageAdapter
+    private lateinit var detailContentAdapter: DetailContentAdapter
     private lateinit var photoViewerActivityLauncher: ActivityResultLauncher<Pair<List<UrlPhotoInfo>, Int>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,8 +90,9 @@ class DetailActivity : BaseActivity() {
                 val lastPosition = state.itemCount - 1
                 val bottomOffset = if (lastPosition != 0 && position == lastPosition) {
                     val image =
-                        detailImageAdapter.currentList.getOrNull(position - 1 - detailVideoAdapter.itemCount)
-                    image?.let {
+                        detailContentAdapter.currentList.getOrNull(position - 1) as? DetailImage
+                    image?.data?.let {
+                        if (it.width == 0 || it.height == 0) return@let mBottomOffset
                         val imageHeight = (it.height * parent.width / it.width.toFloat()).toInt()
                         mBottomOffset.coerceAtLeast((window.decorView.height - imageHeight) / 2)
                     } ?: mOffset
@@ -105,10 +105,8 @@ class DetailActivity : BaseActivity() {
 
         val detailHeaderAdapter =
             DetailHeaderAdapter(binding.detailRecycler, mTitle, mContentType, mContentId)
-        detailVideoAdapter = DetailVideoAdapter(detailViewModel.playerProvider)
-        detailImageAdapter = DetailImageAdapter()
-        binding.detailRecycler.adapter =
-            ConcatAdapter(detailHeaderAdapter, detailVideoAdapter, detailImageAdapter)
+        detailContentAdapter = DetailContentAdapter(detailViewModel.playerProvider)
+        binding.detailRecycler.adapter = ConcatAdapter(detailHeaderAdapter, detailContentAdapter)
 
         detailViewModel.workDetails.observe(this) { workDetails ->
             binding.swipeRefresh.isRefreshing = false
@@ -117,8 +115,12 @@ class DetailActivity : BaseActivity() {
             binding.actionBar.title = mTitle
             detailHeaderAdapter.updateTitle(mTitle)
             detailHeaderAdapter.setWorkDetails(workDetails)
-            detailVideoAdapter.submitList(workDetails.product.productVideos)
-            detailImageAdapter.submitList(workDetails.product.productImages)
+            val detailContents = workDetails.product.productVideos.map {
+                DetailVideo(it)
+            } + workDetails.product.productImages.map {
+                DetailImage(it)
+            }
+            detailContentAdapter.submitList(detailContents)
             if (mThemeColor != null) return@observe
             val firstImage = workDetails.product.productImages.firstOrNull() ?: return@observe
             GlideApp.with(this).run {
@@ -142,6 +144,19 @@ class DetailActivity : BaseActivity() {
                         override fun onLoadCleared(placeholder: Drawable?) = Unit
                     })
             }
+        }
+
+        detailViewModel.articleDetails.observe(this) { articleDetails ->
+            binding.swipeRefresh.isRefreshing = false
+            articleDetails ?: return@observe
+            mTitle = articleDetails.articledata.title
+            binding.actionBar.title = mTitle
+            detailHeaderAdapter.updateTitle(mTitle)
+            val detailContents =
+                DetailContent.htmlToDetailContent(articleDetails.articledata.memoHtml)
+            val images = detailContents.filterIsInstance<DetailImage>().map { it.data }
+            detailHeaderAdapter.setArticleDetails(articleDetails, images)
+            detailContentAdapter.submitList(detailContents)
         }
 
         initPhotoViewerActivityLauncher()
@@ -202,7 +217,8 @@ class DetailActivity : BaseActivity() {
 
         photoViewerActivityLauncher = registerForActivityResult(contract) { result ->
             result ?: return@registerForActivityResult
-            val image = detailImageAdapter.currentList.getOrNull(result.first)
+            val contentList = detailContentAdapter.currentList
+            val detailImage = contentList.filterIsInstance<DetailImage>().getOrNull(result.first)
                 ?: return@registerForActivityResult
             val screenLocation = result.second ?: window.decorView.run {
                 IntArray(2).let {
@@ -211,7 +227,9 @@ class DetailActivity : BaseActivity() {
                 }
             }
             binding.detailRecycler.run {
-                val imageHeight = (image.height * width / image.width.toFloat()).toInt()
+                val image = detailImage.data
+                val imageHeight = if (image.width == 0 || image.height == 0) 0
+                else (image.height * width / image.width.toFloat()).toInt()
                 val imageViewScreenTop =
                     screenLocation.top + (screenLocation.height() - imageHeight) / 2
                 val recyclerViewScreenTop = IntArray(2).let {
@@ -219,7 +237,7 @@ class DetailActivity : BaseActivity() {
                     it[1]
                 }
                 val offset = imageViewScreenTop - recyclerViewScreenTop
-                val position = result.first + 1 + detailVideoAdapter.itemCount
+                val position = 1 + contentList.indexOf(detailImage)
                 (binding.detailRecycler.layoutManager as LinearLayoutManager)
                     .scrollToPositionWithOffset(position, offset)
             }

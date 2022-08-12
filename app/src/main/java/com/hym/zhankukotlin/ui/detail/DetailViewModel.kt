@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hym.zhankukotlin.model.ArticleDetails
 import com.hym.zhankukotlin.model.ContentType
 import com.hym.zhankukotlin.model.WorkDetails
 import com.hym.zhankukotlin.network.NetworkService
@@ -25,6 +26,9 @@ class DetailViewModel @Inject constructor(private val networkService: NetworkSer
     private val _workDetails = MutableLiveData<WorkDetails?>()
     val workDetails: LiveData<WorkDetails?> = _workDetails
 
+    private val _articleDetails = MutableLiveData<ArticleDetails?>()
+    val articleDetails: LiveData<ArticleDetails?> = _articleDetails
+
     val playerProvider = PlayerProvider()
 
     fun setDetailTypeAndId(type: Int, id: String) {
@@ -40,8 +44,12 @@ class DetailViewModel @Inject constructor(private val networkService: NetworkSer
                         }
                     }
                     ContentType.ARTICLE.value -> {
-                        // TODO: 2021/12/29
-                        _workDetails.postValue(null)
+                        networkService.getArticleDetails(id).run {
+                            dataContent.also {
+                                if (it == null) Log.e(TAG, "getArticleDetails $id failed: $msg")
+                                _articleDetails.postValue(it)
+                            }
+                        }
                     }
                 }
             } catch (t: Throwable) {
