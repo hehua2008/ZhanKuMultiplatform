@@ -11,4 +11,12 @@
     <declare-styleable name="RatioConstraintLayout">
         <attr name="widthHeightRatio" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="RatioImageView">
+        <attr name="widthHeightRatio" />
+    </declare-styleable>
+
+    <declare-styleable name="CustomPlayerView">
+        <attr name="widthHeightRatio" />
+    </declare-styleable>
 </resources>

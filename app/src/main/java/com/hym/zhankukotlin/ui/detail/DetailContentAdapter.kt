@@ -10,9 +10,7 @@ import android.util.Log
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,6 +29,7 @@ import com.hym.zhankukotlin.model.ProductVideo
 import com.hym.zhankukotlin.player.CustomPlayerView
 import com.hym.zhankukotlin.player.PlayerProvider
 import com.hym.zhankukotlin.ui.ImageViewHeightListener
+import com.hym.zhankukotlin.ui.RatioImageView
 import com.hym.zhankukotlin.ui.photoviewer.UrlPhotoInfo
 import com.hym.zhankukotlin.ui.webview.WebViewActivity
 import com.hym.zhankukotlin.util.getActivity
@@ -80,63 +79,44 @@ class DetailContentAdapter(private val playerProvider: PlayerProvider) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == DetailContent.CONTENT_IMAGE) {
             /**
-             * <androidx.constraintlayout.widget.ConstraintLayout
+             * <com.hym.zhankukotlin.ui.RatioImageView
              *     android:layout_width="match_parent"
-             *     android:layout_height="wrap_content">
-             *
-             *     <androidx.appcompat.widget.AppCompatImageView
-             *         android:id="@+id/image_view"
-             *         android:layout_width="match_parent"
-             *         android:layout_height="0dp"
-             *         android:adjustViewBounds="true"
-             *         android:contentDescription="Loading..."
-             *         android:scaleType="fitCenter"
-             *         app:layout_constraintDimensionRatio="3:2" />
-             * </androidx.constraintlayout.widget.ConstraintLayout>
+             *     android:layout_height="0dp"
+             *     android:adjustViewBounds="true"
+             *     android:contentDescription="Loading..."
+             *     android:scaleType="fitCenter"
+             *     app:widthHeightRatio="3:2">
+             * </com.hym.zhankukotlin.ui.RatioImageView>
              */
             val context = parent.context
-            val constraintLayout = ConstraintLayout(context)
-            constraintLayout.layoutParams = RecyclerView.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            val imageView = AppCompatImageView(context).apply {
-                id = R.id.image_view
+            val imageView = RatioImageView(context).apply {
                 adjustViewBounds = true
                 contentDescription = "Loading..."
                 scaleType = ImageView.ScaleType.FIT_CENTER
+                widthHeightRatio = "3:2"
             }
-            imageView.layoutParams = ConstraintLayout.LayoutParams(
+            imageView.layoutParams = RecyclerView.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, 0
-            ).apply { dimensionRatio = "3:2" }
-            constraintLayout.addView(imageView)
-            return ImageViewHolder(constraintLayout)
+            )
+            return ImageViewHolder(imageView)
         } else if (viewType == DetailContent.CONTENT_VIDEO) {
             /**
-             * <androidx.constraintlayout.widget.ConstraintLayout
+             * <com.hym.zhankukotlin.player.CustomPlayerView
+             *     android:id="@+id/player_view"
              *     android:layout_width="match_parent"
-             *     android:layout_height="wrap_content">
-             *
-             *     <com.hym.zhankukotlin.player.CustomPlayerView
-             *         android:id="@+id/player_view"
-             *         android:layout_width="match_parent"
-             *         android:layout_height="0dp"
-             *         android:contentDescription="Loading..."
-             *         app:show_next_button="false"
-             *         app:show_previous_button="false"
-             *         app:show_fastforward_button="false"
-             *         app:show_rewind_button="false"
-             *         app:show_timeout="2000"
-             *         app:shutter_background_color="@android:color/white"
-             *         app:layout_constraintDimensionRatio="16:9" />
-             * </androidx.constraintlayout.widget.ConstraintLayout>
+             *     android:layout_height="0dp"
+             *     android:contentDescription="Loading..."
+             *     app:show_next_button="false"
+             *     app:show_previous_button="false"
+             *     app:show_fastforward_button="false"
+             *     app:show_rewind_button="false"
+             *     app:show_timeout="2000"
+             *     app:shutter_background_color="@android:color/white"
+             *     app:widthHeightRatio="16:9">
+             * </com.hym.zhankukotlin.player.CustomPlayerView>
              */
             val context = parent.context
-            val constraintLayout = ConstraintLayout(context)
-            constraintLayout.layoutParams = RecyclerView.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
-            )
             val playerView = CustomPlayerView(context).apply {
-                id = R.id.player_view
                 contentDescription = "Loading..."
                 setShowNextButton(false)
                 setShowPreviousButton(false)
@@ -144,12 +124,12 @@ class DetailContentAdapter(private val playerProvider: PlayerProvider) :
                 setShowRewindButton(false)
                 controllerShowTimeoutMs = 2000
                 setShutterBackgroundColor(Color.WHITE)
+                widthHeightRatio = "16:9"
             }
-            playerView.layoutParams = ConstraintLayout.LayoutParams(
+            playerView.layoutParams = RecyclerView.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, 0
-            ).apply { dimensionRatio = "16:9" }
-            constraintLayout.addView(playerView)
-            return VideoViewHolder(constraintLayout)
+            )
+            return VideoViewHolder(playerView)
         } else if (viewType == DetailContent.CONTENT_TEXT) {
             /**
              * <androidx.appcompat.widget.AppCompatTextView
@@ -178,9 +158,7 @@ class DetailContentAdapter(private val playerProvider: PlayerProvider) :
             val hasSize = img.width != 0 && img.height != 0
             holder.imageView.run {
                 if (hasSize) {
-                    layoutParams = (layoutParams as ConstraintLayout.LayoutParams).apply {
-                        dimensionRatio = "${img.width}:${img.height}"
-                    }
+                    widthHeightRatio = "${img.width}:${img.height}"
                 }
                 layout(0, 0, 0, 0)
                 setOnClickListener { v ->
@@ -276,13 +254,10 @@ class DetailContentAdapter(private val playerProvider: PlayerProvider) :
 
     class TextViewHolder(val textView: AppCompatTextView) : RecyclerView.ViewHolder(textView)
 
-    class ImageViewHolder(viewGroup: ViewGroup) : RecyclerView.ViewHolder(viewGroup) {
-        val imageView: AppCompatImageView = viewGroup.findViewById(R.id.image_view)
-    }
+    class ImageViewHolder(val imageView: RatioImageView) : RecyclerView.ViewHolder(imageView)
 
-    inner class VideoViewHolder(viewGroup: ViewGroup) : RecyclerView.ViewHolder(viewGroup),
-        Player.Listener {
-        val playerView: CustomPlayerView = viewGroup.findViewById(R.id.player_view)
+    inner class VideoViewHolder(val playerView: CustomPlayerView) :
+        RecyclerView.ViewHolder(playerView), Player.Listener {
         var productVideo: ProductVideo? = null
 
         fun bindData(productVideo: ProductVideo?) {
@@ -318,11 +293,7 @@ class DetailContentAdapter(private val playerProvider: PlayerProvider) :
 
         override fun onVideoSizeChanged(videoSize: VideoSize) {
             if (videoSize.width == 0 || videoSize.height == 0) return
-            playerView.run {
-                layoutParams = (layoutParams as ConstraintLayout.LayoutParams).apply {
-                    dimensionRatio = "${videoSize.width}:${videoSize.height}"
-                }
-            }
+            playerView.widthHeightRatio = "${videoSize.width}:${videoSize.height}"
         }
 
         override fun onPlayerError(error: PlaybackException) {

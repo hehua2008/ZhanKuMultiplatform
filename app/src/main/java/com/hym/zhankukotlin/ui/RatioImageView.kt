@@ -1,17 +1,20 @@
-package com.hym.zhankukotlin.player
+package com.hym.zhankukotlin.ui
 
 import android.content.Context
 import android.util.AttributeSet
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ui.PlayerView
+import androidx.appcompat.widget.AppCompatImageView
 import com.hym.zhankukotlin.R
 import kotlin.math.abs
 
-class CustomPlayerView @JvmOverloads constructor(
+/**
+ * @author hehua2008
+ * @date 2021/12/13
+ */
+class RatioImageView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : PlayerView(context, attrs, defStyleAttr) {
+) : AppCompatImageView(context, attrs, defStyleAttr) {
     companion object {
-        private const val TAG = "CustomPlayerView"
+        private const val TAG = "RatioImageView"
 
         private const val UNSET = -1
         private const val HORIZONTAL = 0
@@ -44,23 +47,10 @@ class CustomPlayerView @JvmOverloads constructor(
         // Ensure we are using the correctly themed context rather than the context that was
         // passed in.
         val ctx = getContext()
-        val a = ctx.obtainStyledAttributes(attrs, R.styleable.CustomPlayerView, defStyleAttr, 0)
-        val widthHeightRatio = a.getString(R.styleable.CustomPlayerView_widthHeightRatio)
+        val a = ctx.obtainStyledAttributes(attrs, R.styleable.RatioImageView, defStyleAttr, 0)
+        val widthHeightRatio = a.getString(R.styleable.RatioImageView_widthHeightRatio)
         parseDimensionRatioString(widthHeightRatio)
         a.recycle()
-    }
-
-    override fun setPlayer(newPlayer: Player?) {
-        if (newPlayer == null) {
-            player?.playerView = null
-            super.setPlayer(null)
-        } else {
-            newPlayer.playerView = this
-        }
-    }
-
-    fun superSetPlayer(player: Player?) {
-        super.setPlayer(player)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
