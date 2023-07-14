@@ -21,7 +21,9 @@ import kotlin.math.roundToInt
 "proofStatus": 0,
 "proofUpdateTime": 1638853970000,
 "property": "{}",
-"url": "https://img.zcool.cn/community/01d60861aea9b511013e8cd07a2dee.jpg@1280w_1l_2o_100sh.jpg",
+"url": "https://img.zcool.cn/community/01d60861aea9b511013e8cd07a2dee.jpg?x-oss-process=image/auto-orient,1/resize,m_lfit,w_1280,limit_1/sharpen,100/quality,q_100",
+"urlBig": "https://img.zcool.cn/community/01d60861aea9b511013e8cd07a2dee.jpg",
+"urlSmall": "https://img.zcool.cn/community/01d60861aea9b511013e8cd07a2dee.jpg?x-oss-process=image/auto-orient,1/resize,m_lfit,w_309,limit_1/sharpen,100/quality,q_100",
 "width": 3150
 }
  */
@@ -44,6 +46,8 @@ data class ProductImage(
     @SerializedName("property")
     val properties: String,
     val url: String,
+    val urlBig: String,
+    val urlSmall: String,
     val width: Int
 ) {
     val oriWidth: Int
@@ -62,19 +66,10 @@ data class ProductImage(
             } else height
         }
 
-    val oriUrl: String
-        get() = regex.find(url)?.let {
-            val curWidth = it.groupValues[1].toInt()
-            if (curWidth >= width) url
-            else if (width >= MAX_SIZE && width >= height) url.replace(regex, "@${MAX_SIZE}w")
-            else if (height >= MAX_SIZE && height >= width) url.replace(regex, "@${MAX_SIZE}h")
-            else url.replace(regex, "@${width}w")
-        } ?: url
+    val oriUrl: String get() = urlBig
 
     companion object {
         // Width or Height should be less than 16384
         const val MAX_SIZE = 16384
-
-        val regex = Regex("@(\\d+)w")
     }
 }

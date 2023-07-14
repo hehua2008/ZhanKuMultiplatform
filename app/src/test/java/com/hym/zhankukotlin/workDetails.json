@@ -83,7 +83,9 @@
           "proofStatus": 0,
           "proofUpdateTime": 1638874001000,
           "property": "{orientation:'1'}",
-          "url": "https://img.zcool.cn/community/01acc661af374211013f01cd8928a2.jpg@1280w_1l_2o_100sh.jpg",
+          "url": "https://img.zcool.cn/community/01acc661af374211013f01cd8928a2.jpg?x-oss-process=image/auto-orient,1/resize,m_lfit,w_1280,limit_1/sharpen,100/quality,q_100",
+          "urlBig": "https://img.zcool.cn/community/01acc661af374211013f01cd8928a2.jpg",
+          "urlSmall": "https://img.zcool.cn/community/01acc661af374211013f01cd8928a2.jpg?x-oss-process=image/auto-orient,1/resize,m_lfit,w_309,limit_1/sharpen,100/quality,q_100",
           "width": 1920
         },
         {

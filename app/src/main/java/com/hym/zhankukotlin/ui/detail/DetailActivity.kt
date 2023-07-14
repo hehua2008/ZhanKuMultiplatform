@@ -153,7 +153,7 @@ class DetailActivity : BaseActivity() {
             binding.actionBar.title = mTitle
             detailHeaderAdapter.updateTitle(mTitle)
             val detailContents =
-                DetailContent.htmlToDetailContent(articleDetails.articledata.memoHtml)
+                DetailContent.articleDetailsToDetailContent(articleDetails)
             val images = detailContents.filterIsInstance<DetailImage>().map { it.data }
             detailHeaderAdapter.setArticleDetails(articleDetails, images)
             detailContentAdapter.submitList(detailContents)

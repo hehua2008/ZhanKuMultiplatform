@@ -1,5 +1,6 @@
 package com.hym.zhankukotlin.ui.detail
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Rect
@@ -48,6 +49,7 @@ class DetailContentAdapter(private val playerProvider: PlayerProvider) :
                 return oldItem.shallowEquals(newItem)
             }
 
+            @SuppressLint("DiffUtilEquals")
             override fun areContentsTheSame(
                 oldItem: DetailContent<*>, newItem: DetailContent<*>
             ): Boolean {

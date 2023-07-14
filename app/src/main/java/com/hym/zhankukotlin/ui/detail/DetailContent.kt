@@ -1,5 +1,6 @@
 package com.hym.zhankukotlin.ui.detail
 
+import com.hym.zhankukotlin.model.ArticleDetails
 import com.hym.zhankukotlin.model.ProductImage
 import com.hym.zhankukotlin.model.ProductVideo
 import org.jsoup.Jsoup
@@ -14,8 +15,8 @@ sealed class DetailContent<T>(val type: Int, val data: T) {
         const val CONTENT_VIDEO = 2
         const val CONTENT_TEXT = 3
 
-        fun htmlToDetailContent(html: String): List<DetailContent<*>> {
-            val doc = Jsoup.parse(html)
+        fun articleDetailsToDetailContent(articleDetails: ArticleDetails): List<DetailContent<*>> {
+            val doc = Jsoup.parse(articleDetails.articledata.memoHtml)
             val list = mutableListOf<DetailContent<*>>()
             val body = doc.selectFirst("body") ?: return list
             val sb = StringBuilder()
@@ -32,6 +33,9 @@ sealed class DetailContent<T>(val type: Int, val data: T) {
                     }
                     val imageUrl = img.absUrl("src")
                     if (imageUrl.isNullOrBlank()) return@forEach
+                    val articleImage = articleDetails.articleImageList.first { articleImage ->
+                        articleImage.img == imageUrl
+                    }
                     val productImage = ProductImage(
                         0L,
                         0,
@@ -48,7 +52,9 @@ sealed class DetailContent<T>(val type: Int, val data: T) {
                         0,
                         0L,
                         "",
+                        articleImage.middleImg,
                         imageUrl,
+                        articleImage.smallImg,
                         0
                     )
                     list.add(DetailImage(productImage))
@@ -75,7 +81,7 @@ class DetailImage(image: ProductImage) : DetailContent<ProductImage>(CONTENT_IMA
     override fun shallowEquals(other: DetailContent<*>?): Boolean {
         if (this === other) return true
         if (other !is DetailImage) return false
-        return data.url == other.data.url
+        return data.oriUrl == other.data.oriUrl
     }
 }
 

@@ -111,7 +111,7 @@ class DetailHeaderAdapter(
             downloadAll.setOnClickListener { v ->
                 DownloadWorker.enqueue(
                     v.context,
-                    images.map { it.url })
+                    images.map { it.oriUrl })
             }
 
             GlideApp.with(root)
