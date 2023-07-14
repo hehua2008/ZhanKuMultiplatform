@@ -71,6 +71,10 @@ class PhotoViewerFragment : Fragment(), OnScreenListener,
             fragment.arguments = arguments
             return fragment
         }
+
+        private fun PhotoInfo<*>.canShowThumb(): Boolean {
+            return hasThumb() && width > 0 && height > 0
+        }
     }
 
     /**
@@ -158,7 +162,7 @@ class PhotoViewerFragment : Fragment(), OnScreenListener,
             registerForContextMenu(photoView)
 
             mOriginalUriProvider = ModelUriProvider(mPhotoInfo.original)
-            if (mPhotoInfo.hasThumb()) {
+            if (mPhotoInfo.canShowThumb()) {
                 mThumbUriProvider = ModelUriProvider(mPhotoInfo.thumb)
                     .also {
                         photoView.setImage(
@@ -273,7 +277,7 @@ class PhotoViewerFragment : Fragment(), OnScreenListener,
         if (mLoadState == STATE_LOADED) return
         val isThumb = when ((mCallback.getCurrentPosition() - mPosition).absoluteValue) {
             0 -> false
-            1 -> mPhotoInfo.hasThumb()
+            1 -> mPhotoInfo.canShowThumb()
             else -> return
         }
         mThumbUriProvider?.startLoad()
