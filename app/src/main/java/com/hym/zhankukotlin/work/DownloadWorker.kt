@@ -1,11 +1,16 @@
 package com.hym.zhankukotlin.work
 
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.work.*
 import com.hym.zhankukotlin.util.PictureUtils
 import java.util.concurrent.TimeUnit
+import com.hym.zhankukotlin.R
 
 /**
  * @author hehua2008
@@ -15,7 +20,8 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
     companion object {
         private const val KEY_URLS = "KEY_URLS"
-        private const val CHANNEL_ID = "Download Channel"
+        private const val CHANNEL_ID = "ZhanKu Download Channel"
+        private const val CHANNEL_NAME = "ZhanKu Download Worker"
         private const val NOTIFICATION_ID = 20220324
 
         @JvmStatic
@@ -51,10 +57,29 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
     }
 
     private fun createNotification(): Notification {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager =
+                ContextCompat.getSystemService(
+                    applicationContext,
+                    NotificationManager::class.java
+                )!!
+            var notificationChannel: NotificationChannel? =
+                notificationManager.getNotificationChannel(CHANNEL_ID)
+            if (notificationChannel == null) {
+                notificationChannel = NotificationChannel(
+                    CHANNEL_ID,
+                    CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_DEFAULT
+                )
+                notificationManager.createNotificationChannel(notificationChannel)
+            }
+        }
+
         return NotificationCompat.Builder(applicationContext, CHANNEL_ID)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(Notification.CATEGORY_SERVICE)
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setAutoCancel(false)
             .build()
     }
