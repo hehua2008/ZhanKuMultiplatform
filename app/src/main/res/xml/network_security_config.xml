@@ -1,15 +1,12 @@
-<!-- Automatically generated file. DO NOT MODIFY -->
-<!-- Values from app > build.gradle > task generateExtraRes -->
+<?xml version="1.0" encoding="utf-8"?>
 <network-security-config xmlns:tools="http://schemas.android.com/tools">
     <!-- Reference #1: https://stackoverflow.com/questions/45940861/android-8-cleartext-http-traffic-not-permitted -->
     <!-- Reference #2: https://developer.android.com/training/articles/security-config#CleartextTrafficPermitted -->
-    <base-config cleartextTrafficPermitted="true">
+    <debug-overrides>
         <trust-anchors>
-            <!-- Allow Charles to capture packets -->
             <certificates src="system" />
-            <certificates
-                src="user"
-                tools:ignore="AcceptsUserCertificates" />
+            <!-- Allow Charles to capture packets -->
+            <certificates src="user" />
         </trust-anchors>
-    </base-config>
+    </debug-overrides>
 </network-security-config>
