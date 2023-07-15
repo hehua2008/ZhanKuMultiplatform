@@ -2,9 +2,9 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="17">
-      <module name="ZhanKuKotlin.buildSrc" target="1.8" />
-      <module name="ZhanKuKotlin.buildSrc.main" target="1.8" />
-      <module name="ZhanKuKotlin.buildSrc.test" target="1.8" />
+      <module name="ZhanKuKotlin.buildSrc" target="11" />
+      <module name="ZhanKuKotlin.buildSrc.main" target="11" />
+      <module name="ZhanKuKotlin.buildSrc.test" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
