@@ -11,8 +11,6 @@ import kotlinx.coroutines.runBlocking
 
 @HiltAndroidApp
 class MyApplication : Application(), ViewModelStoreOwner, HasDefaultViewModelProviderFactory {
-    private val viewModelStore = ViewModelStore()
-
     override fun onCreate() {
         super.onCreate()
 
@@ -54,10 +52,10 @@ class MyApplication : Application(), ViewModelStoreOwner, HasDefaultViewModelPro
         }
     }
 
-    override fun getViewModelStore(): ViewModelStore = viewModelStore
+    override val viewModelStore: ViewModelStore = ViewModelStore()
 
-    override fun getDefaultViewModelProviderFactory(): ViewModelProvider.Factory =
-        ViewModelProvider.AndroidViewModelFactory.getInstance(this)
+    override val defaultViewModelProviderFactory: ViewModelProvider.Factory
+        get() = ViewModelProvider.AndroidViewModelFactory.getInstance(this)
 
     companion object {
         private const val TAG = "MyApplication"

@@ -2,8 +2,8 @@ package com.hym.zhankukotlin.player
 
 import android.util.Log
 import androidx.core.util.Pools
-import com.google.android.exoplayer2.ForwardingPlayer
-import com.google.android.exoplayer2.Player
+import androidx.media3.common.ForwardingPlayer
+import androidx.media3.common.Player
 
 class PlayerProvider(maxPoolSize: Int = 3) {
     private val mTag = "PlayerProvider@${Integer.toHexString(hashCode())}"

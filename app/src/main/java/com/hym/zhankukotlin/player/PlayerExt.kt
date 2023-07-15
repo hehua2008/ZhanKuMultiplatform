@@ -1,7 +1,7 @@
 package com.hym.zhankukotlin.player
 
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ui.PlayerView
+import androidx.media3.common.Player
+import androidx.media3.ui.PlayerView
 import java.lang.ref.WeakReference
 import java.util.*
 

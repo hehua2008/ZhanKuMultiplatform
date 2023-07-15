@@ -2,8 +2,8 @@ package com.hym.zhankukotlin.player
 
 import android.app.Application
 import android.util.Log
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.Player
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import com.hym.zhankukotlin.MyApplication
 import java.util.concurrent.atomic.AtomicInteger
 

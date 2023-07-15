@@ -2,8 +2,8 @@ package com.hym.zhankukotlin.player
 
 import android.content.Context
 import android.util.AttributeSet
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ui.PlayerView
+import androidx.media3.common.Player
+import androidx.media3.ui.PlayerView
 import com.hym.zhankukotlin.R
 import kotlin.math.abs
 

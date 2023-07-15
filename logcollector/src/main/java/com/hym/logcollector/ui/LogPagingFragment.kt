@@ -66,7 +66,7 @@ internal class LogPagingFragment : Fragment() {
     }
 
     private val mVMFactory = object : ViewModelProvider.NewInstanceFactory() {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return if (LogPagingViewModel::class.java.isAssignableFrom(modelClass)) {
                 LogPagingViewModel(logConfig) as T
             } else {
