@@ -22,9 +22,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.hym.zhankucompose.GlideApp
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.hym.zhankucompose.GlideAppExtension
-import com.hym.zhankucompose.GlideRequests
 import com.hym.zhankucompose.R
 import com.hym.zhankucompose.model.ProductVideo
 import com.hym.zhankucompose.player.CustomPlayerView
@@ -72,7 +72,7 @@ class DetailContentAdapter(private val playerProvider: PlayerProvider) :
 
     private var mFirstPlay = true
 
-    private var mRequestManager: GlideRequests? = null
+    private var mRequestManager: RequestManager? = null
 
     override fun getItemViewType(position: Int): Int {
         return getItem(position).type
@@ -240,7 +240,7 @@ class DetailContentAdapter(private val playerProvider: PlayerProvider) :
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        mRequestManager = GlideApp.with(recyclerView)
+        mRequestManager = Glide.with(recyclerView)
         //recyclerView.addOnScrollListener(mOnScrollListener)
     }
 

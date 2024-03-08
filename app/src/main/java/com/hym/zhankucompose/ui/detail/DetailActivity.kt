@@ -18,10 +18,10 @@ import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.hym.zhankucompose.BaseActivity
-import com.hym.zhankucompose.GlideApp
 import com.hym.zhankucompose.R
 import com.hym.zhankucompose.databinding.ActivityDetailBinding
 import com.hym.zhankucompose.model.ContentType
@@ -123,7 +123,7 @@ class DetailActivity : BaseActivity() {
             detailContentAdapter.submitList(detailContents)
             if (mThemeColor != null) return@observe
             val firstImage = workDetails.product.productImages.firstOrNull() ?: return@observe
-            GlideApp.with(this).run {
+            Glide.with(this).run {
                 asBitmap()
                     .load(firstImage.url)
                     .into(object : CustomTarget<Bitmap>() {

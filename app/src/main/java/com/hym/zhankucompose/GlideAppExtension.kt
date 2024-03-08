@@ -16,9 +16,9 @@ import jp.wasabeef.glide.transformations.BlurTransformation
 @GlideExtension
 object GlideAppExtension {
     // Size of mini thumb in pixels.
-    private const val MINI_THUMB_SIZE = 100
+    const val MINI_THUMB_SIZE = 100
 
-    private val CROSS_FADE_FACTORY =
+    val CROSS_FADE_FACTORY =
         DrawableCrossFadeFactory.Builder(150).setCrossFadeEnabled(false).build()
 
     @JvmField
@@ -27,19 +27,21 @@ object GlideAppExtension {
     @JvmField
     val BITMAP_CROSS_FADE = BitmapTransitionOptions.withCrossFade(CROSS_FADE_FACTORY)
 
-    private val blurMulti = RequestOptions.bitmapTransform(
+    val blurMulti = RequestOptions.bitmapTransform(
         MultiTransformation(
             BlurTransformation(5, 1),
             //BrightnessFilterTransformation(-0.15f)
         )
     )
 
+    @Deprecated("Deprecate Glide's Extensions, GlideApp, GlideRequest and GlideRequests.")
     @JvmStatic
     @GlideOption
     fun miniThumb(options: BaseRequestOptions<*>): BaseRequestOptions<*> {
         return options.fitCenter().override(MINI_THUMB_SIZE)
     }
 
+    @Deprecated("Deprecate Glide's Extensions, GlideApp, GlideRequest and GlideRequests.")
     @JvmStatic
     @GlideOption
     fun transparentPlaceHolder(options: BaseRequestOptions<*>): BaseRequestOptions<*> {
@@ -48,12 +50,14 @@ object GlideAppExtension {
         return options.placeholder(accessor.transparentDrawable())
     }
 
+    @Deprecated("Deprecate Glide's Extensions, GlideApp, GlideRequest and GlideRequests.")
     @JvmStatic
     @GlideOption
     fun originalSize(options: BaseRequestOptions<*>): BaseRequestOptions<*> {
         return options.override(Target.SIZE_ORIGINAL)
     }
 
+    @Deprecated("Deprecate Glide's Extensions, GlideApp, GlideRequest and GlideRequests.")
     @JvmStatic
     @GlideOption
     fun blur(options: BaseRequestOptions<*>): BaseRequestOptions<*> {

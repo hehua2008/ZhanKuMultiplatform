@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     //id 'groovy'
-    id 'org.jetbrains.kotlin.jvm' version '1.8.20'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
     id 'java-gradle-plugin'
 }
 
@@ -23,12 +23,12 @@ compileKotlin {
 dependencies {
     //implementation localGroovy()
     //implementation gradleApi()
-    implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20"
+    implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22"
     implementation "com.android.tools.build:gradle:7.4.2"
     implementation "com.android.tools.build:gradle-api:7.4.2"
     implementation "com.squareup:javapoet:1.13.0"
-    implementation "commons-io:commons-io:2.9.0"
+    implementation "commons-io:commons-io:2.11.0"
     //implementation "commons-codec:commons-codec:1.15"
-    implementation "org.ow2.asm:asm:9.2"
+    implementation "org.ow2.asm:asm:9.6"
     implementation "org.ow2.asm:asm-tree:9.2"
 }

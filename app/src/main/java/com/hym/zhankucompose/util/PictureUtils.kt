@@ -7,7 +7,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
-import com.hym.zhankucompose.GlideApp
+import com.bumptech.glide.Glide
 import com.hym.zhankucompose.MyApplication
 import kotlinx.coroutines.*
 import java.io.File
@@ -48,7 +48,7 @@ object PictureUtils {
             Toast.makeText(context, startMsg, Toast.LENGTH_SHORT).show()
             val failedUrls = mutableListOf<String>()
             imgUrls.forEachIndexed { index, url ->
-                val futureTarget = GlideApp.with(context)
+                val futureTarget = Glide.with(context)
                     .download(url)
                     .submit()
 

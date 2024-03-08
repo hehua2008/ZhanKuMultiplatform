@@ -10,9 +10,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.hym.zhankucompose.GlideApp
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.hym.zhankucompose.GlideAppExtension
-import com.hym.zhankucompose.GlideRequests
 import com.hym.zhankucompose.databinding.PreviewItemLayoutBinding
 import com.hym.zhankucompose.model.Content
 import com.hym.zhankucompose.ui.BindingViewHolder
@@ -44,7 +44,7 @@ class PagingPreviewItemAdapter :
         const val PREVIEW_ITEM_TYPE = 1
     }
 
-    private var mRequestManager: GlideRequests? = null
+    private var mRequestManager: RequestManager? = null
 
     private val mFastScrollListener = FastScrollListener(this)
 
@@ -136,7 +136,7 @@ class PagingPreviewItemAdapter :
         }
         */
         mFastScrollListener.attachToRecyclerView(recyclerView)
-        mRequestManager = GlideApp.with(recyclerView)
+        mRequestManager = Glide.with(recyclerView)
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {

@@ -3,10 +3,10 @@ package com.hym.zhankucompose.ui.tag
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.fragment.app.commitNow
+import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.hym.zhankucompose.BaseActivity
-import com.hym.zhankucompose.GlideApp
 import com.hym.zhankucompose.R
 import com.hym.zhankucompose.databinding.TagActivityBinding
 import com.hym.zhankucompose.model.CreatorObj
@@ -31,7 +31,7 @@ class TagActivity : BaseActivity() {
         binding.actionBar.run {
             title = mTitle
             author?.let {
-                GlideApp.with(this@TagActivity)
+                Glide.with(this@TagActivity)
                     .load(it.avatar1x)
                     .optionalCircleCrop()
                     .into(object : CustomTarget<Drawable>() {

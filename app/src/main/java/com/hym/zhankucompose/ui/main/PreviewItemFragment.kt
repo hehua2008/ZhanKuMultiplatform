@@ -20,13 +20,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
-import com.hym.zhankucompose.GlideApp
 import com.hym.zhankucompose.GlideAppExtension
-import com.hym.zhankucompose.GlideRequests
 import com.hym.zhankucompose.R
 import com.hym.zhankucompose.databinding.FragmentMainBinding
 import com.hym.zhankucompose.model.RecommendLevel
@@ -64,7 +64,7 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
     private val mPageViewModel: PreviewPageViewModel by viewModels()
     private var mBinding: FragmentMainBinding? = null
     private val binding get() = checkNotNull(mBinding)
-    private lateinit var mRequestManager: GlideRequests
+    private lateinit var mRequestManager: RequestManager
 
     private lateinit var mPagingPreviewItemAdapter: PagingPreviewItemAdapter
     private lateinit var mCategoryItemLayoutManager: FlexboxLayoutManager
@@ -130,7 +130,7 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
             }
         }
 
-        mRequestManager = GlideApp.with(this)
+        mRequestManager = Glide.with(this)
     }
 
     override fun onCreateView(
@@ -261,7 +261,7 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
             ?: topCate?.backgroundImage.takeUnless { it.isNullOrBlank() })?.let {
             mRequestManager.load(it)
                 .transition(GlideAppExtension.DRAWABLE_CROSS_FADE)
-                .blur()
+                .apply(GlideAppExtension.blurMulti)
                 .into(binding.previewHeader.bgView)
         }
     }

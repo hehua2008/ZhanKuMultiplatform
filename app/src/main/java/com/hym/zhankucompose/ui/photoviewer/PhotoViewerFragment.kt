@@ -21,13 +21,13 @@ import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
+import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
+import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.FutureTarget
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.davemorrissey.labs.subscaleview.UriProvider
-import com.hym.zhankucompose.GlideApp
-import com.hym.zhankucompose.GlideRequests
 import com.hym.zhankucompose.databinding.FragmentPhotoViewerBinding
 import com.hym.zhankucompose.ui.ProgressBarWrapper
 import java.io.File
@@ -88,7 +88,7 @@ class PhotoViewerFragment : Fragment(), OnScreenListener,
     private var mBinding: FragmentPhotoViewerBinding? = null
     private var mPhotoProgressBar: ProgressBarWrapper? = null
 
-    private lateinit var mRequestManager: GlideRequests
+    private lateinit var mRequestManager: RequestManager
     private var mThumbUriProvider: ModelUriProvider? = null
     private lateinit var mOriginalUriProvider: ModelUriProvider
 
@@ -135,7 +135,7 @@ class PhotoViewerFragment : Fragment(), OnScreenListener,
         mPosition = bundle.getInt(ARG_POSITION)
         mPhotoInfo = bundle.getParcelable(ARG_PHOTO_INFO)!!
         mWatchNetworkState = bundle.getBoolean(ARG_WATCH_NETWORK, false)
-        mRequestManager = GlideApp.with(this)
+        mRequestManager = Glide.with(this)
     }
 
     @SuppressLint("ClickableViewAccessibility")

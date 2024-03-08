@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
+    id 'com.google.devtools.ksp'
     id 'dagger.hilt.android.plugin'
     id 'compose.track'
 }
@@ -24,6 +25,7 @@ android {
         viewBinding true
     }
 
+    /*
     sourceSets {
         debug {
             java.srcDirs += ['build/generated/data_binding_base_class_source_out/debug/out']
@@ -32,6 +34,7 @@ android {
             java.srcDirs += ['build/generated/data_binding_base_class_source_out/release/out']
         }
     }
+    */
 
     buildTypes {
         debug {
@@ -84,7 +87,8 @@ dependencies {
     implementation "com.github.bumptech.glide:okhttp3-integration:${Versions.GLIDE}"
     implementation "jp.wasabeef:glide-transformations:${Versions.GLIDE_TRANSFORMATIONS}"
     implementation "jp.co.cyberagent.android:gpuimage:${Versions.GPUIMAGE}"
-    kapt "com.github.bumptech.glide:compiler:${Versions.GLIDE}"
+    ksp "com.github.bumptech.glide:ksp:${Versions.GLIDE}"
+    //kapt "com.github.bumptech.glide:compiler:${Versions.GLIDE}"
     //annotationProcessor "com.github.bumptech.glide:compiler:${Versions.GLIDE}"
     implementation "com.google.dagger:hilt-android:${Versions.GOOGLE_HILT}"
     kapt "com.google.dagger:hilt-compiler:${Versions.GOOGLE_HILT}"

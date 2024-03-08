@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
-import com.hym.zhankucompose.GlideApp
 import com.hym.zhankucompose.R
 import com.hym.zhankucompose.databinding.DetailHeaderLayoutBinding
 import com.hym.zhankucompose.model.*
@@ -91,7 +91,7 @@ class DetailHeaderAdapter(
                     workDetails.product.productImages.map { it.oriUrl })
             }
 
-            GlideApp.with(root)
+            Glide.with(root)
                 .load(workDetails.product.creatorObj.avatar1x)
                 .into(detailAvatar)
         }
@@ -114,7 +114,7 @@ class DetailHeaderAdapter(
                     images.map { it.oriUrl })
             }
 
-            GlideApp.with(root)
+            Glide.with(root)
                 .load(articleDetails.articledata.creatorObj.avatar1x)
                 .into(detailAvatar)
         }

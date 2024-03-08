@@ -241,7 +241,7 @@ class PhotoViewFragment : Fragment(), OnScreenListener, RequestListener<Bitmap> 
     override fun onLoadFailed(
         e: GlideException?,
         model: Any?,
-        target: Target<Bitmap>?,
+        target: Target<Bitmap>,
         isFirstResource: Boolean
     ): Boolean {
         mBinding?.run {
@@ -256,9 +256,9 @@ class PhotoViewFragment : Fragment(), OnScreenListener, RequestListener<Bitmap> 
 
     override fun onResourceReady(
         resource: Bitmap,
-        model: Any?,
+        model: Any,
         target: Target<Bitmap>?,
-        dataSource: DataSource?,
+        dataSource: DataSource,
         isFirstResource: Boolean
     ): Boolean {
         mBinding?.run {
