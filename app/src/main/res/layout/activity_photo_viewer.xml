@@ -17,7 +17,7 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@id/action_bar"
-        style="@style/Widget.ZhanKuKotlin.Toolbar"
+        style="@style/Widget.ZhanKuCompose.Toolbar"
         android:background="@null"
         android:elevation="0dp"
         app:layout_constraintLeft_toLeftOf="parent"

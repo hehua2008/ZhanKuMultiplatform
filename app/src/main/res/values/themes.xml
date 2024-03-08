@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.ZhanKuKotlin" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.ZhanKuCompose" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/teal_200</item>
         <item name="colorPrimaryVariant">@color/teal_200</item>
@@ -16,20 +16,20 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.ZhanKuKotlin.Detail">
+    <style name="Theme.ZhanKuCompose.Detail">
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
 
-    <style name="Theme.ZhanKuKotlin.Fullscreen">
+    <style name="Theme.ZhanKuCompose.Fullscreen">
         <!--<item name="android:windowFullscreen">true</item>-->
         <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="p">shortEdges</item>
     </style>
 
-    <style name="Theme.ZhanKuKotlin.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.ZhanKuCompose.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="Theme.ZhanKuKotlin.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.ZhanKuCompose.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="Widget.ZhanKuKotlin.Toolbar" parent="Widget.MaterialComponents.Toolbar.Surface">
+    <style name="Widget.ZhanKuCompose.Toolbar" parent="Widget.MaterialComponents.Toolbar.Surface">
         <item name="android:id">@id/action_bar</item>
         <item name="android:elevation">4dp</item>
         <item name="android:layout_width">match_parent</item>

@@ -1,4 +1,4 @@
-# ZhanKuKotlin
+# ZhanKuCompose
   
 Use Retrofit (with kotlin coroutines) to get html from https://www.zcool.com.cn/discover  
 Use Pagging to automatically get the next page of data  

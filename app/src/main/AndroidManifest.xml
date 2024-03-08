@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.hym.zhankukotlin">
+    package="com.hym.zhankucompose">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -16,7 +16,7 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ZhanKuKotlin"
+        android:theme="@style/Theme.ZhanKuCompose"
         tools:targetApi="n">
 
         <uses-library
@@ -36,7 +36,7 @@
         <activity
             android:name=".ui.detail.DetailActivity"
             android:exported="true"
-            android:theme="@style/Theme.ZhanKuKotlin.Detail">
+            android:theme="@style/Theme.ZhanKuCompose.Detail">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -77,7 +77,7 @@
         <activity
             android:name=".ui.photoviewer.PhotoViewerActivity"
             android:exported="true"
-            android:theme="@style/Theme.ZhanKuKotlin.Fullscreen">
+            android:theme="@style/Theme.ZhanKuCompose.Fullscreen">
         </activity>
 
     </application>

@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">ZhanKuKotlin</string>
+    <string name="app_name">ZhanKuCompose</string>
     <!-- Strings related to login -->
     <string name="prompt_userId">User Id</string>
     <string name="prompt_password">Password</string>

@@ -1,5 +1,5 @@
 include ':app'
-rootProject.name = "ZhanKuKotlin"
+rootProject.name = "ZhanKuCompose"
 include ':photoviewer'
 include ':photoviewerdemo'
 include ':ssiv:library'

@@ -8,7 +8,7 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@id/action_bar"
-        style="@style/Widget.ZhanKuKotlin.Toolbar"
+        style="@style/Widget.ZhanKuCompose.Toolbar"
         app:layout_constraintBottom_toTopOf="@id/progress_bar"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
