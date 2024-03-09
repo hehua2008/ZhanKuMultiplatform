@@ -1,24 +1,22 @@
 package com.hym.zhankucompose.ui.main
 
 import android.graphics.Rect
-import android.graphics.drawable.StateListDrawable
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
@@ -28,17 +26,13 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.hym.zhankucompose.GlideAppExtension
 import com.hym.zhankucompose.R
+import com.hym.zhankucompose.compose.EMPTY_BLOCK
 import com.hym.zhankucompose.databinding.FragmentMainBinding
 import com.hym.zhankucompose.model.RecommendLevel
 import com.hym.zhankucompose.model.SubCate
 import com.hym.zhankucompose.model.TopCate
-import com.hym.zhankucompose.ui.FastScroller
-import com.hym.zhankucompose.ui.HeaderFooterLoadStateAdapter
 import com.hym.zhankucompose.ui.TabReselectedCallback
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.filter
 
 @AndroidEntryPoint
 class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCallback {
@@ -66,11 +60,11 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
     private val binding get() = checkNotNull(mBinding)
     private lateinit var mRequestManager: RequestManager
 
-    private lateinit var mPagingPreviewItemAdapter: PagingPreviewItemAdapter
     private lateinit var mCategoryItemLayoutManager: FlexboxLayoutManager
     private lateinit var mCategoryItemAdapter: CategoryItemAdapter
     private lateinit var mButtonItemDecoration: RecyclerView.ItemDecoration
-    private lateinit var mPreviewItemDecoration: RecyclerView.ItemDecoration
+
+    private var scrollToTop: () -> Unit = EMPTY_BLOCK
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -89,7 +83,6 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
         mPageViewModel.topCate = topCate
         mPageViewModel.setSubCate(mSubCate)
 
-        mPagingPreviewItemAdapter = PagingPreviewItemAdapter()
         mCategoryItemLayoutManager = FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)
         mCategoryItemLayoutManager.justifyContent = JustifyContent.SPACE_EVENLY
         mCategoryItemAdapter = CategoryItemAdapter(topCate, mSubCate, mPageViewModel)
@@ -111,24 +104,6 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
                 outRect.set(left, 0, right, 0)
             }
         }
-        mPreviewItemDecoration = object : RecyclerView.ItemDecoration() {
-            private val mOffset = resources.getDimensionPixelSize(
-                R.dimen.preview_item_offset
-            ) and 1.inv()
-            private val mHalfOffset = mOffset shr 1
-
-            override fun getItemOffsets(
-                outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
-            ) {
-                val itemPosition =
-                    (view.layoutParams as RecyclerView.LayoutParams).viewLayoutPosition
-                if (itemPosition and 1 == 0) {
-                    outRect.set(mOffset, 0, mHalfOffset, mOffset)
-                } else {
-                    outRect.set(mHalfOffset, 0, mOffset, mOffset)
-                }
-            }
-        }
 
         mRequestManager = Glide.with(this)
     }
@@ -141,47 +116,29 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
         updateBackgroundImage()
         updateCategoryLink()
 
+        /*
         val typedValue = TypedValue()
         requireContext().theme.resolveAttribute(R.attr.colorAccent, typedValue, true)
         binding.swipeRefresh.setColorSchemeColors(typedValue.data)
-        binding.swipeRefresh.setOnRefreshListener { mPagingPreviewItemAdapter.refresh() }
+        */
 
-        // Setting fastScroller should be before setting adapter
-        val theme = requireContext().theme
-        val thumbDrawable =
-            ResourcesCompat.getDrawable(resources, R.drawable.fast_scrollbar_thumb_bg, theme)
-                    as StateListDrawable
-        val trackDrawable =
-            ResourcesCompat.getDrawable(resources, android.R.color.transparent, null)
-        FastScroller(
-            binding.previewRecycler, thumbDrawable, trackDrawable, thumbDrawable, trackDrawable
-        )
+        binding.previewCompose.setContent {
+            val lazyPagingItems = mPageViewModel.pagingFlow.collectAsLazyPagingItems()
+            val lifecycleOwner = LocalLifecycleOwner.current
 
-        binding.previewRecycler.addItemDecoration(mPreviewItemDecoration)
-        binding.previewRecycler.adapter = mPagingPreviewItemAdapter.withLoadStateFooter(
-            HeaderFooterLoadStateAdapter(mPagingPreviewItemAdapter)
-        )
-        binding.previewRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            var mLastState = RecyclerView.SCROLL_STATE_IDLE
+            DisposableEffect(lazyPagingItems, lifecycleOwner) {
+                val observer = Observer<Unit> { lazyPagingItems.refresh() }
+                mPageViewModel.mediatorLiveData.observe(lifecycleOwner, observer)
 
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                mLastState = newState
-            }
-
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                val scaledTouchSlop =
-                    ViewConfiguration.getTouchSlop() * recyclerView.resources.displayMetrics.density
-                if (mLastState == RecyclerView.SCROLL_STATE_SETTLING &&
-                    dy < -scaledTouchSlop && recyclerView.canScrollVertically(-1)
-                ) {
-                    binding.fab.show()
-                } else if (!recyclerView.canScrollVertically(-1) ||
-                    (dy > scaledTouchSlop && recyclerView.canScrollVertically(1))
-                ) {
-                    binding.fab.hide()
+                onDispose {
+                    mPageViewModel.mediatorLiveData.removeObserver(observer)
                 }
             }
-        })
+
+            PreviewLayout(lazyPagingItems = lazyPagingItems, setOnScrollToTopAction = {
+                scrollToTop = it
+            })
+        }
 
         binding.previewHeader.catRecrcler.layoutManager = mCategoryItemLayoutManager
         binding.previewHeader.catRecrcler.addItemDecoration(mButtonItemDecoration)
@@ -235,25 +192,11 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
                 override fun onNothingSelected(parent: AdapterView<*>) = Unit
             }
 
-        binding.fab.hide()
-        binding.fab.setOnClickListener {
-            scrollToTop()
-        }
-
         return binding.root
     }
 
     override fun onTabReselected() {
         scrollToTop()
-    }
-
-    private fun scrollToTop() {
-        binding.previewRecycler.run {
-            scrollToPosition(0)
-            post {
-                nestedScrollBy(0, -binding.previewHeader.root.height)
-            }
-        }
     }
 
     private fun updateBackgroundImage() {
@@ -285,8 +228,7 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.previewRecycler.adapter = null
-        binding.previewRecycler.clearOnScrollListeners()
+        scrollToTop = EMPTY_BLOCK
         binding.previewHeader.catRecrcler.layoutManager = null
         binding.previewHeader.catRecrcler.adapter = null
         mRequestManager.clear(binding.previewHeader.bgView)
@@ -301,31 +243,10 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
             mPageViewModel.totalPages.observe(viewLifecycleOwner) {
                 binding.previewHeader.paged.root.lastPage = it
             }
-            mPageViewModel.mediatorLiveData.observe(viewLifecycleOwner) {
-                mPagingPreviewItemAdapter.refresh()
-            }
             mPageViewModel.subCate.observe(viewLifecycleOwner) {
                 mSubCate = it
                 updateBackgroundImage()
                 updateCategoryLink()
-            }
-        }
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            mPagingPreviewItemAdapter.loadStateFlow.collectLatest { loadStates ->
-                binding.swipeRefresh.isRefreshing = loadStates.refresh is LoadState.Loading
-            }
-        }
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            mPagingPreviewItemAdapter.loadStateFlow
-                // Only emit when REFRESH LoadState changes.
-                .distinctUntilChangedBy { it.refresh }
-                // Only react to cases where REFRESH completes i.e., NotLoading.
-                .filter { it.refresh is LoadState.NotLoading }
-                .collect { binding.previewRecycler.scrollToPosition(0) }
-        }
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            mPageViewModel.pagingFlow.collectLatest { pagingData ->
-                mPagingPreviewItemAdapter.submitData(pagingData)
             }
         }
     }

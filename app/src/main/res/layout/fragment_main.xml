@@ -10,29 +10,10 @@
         android:id="@+id/preview_header"
         layout="@layout/preview_header_layout" />
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/preview_compose"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="com.hym.zhankucompose.ui.HeaderLayout$HeaderScrollingViewBehavior">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/preview_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:nestedScrollingEnabled="true"
-            android:overScrollMode="never"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="2" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="@dimen/fab_margin"
-        android:contentDescription="Fast Scroll to Top"
-        app:srcCompat="@drawable/ic_rocket" />
+        app:layout_behavior="com.hym.zhankucompose.ui.HeaderLayout$HeaderScrollingViewBehavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

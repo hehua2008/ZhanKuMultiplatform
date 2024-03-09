@@ -5,7 +5,7 @@ plugins {
     id 'kotlin-parcelize'
     id 'com.google.devtools.ksp'
     id 'dagger.hilt.android.plugin'
-    id 'compose.track'
+    //id 'compose.track'
 }
 
 android {
@@ -19,10 +19,14 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     buildFeatures {
         viewBinding true
+        compose true
     }
 
     /*
@@ -45,12 +49,24 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = Versions.COMPOSE_COMPILER
+    }
+
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
 }
 
@@ -99,9 +115,22 @@ dependencies {
     implementation "androidx.media3:media3-ui:${Versions.ANDROID_MEDIA3}"
     implementation "org.jsoup:jsoup:${Versions.JSOUP}"
     implementation project(path: ':ssiv:library')
+    implementation "androidx.activity:activity-compose:${Versions.COMPOSE_ACTIVITY}"
+    implementation platform("androidx.compose:compose-bom:${Versions.COMPOSE_BOM}")
+    implementation "androidx.compose.ui:ui"
+    implementation "androidx.compose.ui:ui-graphics"
+    implementation "androidx.compose.ui:ui-tooling-preview"
+    implementation "androidx.compose.material3:material3"
+    implementation "androidx.paging:paging-compose:${Versions.ANDROID_PAGING}"
+    implementation "androidx.constraintlayout:constraintlayout-compose:${Versions.COMPOSE_CONSTRAINTLAYOUT}"
+    implementation "com.github.bumptech.glide:compose:${Versions.COMPOSE_GLIDE}"
     debugImplementation project(path: ':logcollector')
     debugImplementation "com.squareup.leakcanary:leakcanary-android:${Versions.LEAKCANARY}"
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation platform("androidx.compose:compose-bom:${Versions.COMPOSE_BOM}")
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4"
+    debugImplementation "androidx.compose.ui:ui-tooling"
+    debugImplementation "androidx.compose.ui:ui-test-manifest"
 }

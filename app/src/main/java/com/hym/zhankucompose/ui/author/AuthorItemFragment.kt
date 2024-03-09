@@ -1,13 +1,12 @@
 package com.hym.zhankucompose.ui.author
 
-import android.graphics.Rect
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -15,19 +14,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
-import androidx.recyclerview.widget.RecyclerView
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.hym.zhankucompose.R
+import com.hym.zhankucompose.compose.EMPTY_BLOCK
 import com.hym.zhankucompose.databinding.FragmentMainBinding
 import com.hym.zhankucompose.model.CreatorObj
 import com.hym.zhankucompose.model.SortOrder
-import com.hym.zhankucompose.ui.HeaderFooterLoadStateAdapter
 import com.hym.zhankucompose.ui.TabReselectedCallback
-import com.hym.zhankucompose.ui.main.PagingPreviewItemAdapter
+import com.hym.zhankucompose.ui.main.PreviewLayout
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.filter
 
 @AndroidEntryPoint
 class AuthorItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCallback {
@@ -50,8 +45,7 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCa
     private val binding get() = checkNotNull(mBinding)
     private lateinit var mAuthor: CreatorObj
 
-    private lateinit var mPagingPreviewItemAdapter: PagingPreviewItemAdapter
-    private lateinit var mPreviewItemDecoration: RecyclerView.ItemDecoration
+    private var scrollToTop: () -> Unit = EMPTY_BLOCK
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -66,27 +60,6 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCa
         val activeBundle = savedInstanceState ?: arguments
         mAuthor = activeBundle!!.getParcelable(AUTHOR)!!
         mPageViewModel.authorUid = mAuthor.id
-
-        mPagingPreviewItemAdapter = PagingPreviewItemAdapter()
-
-        mPreviewItemDecoration = object : RecyclerView.ItemDecoration() {
-            private val mOffset = resources.getDimensionPixelSize(
-                R.dimen.preview_item_offset
-            ) and 1.inv()
-            private val mHalfOffset = mOffset shr 1
-
-            override fun getItemOffsets(
-                outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
-            ) {
-                val itemPosition =
-                    (view.layoutParams as RecyclerView.LayoutParams).viewLayoutPosition
-                if (itemPosition and 1 == 0) {
-                    outRect.set(mOffset, 0, mHalfOffset, mOffset)
-                } else {
-                    outRect.set(mHalfOffset, 0, mOffset, mOffset)
-                }
-            }
-        }
     }
 
     override fun onCreateView(
@@ -95,37 +68,6 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCa
         mBinding = FragmentMainBinding.inflate(inflater, container, false)
 
         updateCategoryLink()
-
-        val typedValue = TypedValue()
-        requireContext().theme.resolveAttribute(R.attr.colorAccent, typedValue, true)
-        binding.swipeRefresh.setColorSchemeColors(typedValue.data)
-        binding.swipeRefresh.setOnRefreshListener { mPagingPreviewItemAdapter.refresh() }
-
-        binding.previewRecycler.addItemDecoration(mPreviewItemDecoration)
-        binding.previewRecycler.adapter = mPagingPreviewItemAdapter.withLoadStateFooter(
-            HeaderFooterLoadStateAdapter(mPagingPreviewItemAdapter)
-        )
-        binding.previewRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            var mLastState = RecyclerView.SCROLL_STATE_IDLE
-
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                mLastState = newState
-            }
-
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                val scaledTouchSlop =
-                    ViewConfiguration.getTouchSlop() * recyclerView.resources.displayMetrics.density
-                if (mLastState == RecyclerView.SCROLL_STATE_SETTLING &&
-                    dy < -scaledTouchSlop && recyclerView.canScrollVertically(-1)
-                ) {
-                    binding.fab.show()
-                } else if (!recyclerView.canScrollVertically(-1) ||
-                    (dy > scaledTouchSlop && recyclerView.canScrollVertically(1))
-                ) {
-                    binding.fab.hide()
-                }
-            }
-        })
 
         binding.previewHeader.catRecrcler.isVisible = false
 
@@ -160,9 +102,23 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCa
             if (numberEdit.isEmpty()) return@setOnClickListener
             mPageViewModel.setPage(numberEdit.toInt())
         }
-        binding.fab.hide()
-        binding.fab.setOnClickListener {
-            scrollToTop()
+
+        binding.previewCompose.setContent {
+            val lazyPagingItems = mPageViewModel.pagingFlow.collectAsLazyPagingItems()
+            val lifecycleOwner = LocalLifecycleOwner.current
+
+            DisposableEffect(lazyPagingItems, lifecycleOwner) {
+                val observer = Observer<Unit> { lazyPagingItems.refresh() }
+                mPageViewModel.mediatorLiveData.observe(lifecycleOwner, observer)
+
+                onDispose {
+                    mPageViewModel.mediatorLiveData.removeObserver(observer)
+                }
+            }
+
+            PreviewLayout(lazyPagingItems = lazyPagingItems, setOnScrollToTopAction = {
+                scrollToTop = it
+            })
         }
 
         return binding.root
@@ -170,15 +126,6 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCa
 
     override fun onTabReselected() {
         scrollToTop()
-    }
-
-    private fun scrollToTop() {
-        binding.previewRecycler.run {
-            scrollToPosition(0)
-            post {
-                nestedScrollBy(0, -binding.previewHeader.root.height)
-            }
-        }
     }
 
     private fun updateCategoryLink() {
@@ -195,8 +142,7 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCa
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.previewRecycler.adapter = null
-        binding.previewRecycler.clearOnScrollListeners()
+        scrollToTop = EMPTY_BLOCK
         mBinding = null
     }
 
@@ -207,27 +153,6 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCa
             }
             mPageViewModel.totalPages.observe(viewLifecycleOwner) {
                 binding.previewHeader.paged.root.lastPage = it
-            }
-            mPageViewModel.mediatorLiveData.observe(viewLifecycleOwner) {
-                mPagingPreviewItemAdapter.refresh()
-            }
-        }
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            mPagingPreviewItemAdapter.loadStateFlow.collectLatest { loadStates ->
-                binding.swipeRefresh.isRefreshing = loadStates.refresh is LoadState.Loading
-            }
-        }
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            mPagingPreviewItemAdapter.loadStateFlow
-                // Only emit when REFRESH LoadState changes.
-                .distinctUntilChangedBy { it.refresh }
-                // Only react to cases where REFRESH completes i.e., NotLoading.
-                .filter { it.refresh is LoadState.NotLoading }
-                .collect { binding.previewRecycler.scrollToPosition(0) }
-        }
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            mPageViewModel.pagingFlow.collectLatest { pagingData ->
-                mPagingPreviewItemAdapter.submitData(pagingData)
             }
         }
     }

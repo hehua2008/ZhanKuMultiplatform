@@ -38,8 +38,16 @@ object Versions {
     const val LEAKCANARY = "2.12"
     // endregion
 
+    // region compose
+    const val COMPOSE_COMPILER = "1.5.10"
+    const val COMPOSE_BOM = "2024.02.02"
+    const val COMPOSE_ACTIVITY = "1.8.2"
+    const val COMPOSE_CONSTRAINTLAYOUT = "1.1.0-alpha13"
+    const val COMPOSE_GLIDE = "1.0.0-beta01"
+    // endregion
+
     // region glide
-    const val GLIDE = "4.16.0"
+    const val GLIDE = "5.0.0-rc01"
     const val GLIDE_TRANSFORMATIONS = "4.3.0"
     const val GPUIMAGE = "2.1.0"
     // endregion

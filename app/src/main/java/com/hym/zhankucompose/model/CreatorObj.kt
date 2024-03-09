@@ -2,6 +2,7 @@ package com.hym.zhankucompose.model
 
 import android.os.Parcelable
 import androidx.annotation.Keep
+import androidx.compose.runtime.Immutable
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -18,6 +19,7 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 @Keep
+@Immutable
 data class CreatorObj(
     val avatar: String,
     val avatar1x: String,
@@ -52,4 +54,17 @@ data class CreatorObj(
     val signature: String = ""
 
     val contentCards: List<Content> = emptyList()
+
+    companion object {
+        val Demo = CreatorObj(
+            avatar = "https://img.zcool.cn/community/031f1b95c60ae1fa801213f2663ce65.jpg",
+            avatar1x = "https://img.zcool.cn/community/031f1b95c60ae1fa801213f2663ce65.jpg@80w_80h_1c_1e_1o_100sh.jpg",
+            avatar2x = "https://img.zcool.cn/community/031f1b95c60ae1fa801213f2663ce65.jpg@160w_160h_1c_1e_1o_100sh.jpg",
+            id = 199049,
+            memberType = 0,
+            pageUrl = "https://kimtao.zcool.com.cn",
+            status = 1,
+            username = "画画的淘米"
+        )
+    }
 }
