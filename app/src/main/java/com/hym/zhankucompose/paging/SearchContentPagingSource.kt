@@ -1,13 +1,18 @@
 package com.hym.zhankucompose.paging
 
-import com.hym.zhankucompose.model.*
+import com.hym.zhankucompose.model.ContentPage
+import com.hym.zhankucompose.model.ContentPageResponse
+import com.hym.zhankucompose.model.ContentType
+import com.hym.zhankucompose.model.RecommendLevel
+import com.hym.zhankucompose.model.SortOrder
+import com.hym.zhankucompose.model.TopCate
 import com.hym.zhankucompose.network.NetworkService
 
 class SearchContentPagingSource(
     private val networkService: NetworkService,
     private val word: String,
     private val contentType: ContentType,
-    private val topCate: TopCate?,
+    private val topCate: TopCate,
     private val recommendLevel: RecommendLevel,
     private val sortOrder: SortOrder,
     private val pageSize: Int,
@@ -19,7 +24,7 @@ class SearchContentPagingSource(
         val searchContentResponse = networkService.getSearchContent(
             page = paramsKey.page,
             pageSize = pageSize,
-            topCate = topCate?.id,
+            topCate = topCate.id,
             recommendLevel = recommendLevel,
             sort = sortOrder,
             type = contentType,

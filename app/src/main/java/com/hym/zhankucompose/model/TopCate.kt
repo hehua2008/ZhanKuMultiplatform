@@ -1,6 +1,7 @@
 package com.hym.zhankucompose.model
 
 import androidx.annotation.Keep
+import androidx.compose.runtime.Immutable
 
 /**
 {
@@ -22,6 +23,7 @@ import androidx.annotation.Keep
 }
  */
 @Keep
+@Immutable
 data class TopCate(
     override val backgroundImage: String,
     override val commonOrderNo: Int,
@@ -82,6 +84,24 @@ data class TopCate(
                 )
             }
         }
+
+        val All = TopCate(
+            backgroundImage = "",
+            commonOrderNo = Int.MIN_VALUE,
+            description = "全部",
+            descriptionEn = "全部",
+            icon = "",
+            iconHover = "",
+            id = Int.MIN_VALUE,
+            level = Int.MIN_VALUE,
+            name = "全部",
+            nameEn = "全部",
+            orderNo = Int.MIN_VALUE,
+            parent = Int.MIN_VALUE,
+            statusId = Int.MIN_VALUE,
+            subCateList = emptyList(),
+            type = Int.MIN_VALUE,
+        )
 
         val TopCateTypeAdapter = object : CateTypeAdapter<TopCate>() {
             override val cateCreator get() = CREATOR

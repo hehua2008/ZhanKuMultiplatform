@@ -1,16 +1,25 @@
 package com.hym.zhankucompose.ui.search
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.hym.zhankucompose.model.*
+import com.hym.zhankucompose.model.Content
+import com.hym.zhankucompose.model.ContentType
+import com.hym.zhankucompose.model.RecommendLevel
+import com.hym.zhankucompose.model.SortOrder
+import com.hym.zhankucompose.model.TopCate
 import com.hym.zhankucompose.network.NetworkService
 import com.hym.zhankucompose.paging.LoadParamsHolder
 import com.hym.zhankucompose.paging.SearchContentPagingSource
 import com.hym.zhankucompose.paging.TotalPagesCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -19,12 +28,19 @@ class SearchContentPageViewModel @Inject constructor(private val networkService:
     ViewModel() {
     companion object {
         private const val TAG = "SearchContentPageViewModel"
+        val PageSizeList = listOf(10, 25, 50, 100, 200, 400).toImmutableList()
     }
 
     lateinit var contentType: ContentType
 
+    private val _topCate = MutableLiveData<TopCate>(TopCate.All)
+    val topCate: LiveData<TopCate> = _topCate
+
     private val _page = MutableLiveData<Int>(1)
     val page: LiveData<Int> = _page
+
+    private val _pageSizeIndex = MutableLiveData<Int>(0)
+    val pageSizeIndex: LiveData<Int> = _pageSizeIndex
 
     private val _totalPages = MutableLiveData<Int>(2)
     val totalPages: LiveData<Int> = _totalPages
@@ -35,11 +51,7 @@ class SearchContentPageViewModel @Inject constructor(private val networkService:
         }
     }
 
-    private var pageSize: Int = 10
-
     private var word = ""
-
-    private var topCate: TopCate? = null
 
     private var recommendLevel = RecommendLevel.ALL_LEVEL
 
@@ -59,9 +71,9 @@ class SearchContentPageViewModel @Inject constructor(private val networkService:
      * Set the [pageSize] field does not take effect.
      * I have no idea why the server always considers the page size as 10 when returning a response.
      */
-    fun setPageSize(pageSize: Int) {
-        if (this.pageSize == pageSize) return
-        this.pageSize = pageSize
+    fun setPageSizeIndex(pageSizeIndex: Int) {
+        if (_pageSizeIndex.value == pageSizeIndex) return
+        _pageSizeIndex.value = pageSizeIndex
         totalPagesCallback.invalidate()
         _page.value = 1
     }
@@ -74,9 +86,9 @@ class SearchContentPageViewModel @Inject constructor(private val networkService:
         _page.value = 1
     }
 
-    fun setTopCate(topCate: TopCate?) {
-        if (this.topCate == topCate) return
-        this.topCate = topCate
+    fun setTopCate(topCate: TopCate) {
+        if (_topCate.value == topCate) return
+        _topCate.value = topCate
         totalPagesCallback.invalidate()
         _page.value = 1
     }
@@ -98,16 +110,16 @@ class SearchContentPageViewModel @Inject constructor(private val networkService:
     val pagingFlow: Flow<PagingData<Content>> = Pager(
         // Configure how data is loaded by passing additional properties to
         // PagingConfig, such as prefetchDistance.
-        config = PagingConfig(pageSize = pageSize),
+        config = PagingConfig(pageSize = PageSizeList[pageSizeIndex.value ?: 0]),
         initialKey = LoadParamsHolder.INITIAL,
         pagingSourceFactory = {
             SearchContentPagingSource(
                 networkService = networkService,
                 initialPage = page.value ?: 1,
-                pageSize = pageSize,
+                pageSize = PageSizeList[pageSizeIndex.value ?: 0],
                 word = word,
                 contentType = contentType,
-                topCate = topCate,
+                topCate = topCate.value ?: TopCate.All,
                 recommendLevel = recommendLevel,
                 sortOrder = sortOrder,
                 totalPagesCallback = totalPagesCallback

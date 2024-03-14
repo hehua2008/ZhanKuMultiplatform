@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -50,7 +51,8 @@ fun PreviewItemGrid(
     modifier: Modifier = Modifier,
     columnSize: Int = 1,
     lazyGridState: LazyGridState = rememberLazyGridState(),
-    flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior()
+    flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
+    headerContent: @Composable ((headerModifier: Modifier) -> Unit)? = null
 ) {
     val view = LocalView.current
     val activity = remember(view) { view.getActivity() }
@@ -78,6 +80,12 @@ fun PreviewItemGrid(
         verticalArrangement = VerticalArrangement,
         horizontalArrangement = horizontalArrangement
     ) {
+        if (headerContent != null) {
+            item(key = "HeaderContent", span = { GridItemSpan(maxLineSpan) }) {
+                headerContent(Modifier.animateItemPlacement())
+            }
+        }
+
         items(
             count = lazyPagingItems.itemCount,
             key = lazyPagingItems.itemKey { it.id }

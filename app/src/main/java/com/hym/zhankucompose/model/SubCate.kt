@@ -1,6 +1,7 @@
 package com.hym.zhankucompose.model
 
 import androidx.annotation.Keep
+import androidx.compose.runtime.Immutable
 
 /**
 {
@@ -21,6 +22,7 @@ import androidx.annotation.Keep
 }
  */
 @Keep
+@Immutable
 data class SubCate(
     override val backgroundImage: String,
     override val commonOrderNo: Int,
@@ -86,5 +88,22 @@ data class SubCate(
         val SubCateTypeAdapter = object : CateTypeAdapter<SubCate>() {
             override val cateCreator get() = CREATOR
         }
+
+        val Demo = SubCate(
+            backgroundImage = "https://img.zcool.cn/community/013e07603ca975c97427790bfdd0c4.png",
+            commonOrderNo = 1,
+            description = "商品容器的标签、外形或结构设计",
+            descriptionEn = "商品容器的标签、外形或结构设计",
+            icon = "",
+            iconHover = "",
+            id = 9,
+            level = 2,
+            name = "包装",
+            nameEn = "Packaging",
+            orderNo = 1,
+            parent = 8,
+            statusId = 1,
+            type = 1
+        )
     }
 }

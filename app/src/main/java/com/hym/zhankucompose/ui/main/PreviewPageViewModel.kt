@@ -14,6 +14,7 @@ import com.hym.zhankucompose.paging.LoadParamsHolder
 import com.hym.zhankucompose.paging.PreviewPagingSource
 import com.hym.zhankucompose.paging.TotalPagesCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -22,12 +23,16 @@ class PreviewPageViewModel @Inject constructor(private val networkService: Netwo
     ViewModel() {
     companion object {
         private const val TAG = "PreviewPageViewModel"
+        val PageSizeList = listOf(10, 25, 50, 100, 200, 400).toImmutableList()
     }
 
     var topCate: TopCate? = null
 
     private val _page = MutableLiveData<Int>(1)
     val page: LiveData<Int> = _page
+
+    private val _pageSizeIndex = MutableLiveData<Int>(0)
+    val pageSizeIndex: LiveData<Int> = _pageSizeIndex
 
     private val _totalPages = MutableLiveData<Int>(2)
     val totalPages: LiveData<Int> = _totalPages
@@ -37,8 +42,6 @@ class PreviewPageViewModel @Inject constructor(private val networkService: Netwo
             _totalPages.value = totalPages
         }
     }
-
-    private var pageSize: Int = 25
 
     private val _subCate = MutableLiveData<SubCate?>()
     val subCate: LiveData<SubCate?> = _subCate
@@ -57,9 +60,13 @@ class PreviewPageViewModel @Inject constructor(private val networkService: Netwo
         _page.value = page.coerceAtMost(totalPages.value ?: page)
     }
 
-    fun setPageSize(pageSize: Int) {
-        if (this.pageSize == pageSize) return
-        this.pageSize = pageSize
+    /**
+     * Set the [pageSize] field does not take effect.
+     * I have no idea why the server always considers the page size as 10 when returning a response.
+     */
+    fun setPageSizeIndex(pageSizeIndex: Int) {
+        if (_pageSizeIndex.value == pageSizeIndex) return
+        _pageSizeIndex.value = pageSizeIndex
         totalPagesCallback.invalidate()
         _page.value = 1
     }
@@ -88,7 +95,7 @@ class PreviewPageViewModel @Inject constructor(private val networkService: Netwo
     val pagingFlow: Flow<PagingData<Content>> = Pager(
         // Configure how data is loaded by passing additional properties to
         // PagingConfig, such as prefetchDistance.
-        config = PagingConfig(pageSize = pageSize),
+        config = PagingConfig(pageSize = PageSizeList[pageSizeIndex.value ?: 0]),
         initialKey = LoadParamsHolder.INITIAL,
         pagingSourceFactory = {
             PreviewPagingSource(
@@ -96,7 +103,7 @@ class PreviewPageViewModel @Inject constructor(private val networkService: Netwo
                 topCate = topCate,
                 subCate = subCate.value,
                 initialPage = page.value ?: 1,
-                pageSize = pageSize,
+                pageSize = PageSizeList[pageSizeIndex.value ?: 0],
                 recommendLevel = recommendLevel,
                 contentType = contentType,
                 totalPagesCallback = totalPagesCallback

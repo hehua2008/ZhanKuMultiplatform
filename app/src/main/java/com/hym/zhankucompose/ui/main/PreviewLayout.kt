@@ -48,7 +48,6 @@ import com.hym.zhankucompose.compose.plus
 import com.hym.zhankucompose.compose.rememberMutableFloatState
 import com.hym.zhankucompose.compose.rememberMutableState
 import com.hym.zhankucompose.model.Content
-import com.hym.zhankucompose.ui.theme.ComposeTheme
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -63,8 +62,9 @@ private const val TAG = "PreviewLayout"
 @Composable
 fun PreviewLayout(
     lazyPagingItems: LazyPagingItems<Content>,
+    modifier: Modifier = Modifier,
     setOnScrollToTopAction: ((onScrollToTopAction: () -> Unit) -> Unit)? = null,
-    modifier: Modifier = Modifier
+    headerContent: @Composable ((headerModifier: Modifier) -> Unit)? = null
 ) {
     val pullRefreshState = rememberPullToRefreshState()
     val lazyGridState = rememberLazyGridState() // It won't recreated
@@ -182,44 +182,43 @@ fun PreviewLayout(
         }
     }
 
-    ComposeTheme {
-        Box(modifier = modifier.nestedScroll(combinedNestedScrollConnection)) {
-            PreviewItemGrid(
-                lazyPagingItems = lazyPagingItems,
-                modifier = Modifier.fillMaxSize(),
-                columnSize = 2,
-                lazyGridState = lazyGridState,
-                flingBehavior = listenableFlingBehavior(flingVelocityListener)
-            )
+    Box(modifier = modifier.nestedScroll(combinedNestedScrollConnection)) {
+        PreviewItemGrid(
+            lazyPagingItems = lazyPagingItems,
+            modifier = Modifier.fillMaxSize(),
+            columnSize = 2,
+            lazyGridState = lazyGridState,
+            flingBehavior = listenableFlingBehavior(flingVelocityListener),
+            headerContent = headerContent
+        )
 
-            PullToRefreshContainer(
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
+        PullToRefreshContainer(
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
 
-            val fabOnClick: () -> Unit = remember {
-                {
-                    composeScope.launch {
-                        lazyGridState.scrollToItem(0)
-                        showFab = false
-                    }
+        val fabOnClick: () -> Unit = remember {
+            {
+                composeScope.launch {
+                    lazyGridState.scrollToItem(0)
+                    showFab = false
                 }
             }
+        }
 
-            AnimatedVisibility(
-                visible = showFab,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 16.dp),
-                enter = remember { scaleIn() + fadeIn() },
-                exit = remember { scaleOut() + fadeOut() }
+        AnimatedVisibility(
+            visible = showFab,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 16.dp),
+            enter = remember { scaleIn() + fadeIn() },
+            exit = remember { scaleOut() + fadeOut() }
+        ) {
+            FloatingActionButton(
+                onClick = fabOnClick,
+                shape = CircleShape
             ) {
-                FloatingActionButton(
-                    onClick = fabOnClick,
-                    shape = CircleShape
-                ) {
-                    Icon(ImageVector.vectorResource(R.drawable.vector_rocket), "")
-                }
+                Icon(ImageVector.vectorResource(R.drawable.vector_rocket), "")
             }
         }
     }

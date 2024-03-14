@@ -2,6 +2,7 @@ package com.hym.zhankucompose.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.compose.runtime.Immutable
 
 /**
 {
@@ -22,6 +23,7 @@ import android.os.Parcelable
 "type": 1
 }
  */
+@Immutable
 abstract class Cate : Parcelable {
     abstract val backgroundImage: String
 

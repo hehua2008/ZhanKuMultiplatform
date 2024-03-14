@@ -42,6 +42,7 @@ object Versions {
     const val COMPOSE_COMPILER = "1.5.10"
     const val COMPOSE_BOM = "2024.02.02"
     const val COMPOSE_ACTIVITY = "1.8.2"
+    const val COMPOSE_LIVEDATA = "1.6.3"
     const val COMPOSE_CONSTRAINTLAYOUT = "1.1.0-alpha13"
     const val COMPOSE_GLIDE = "1.0.0-beta01"
     // endregion
@@ -53,4 +54,5 @@ object Versions {
     // endregion
 
     const val JSOUP = "1.17.1"
+    const val COLLECTIONS_IMMUTABLE = "0.3.7"
 }

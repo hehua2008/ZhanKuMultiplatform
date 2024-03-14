@@ -17,7 +17,12 @@ val EMPTY_BLOCK = {}
 val EMPTY_COMPOSABLE_BLOCK = @Composable {}
 val COMMON_PADDING = 6.dp
 val PADDING_VALUES_ZERO = PaddingValues()
+val SMALL_PADDING_VALUES = PaddingValues(4.dp)
 val BUTTON_CONTENT_PADDING = PaddingValues(8.dp)
+val SMALL_BUTTON_CONTENT_PADDING = PaddingValues(2.dp)
+
+val NUMBER_REGEX = Regex("\\d*")
+val NON_NUMBER_REGEX = Regex("\\D+")
 
 fun CharSequence.copyToClipboard(context: Context) {
     val clipboard = ContextCompat.getSystemService(context, ClipboardManager::class.java)!!

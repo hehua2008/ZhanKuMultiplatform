@@ -12,6 +12,7 @@ import com.hym.zhankucompose.paging.AuthorPagingSource
 import com.hym.zhankucompose.paging.LoadParamsHolder
 import com.hym.zhankucompose.paging.TotalPagesCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import kotlin.properties.Delegates
@@ -21,12 +22,16 @@ class AuthorPageViewModel @Inject constructor(private val networkService: Networ
     ViewModel() {
     companion object {
         private const val TAG = "AuthorPageViewModel"
+        val PageSizeList = listOf(10, 25, 50, 100, 200, 400).toImmutableList()
     }
 
     var authorUid by Delegates.notNull<Int>()
 
     private val _page = MutableLiveData<Int>(1)
     val page: LiveData<Int> = _page
+
+    private val _pageSizeIndex = MutableLiveData<Int>(0)
+    val pageSizeIndex: LiveData<Int> = _pageSizeIndex
 
     private val _totalPages = MutableLiveData<Int>(2)
     val totalPages: LiveData<Int> = _totalPages
@@ -36,8 +41,6 @@ class AuthorPageViewModel @Inject constructor(private val networkService: Networ
             _totalPages.value = totalPages
         }
     }
-
-    private var pageSize: Int = 25
 
     private var sortOrder = SortOrder.LATEST_PUBLISH
 
@@ -51,9 +54,13 @@ class AuthorPageViewModel @Inject constructor(private val networkService: Networ
         _page.value = page.coerceAtMost(totalPages.value ?: page)
     }
 
-    fun setPageSize(pageSize: Int) {
-        if (this.pageSize == pageSize) return
-        this.pageSize = pageSize
+    /**
+     * Set the [pageSize] field does not take effect.
+     * I have no idea why the server always considers the page size as 10 when returning a response.
+     */
+    fun setPageSizeIndex(pageSizeIndex: Int) {
+        if (_pageSizeIndex.value == pageSizeIndex) return
+        _pageSizeIndex.value = pageSizeIndex
         totalPagesCallback.invalidate()
         _page.value = 1
     }
@@ -68,14 +75,14 @@ class AuthorPageViewModel @Inject constructor(private val networkService: Networ
     val pagingFlow: Flow<PagingData<Content>> = Pager(
         // Configure how data is loaded by passing additional properties to
         // PagingConfig, such as prefetchDistance.
-        config = PagingConfig(pageSize = pageSize),
+        config = PagingConfig(pageSize = PageSizeList[pageSizeIndex.value ?: 0]),
         initialKey = LoadParamsHolder.INITIAL,
         pagingSourceFactory = {
             AuthorPagingSource(
                 networkService = networkService,
                 authorUid = authorUid,
                 initialPage = page.value ?: 1,
-                pageSize = pageSize,
+                pageSize = PageSizeList[pageSizeIndex.value ?: 0],
                 sortOrder = sortOrder,
                 totalPagesCallback = totalPagesCallback
             )

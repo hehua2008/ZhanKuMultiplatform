@@ -1,38 +1,50 @@
 package com.hym.zhankucompose.ui.main
 
-import android.graphics.Rect
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.AdapterView
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestManager
-import com.google.android.flexbox.FlexDirection
-import com.google.android.flexbox.FlexWrap
-import com.google.android.flexbox.FlexboxLayoutManager
-import com.google.android.flexbox.JustifyContent
-import com.hym.zhankucompose.GlideAppExtension
-import com.hym.zhankucompose.R
+import com.hym.zhankucompose.compose.COMMON_PADDING
 import com.hym.zhankucompose.compose.EMPTY_BLOCK
-import com.hym.zhankucompose.databinding.FragmentMainBinding
+import com.hym.zhankucompose.compose.LabelFlowLayout
+import com.hym.zhankucompose.compose.SMALL_PADDING_VALUES
+import com.hym.zhankucompose.compose.SimpleLinkText
+import com.hym.zhankucompose.compose.SimpleRadioGroup
+import com.hym.zhankucompose.model.Cate
 import com.hym.zhankucompose.model.RecommendLevel
 import com.hym.zhankucompose.model.SubCate
 import com.hym.zhankucompose.model.TopCate
+import com.hym.zhankucompose.ui.PagedLayout
 import com.hym.zhankucompose.ui.TabReselectedCallback
+import com.hym.zhankucompose.ui.theme.ComposeTheme
+import com.hym.zhankucompose.ui.webview.WebViewActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.collections.immutable.toImmutableList
 
 @AndroidEntryPoint
 class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCallback {
@@ -56,13 +68,6 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
         private set
     private var mSubCate: SubCate? = null
     private val mPageViewModel: PreviewPageViewModel by viewModels()
-    private var mBinding: FragmentMainBinding? = null
-    private val binding get() = checkNotNull(mBinding)
-    private lateinit var mRequestManager: RequestManager
-
-    private lateinit var mCategoryItemLayoutManager: FlexboxLayoutManager
-    private lateinit var mCategoryItemAdapter: CategoryItemAdapter
-    private lateinit var mButtonItemDecoration: RecyclerView.ItemDecoration
 
     private var scrollToTop: () -> Unit = EMPTY_BLOCK
 
@@ -82,146 +87,145 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
         mSubCate = activeBundle.getParcelable(SUB_CATE)
         mPageViewModel.topCate = topCate
         mPageViewModel.setSubCate(mSubCate)
-
-        mCategoryItemLayoutManager = FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)
-        mCategoryItemLayoutManager.justifyContent = JustifyContent.SPACE_EVENLY
-        mCategoryItemAdapter = CategoryItemAdapter(topCate, mSubCate, mPageViewModel)
-
-        mButtonItemDecoration = object : RecyclerView.ItemDecoration() {
-            private val mOffset = resources.getDimensionPixelSize(
-                R.dimen.button_item_horizontal_offset
-            ) and 1.inv()
-            private val mHalfOffset = mOffset shr 1
-
-            override fun getItemOffsets(
-                outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
-            ) {
-                val itemPosition =
-                    (view.layoutParams as RecyclerView.LayoutParams).viewLayoutPosition
-                val itemCount = state.itemCount
-                val left = if (itemPosition == 0) mOffset else mHalfOffset
-                val right = if (itemPosition == itemCount - 1) mOffset else mHalfOffset
-                outRect.set(left, 0, right, 0)
-            }
-        }
-
-        mRequestManager = Glide.with(this)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        mBinding = FragmentMainBinding.inflate(inflater, container, false)
-
-        updateBackgroundImage()
-        updateCategoryLink()
-
         /*
         val typedValue = TypedValue()
         requireContext().theme.resolveAttribute(R.attr.colorAccent, typedValue, true)
         binding.swipeRefresh.setColorSchemeColors(typedValue.data)
         */
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                ComposeTheme {
+                    val localContext = LocalContext.current
+                    val lazyPagingItems = mPageViewModel.pagingFlow.collectAsLazyPagingItems()
+                    val lifecycleOwner = LocalLifecycleOwner.current
 
-        binding.previewCompose.setContent {
-            val lazyPagingItems = mPageViewModel.pagingFlow.collectAsLazyPagingItems()
-            val lifecycleOwner = LocalLifecycleOwner.current
+                    DisposableEffect(lazyPagingItems, lifecycleOwner) {
+                        val observer = Observer<Unit> { lazyPagingItems.refresh() }
+                        mPageViewModel.mediatorLiveData.observe(lifecycleOwner, observer)
 
-            DisposableEffect(lazyPagingItems, lifecycleOwner) {
-                val observer = Observer<Unit> { lazyPagingItems.refresh() }
-                mPageViewModel.mediatorLiveData.observe(lifecycleOwner, observer)
+                        onDispose {
+                            mPageViewModel.mediatorLiveData.removeObserver(observer)
+                        }
+                    }
 
-                onDispose {
-                    mPageViewModel.mediatorLiveData.removeObserver(observer)
-                }
-            }
+                    val topCate = mPageViewModel.topCate!!
+                    val subCate by mPageViewModel.subCate.observeAsState()
+                    val categoryLink = remember(subCate) {
+                        updateCategoryLink(topCate, subCate)
+                    }
+                    val categories = remember {
+                        mutableListOf<Cate>(topCate).apply {
+                            addAll(topCate.subCateList)
+                        }.toImmutableList()
+                    }
+                    val categoriesNames = remember(categories) {
+                        categories.map { it.name }.toImmutableList()
+                    }
+                    val defaultCategoryIndex = remember(categories, subCate) {
+                        categories.indexOf(subCate as Cate?).let { if (it < 0) 0 else it }
+                    }
 
-            PreviewLayout(lazyPagingItems = lazyPagingItems, setOnScrollToTopAction = {
-                scrollToTop = it
-            })
-        }
+                    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
+                    val labelTextStyle = MaterialTheme.typography.labelLarge.let {
+                        remember(it, onSurfaceColor) { it.copy(color = onSurfaceColor) }
+                    }
 
-        binding.previewHeader.catRecrcler.layoutManager = mCategoryItemLayoutManager
-        binding.previewHeader.catRecrcler.addItemDecoration(mButtonItemDecoration)
-        binding.previewHeader.catRecrcler.adapter = mCategoryItemAdapter
+                    val recommendLevels = remember {
+                        listOf(
+                            RecommendLevel.EDITOR_CHOICE,
+                            RecommendLevel.ALL_RECOMMEND,
+                            RecommendLevel.HOME_RECOMMEND,
+                            RecommendLevel.LATEST_PUBLISH
+                        ).toImmutableList()
+                    }
 
-        binding.previewHeader.order1.text = RecommendLevel.EDITOR_CHOICE.text
-        binding.previewHeader.order2.text = RecommendLevel.ALL_RECOMMEND.text
-        binding.previewHeader.order3.text = RecommendLevel.HOME_RECOMMEND.text
-        binding.previewHeader.order4.text = RecommendLevel.LATEST_PUBLISH.text
-        binding.previewHeader.orderGroup.setOnCheckedChangeListener { group, checkedId ->
-            val recommendLevel: RecommendLevel = when (checkedId) {
-                R.id.order_1 -> RecommendLevel.EDITOR_CHOICE
-                R.id.order_2 -> RecommendLevel.ALL_RECOMMEND
-                R.id.order_3 -> RecommendLevel.HOME_RECOMMEND
-                R.id.order_4 -> RecommendLevel.LATEST_PUBLISH
-                else -> RecommendLevel.EDITOR_CHOICE
-            }
-            mPageViewModel.setRecommendLevel(recommendLevel)
-        }
+                    val activePage by mPageViewModel.page.observeAsState(1)
+                    val lastPage by mPageViewModel.totalPages.observeAsState(1)
+                    val pageSizeIndex by mPageViewModel.pageSizeIndex.observeAsState(0)
 
-        binding.previewHeader.paged.prePage.setOnClickListener {
-            clearEditFocusAndHideSoftInput()
-            val curPage = mPageViewModel.page.value ?: return@setOnClickListener
-            mPageViewModel.setPage(curPage - 1)
-        }
-        binding.previewHeader.paged.nextPage.setOnClickListener {
-            clearEditFocusAndHideSoftInput()
-            val curPage = mPageViewModel.page.value ?: return@setOnClickListener
-            mPageViewModel.setPage(curPage + 1)
-        }
-        binding.previewHeader.paged.jumpButton.setOnClickListener {
-            clearEditFocusAndHideSoftInput()
-            val numberEdit = binding.previewHeader.paged.numberEdit.text.toString()
-            if (numberEdit.isEmpty()) return@setOnClickListener
-            mPageViewModel.setPage(numberEdit.toInt())
-        }
-        binding.previewHeader.paged.pageSizeTitle.isVisible = true
-        binding.previewHeader.paged.pageSizeSpinner.isVisible = true
-        binding.previewHeader.paged.pageSizeSpinner.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                private val pageSizes = resources.getStringArray(R.array.page_sizes).map {
-                    it.toInt()
-                }
+                    PreviewLayout(
+                        lazyPagingItems = lazyPagingItems,
+                        setOnScrollToTopAction = { scrollToTop = it }
+                    ) { headerModifier ->
+                        Column(
+                            modifier = headerModifier,
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            SimpleLinkText(
+                                link = categoryLink,
+                                modifier = Modifier.padding(top = COMMON_PADDING)
+                            ) {
+                                val intent = Intent(localContext, WebViewActivity::class.java)
+                                    .putExtra(WebViewActivity.WEB_URL, it)
+                                    .putExtra(WebViewActivity.WEB_TITLE, (subCate ?: topCate).name)
+                                localContext.startActivity(intent)
+                            }
 
-                override fun onItemSelected(parent: AdapterView<*>, v: View?, pos: Int, id: Long) {
-                    if (pos >= 0 && pos < pageSizes.size) {
-                        mPageViewModel.setPageSize(pageSizes[pos])
+                            LabelFlowLayout(
+                                labels = categoriesNames,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = COMMON_PADDING),
+                                defaultLabelIndex = defaultCategoryIndex,
+                                itemPadding = SMALL_PADDING_VALUES
+                            ) {
+                                mPageViewModel.setSubCate(if (it == 0) null else topCate.subCateList[it - 1])
+                            }
+
+                            SimpleRadioGroup(
+                                items = recommendLevels,
+                                modifier = Modifier.padding(top = COMMON_PADDING),
+                                onItemSelected = { level ->
+                                    mPageViewModel.setRecommendLevel(level)
+                                }
+                            ) { level ->
+                                Text(
+                                    text = level.text,
+                                    maxLines = 1,
+                                    style = labelTextStyle
+                                )
+                            }
+
+                            PagedLayout(
+                                modifier = Modifier.padding(top = COMMON_PADDING),
+                                activePage = activePage,
+                                lastPage = lastPage,
+                                pageSizeList = PreviewPageViewModel.PageSizeList,
+                                pageSizeIndex = pageSizeIndex,
+                                onPreClick = { mPageViewModel.setPage(activePage - 1) },
+                                onNextClick = { mPageViewModel.setPage(activePage + 1) },
+                                onJumpAction = { mPageViewModel.setPage(it) }
+                            ) { index, item ->
+                                mPageViewModel.setPageSizeIndex(index)
+                            }
+                        }
                     }
                 }
-
-                override fun onNothingSelected(parent: AdapterView<*>) = Unit
             }
-
-        return binding.root
+        }
     }
 
     override fun onTabReselected() {
         scrollToTop()
     }
 
-    private fun updateBackgroundImage() {
-        (mSubCate?.backgroundImage.takeUnless { it.isNullOrBlank() }
-            ?: topCate?.backgroundImage.takeUnless { it.isNullOrBlank() })?.let {
-            mRequestManager.load(it)
-                .transition(GlideAppExtension.DRAWABLE_CROSS_FADE)
-                .apply(GlideAppExtension.blurMulti)
-                .into(binding.previewHeader.bgView)
-        }
-    }
-
-    private fun updateCategoryLink() {
+    private fun updateCategoryLink(topCate: TopCate, subCate: SubCate?): String {
         val sb = StringBuilder("https://www.zcool.com.cn/discover?")
-        topCate?.id?.let { cate ->
-            sb.append("cate=").append(cate)
-            mSubCate?.id?.let { subCate ->
-                sb.append("&subCate=").append(subCate)
-            }
+        sb.append("cate=").append(topCate.id)
+        subCate?.id?.let { subCateId ->
+            sb.append("&subCate=").append(subCateId)
         }
-        binding.previewHeader.categoryLink.text = sb
+        return sb.toString()
     }
 
     private fun clearEditFocusAndHideSoftInput() {
-        binding.previewHeader.paged.numberEdit.clearFocus()
         val imm = ContextCompat.getSystemService(requireContext(), InputMethodManager::class.java)!!
         imm.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
@@ -229,24 +233,12 @@ class PreviewItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedC
     override fun onDestroyView() {
         super.onDestroyView()
         scrollToTop = EMPTY_BLOCK
-        binding.previewHeader.catRecrcler.layoutManager = null
-        binding.previewHeader.catRecrcler.adapter = null
-        mRequestManager.clear(binding.previewHeader.bgView)
-        mBinding = null
     }
 
     override fun onChanged(viewLifecycleOwner: LifecycleOwner) {
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            mPageViewModel.page.observe(viewLifecycleOwner) {
-                binding.previewHeader.paged.root.activePage = it
-            }
-            mPageViewModel.totalPages.observe(viewLifecycleOwner) {
-                binding.previewHeader.paged.root.lastPage = it
-            }
             mPageViewModel.subCate.observe(viewLifecycleOwner) {
                 mSubCate = it
-                updateBackgroundImage()
-                updateCategoryLink()
             }
         }
     }
