@@ -20,6 +20,7 @@ import com.hym.zhankucompose.model.TopCate
 import com.hym.zhankucompose.ui.TabReselectedCallback
 import com.hym.zhankucompose.util.createTextColorStateListByColorAttr
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.math.abs
 
 @AndroidEntryPoint
 class Main2Activity : BaseActivity(), TabConfigurationStrategy, OnTabSelectedListener {
@@ -30,6 +31,8 @@ class Main2Activity : BaseActivity(), TabConfigurationStrategy, OnTabSelectedLis
     private lateinit var binding: ActivityMain2Binding
     private val sectionsPagerAdapter = SectionsPager2Adapter(this)
     private val mTopCates: MutableList<TopCate> = mutableListOf()
+
+    private var mInitialFragmentPosition = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Add callback before fragmentManager
@@ -63,6 +66,25 @@ class Main2Activity : BaseActivity(), TabConfigurationStrategy, OnTabSelectedLis
                         tabView.typeface = Typeface.DEFAULT
                     }
                 }
+                val distance = abs(position - mInitialFragmentPosition)
+                if (binding.viewPager.offscreenPageLimit < distance) {
+                    binding.viewPager.offscreenPageLimit = distance
+                }
+            }
+
+            override fun onPageScrolled(
+                position: Int, positionOffset: Float, positionOffsetPixels: Int
+            ) {
+                val maxDistance = abs(position - mInitialFragmentPosition).let {
+                    when {
+                        positionOffset == 0f -> it // Only position is visible
+                        position == sectionsPagerAdapter.itemCount - 1 -> it // Last position
+                        else -> it.coerceAtLeast(abs(position + 1 - mInitialFragmentPosition))
+                    }
+                }
+                if (binding.viewPager.offscreenPageLimit < maxDistance) {
+                    binding.viewPager.offscreenPageLimit = maxDistance
+                }
             }
         })
         binding.tabs.addOnTabSelectedListener(this)
@@ -71,9 +93,11 @@ class Main2Activity : BaseActivity(), TabConfigurationStrategy, OnTabSelectedLis
         getAppViewModel<MyAppViewModel>().categoryItems.observe(this) { categoryItems ->
             mTopCates.clear()
             mTopCates.addAll(categoryItems)
-            binding.viewPager.offscreenPageLimit = 1 + mTopCates.size
+            if (binding.viewPager.offscreenPageLimit < 1) {
+                binding.viewPager.offscreenPageLimit = 1
+            }
             sectionsPagerAdapter.setCategoryItems(mTopCates)
-            binding.viewPager.currentItem = if (mTopCates.isEmpty()) 0 else 1
+            binding.viewPager.currentItem = if (mTopCates.isEmpty()) 0 else mInitialFragmentPosition
             tabLayoutMediator.detach()
             tabLayoutMediator.attach()
         }
