@@ -31,10 +31,12 @@ sealed class DetailContent<T>(val type: Int, val data: T) {
                         list.add(DetailText(sb.toString()))
                         sb.setLength(0)
                     }
-                    val imageUrl = img.absUrl("src")
-                    if (imageUrl.isNullOrBlank()) return@forEach
+                    val imageUrl = img.absUrl("src").let { url ->
+                        if (url.isNullOrBlank()) return@forEach
+                        url.substringBefore('?').substringBefore('@')
+                    }
                     val articleImage = articleDetails.articleImageList.first { articleImage ->
-                        articleImage.img == imageUrl
+                        articleImage.img.contains(imageUrl, ignoreCase = true)
                     }
                     val productImage = ProductImage(
                         0L,
