@@ -1,7 +1,11 @@
 package com.hym.zhankucompose
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
 import com.bumptech.glide.annotation.GlideExtension
 import com.bumptech.glide.annotation.GlideOption
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.placeholder
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -33,6 +37,9 @@ object GlideAppExtension {
             //BrightnessFilterTransformation(-0.15f)
         )
     )
+
+    @OptIn(ExperimentalGlideComposeApi::class)
+    val TransparentPlaceholder = placeholder(ColorPainter(Color.Transparent))
 
     @Deprecated("Deprecate Glide's Extensions, GlideApp, GlideRequest and GlideRequests.")
     @JvmStatic

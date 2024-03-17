@@ -1,5 +1,6 @@
 package com.hym.zhankucompose.ui.detail
 
+import androidx.compose.runtime.Immutable
 import com.hym.zhankucompose.model.ArticleDetails
 import com.hym.zhankucompose.model.ProductImage
 import com.hym.zhankucompose.model.ProductVideo
@@ -9,7 +10,12 @@ import org.jsoup.Jsoup
  * @author hehua2008
  * @date 2022/8/12
  */
-sealed class DetailContent<T>(val type: Int, val data: T) {
+@Immutable
+sealed class DetailContent<T>(
+    open val data: T
+) {
+    abstract val type: Int
+
     companion object {
         const val CONTENT_IMAGE = 1
         const val CONTENT_VIDEO = 2
@@ -19,6 +25,7 @@ sealed class DetailContent<T>(val type: Int, val data: T) {
             val doc = Jsoup.parse(articleDetails.articledata.memoHtml)
             val list = mutableListOf<DetailContent<*>>()
             val body = doc.selectFirst("body") ?: return list
+            var stringId = 0
             val sb = StringBuilder()
             body.children().forEach {
                 val img = it.selectFirst("img")
@@ -28,7 +35,7 @@ sealed class DetailContent<T>(val type: Int, val data: T) {
                     }
                 } else {
                     if (sb.isNotEmpty()) {
-                        list.add(DetailText(sb.toString()))
+                        list.add(DetailText(data = sb.toString(), id = stringId++))
                         sb.setLength(0)
                     }
                     val imageUrl = img.absUrl("src").let { url ->
@@ -63,15 +70,19 @@ sealed class DetailContent<T>(val type: Int, val data: T) {
                 }
             }
             if (sb.isNotEmpty()) {
-                list.add(DetailText(sb.toString()))
+                list.add(DetailText(data = sb.toString(), id = stringId++))
                 sb.setLength(0)
             }
             return list
         }
     }
 
+    open val id: Int get() = hashCode()
+
+    private var hash: Int? = null
+
     override fun hashCode(): Int {
-        return data.hashCode()
+        return hash ?: data.hashCode().also { hash = it }
     }
 
     open fun shallowEquals(other: DetailContent<*>?): Boolean {
@@ -79,7 +90,12 @@ sealed class DetailContent<T>(val type: Int, val data: T) {
     }
 }
 
-class DetailImage(image: ProductImage) : DetailContent<ProductImage>(CONTENT_IMAGE, image) {
+@Immutable
+data class DetailImage(
+    override val data: ProductImage
+) : DetailContent<ProductImage>(data) {
+    override val type: Int = CONTENT_IMAGE
+
     override fun shallowEquals(other: DetailContent<*>?): Boolean {
         if (this === other) return true
         if (other !is DetailImage) return false
@@ -87,7 +103,12 @@ class DetailImage(image: ProductImage) : DetailContent<ProductImage>(CONTENT_IMA
     }
 }
 
-class DetailVideo(video: ProductVideo) : DetailContent<ProductVideo>(CONTENT_VIDEO, video) {
+@Immutable
+data class DetailVideo(
+    override val data: ProductVideo
+) : DetailContent<ProductVideo>(data) {
+    override val type: Int = CONTENT_VIDEO
+
     override fun shallowEquals(other: DetailContent<*>?): Boolean {
         if (this === other) return true
         if (other !is DetailVideo) return false
@@ -95,7 +116,13 @@ class DetailVideo(video: ProductVideo) : DetailContent<ProductVideo>(CONTENT_VID
     }
 }
 
-class DetailText(article: String) : DetailContent<String>(CONTENT_TEXT, article) {
+@Immutable
+data class DetailText(
+    override val data: String,
+    override val id: Int
+) : DetailContent<String>(data) {
+    override val type: Int = CONTENT_TEXT
+
     override fun shallowEquals(other: DetailContent<*>?): Boolean {
         if (this === other) return true
         if (other !is DetailText) return false

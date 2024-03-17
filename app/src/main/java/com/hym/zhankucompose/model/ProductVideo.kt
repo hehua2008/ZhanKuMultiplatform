@@ -1,6 +1,7 @@
 package com.hym.zhankucompose.model
 
 import androidx.annotation.Keep
+import androidx.compose.runtime.Immutable
 
 /**
 {
@@ -21,6 +22,7 @@ import androidx.annotation.Keep
 }
  */
 @Keep
+@Immutable
 data class ProductVideo(
     val createTime: Long,
     val creator: Int,

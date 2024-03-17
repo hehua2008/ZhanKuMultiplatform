@@ -1,6 +1,7 @@
 package com.hym.zhankucompose.model
 
 import androidx.annotation.Keep
+import androidx.compose.runtime.Immutable
 import com.hym.zhankucompose.util.getRelativeOrActualDateString
 
 /**
@@ -67,6 +68,7 @@ import com.hym.zhankucompose.util.getRelativeOrActualDateString
 }
  */
 @Keep
+@Immutable
 data class Product(
     val allowrightclick: Int,
     val allowrightclickStr: String,
@@ -129,4 +131,68 @@ data class Product(
     val zteamId: Int
 ) {
     val updateTimeStr get() = updateTime.getRelativeOrActualDateString()
+
+    companion object {
+        val Demo = Product(
+            allowrightclick = 1,
+            allowrightclickStr = "由于作者设置了版权保护,您无法查看原图",
+            articleId = 0,
+            cate = 33,
+            colorTheme = 1,
+            commentCount = 0,
+            commentCountStr = "0",
+            copyright = 1,
+            copyrightStr = "禁止转载-禁止商业用途-禁止个人用途",
+            cover = "https://img.zcool.cn/community/031b13a61aeed5111013e8cd0ea594e.jpg@800w_600h_1c_1e_1o_100sh.jpg",
+            coverName = "031b13a61aeed5111013e8cd0ea594e.jpg",
+            coverPath = "community",
+            createTime = 1638544604000,
+            creator = 15611957,
+            creatorObj = CreatorObj.Demo,
+            description = "成都约拍～<br>可惜的是橘子林都被套袋了[z大哭]",
+            designTime = 1638544604000,
+            downCount = 0,
+            draftPercent = "",
+            eventId = 0,
+            favoriteCount = 0,
+            fieldCateObj = TopCate.All,
+            fileId = 0,
+            id = 14187298,
+            imageCount = 9,
+            industry = 10,
+            industryStr = "母婴",
+            mycate = 0,
+            pageUrl = "https://www.zcool.com.cn/work/ZNTY3NDkxOTI=.html",
+            productImages = listOf(ProductImage.Demo),
+            productTags = List(10) { ProductTag.Demo },
+            productVideos = emptyList(),
+            publishTime = 1638838573000,
+            publishTimeDiffStr = "12小时前",
+            recommend = 2,
+            recommendCount = 1,
+            recommendCountGuess = 0,
+            recommendCountStr = "0",
+            recommendStr = "编辑推荐",
+            recommendTime = 1638863564000,
+            relObjectId = 0,
+            relObjectType = 0,
+            software = "",
+            source = "ios",
+            statusId = 1,
+            subCateObj = SubCate.Demo,
+            subcate = 34,
+            swfUrl = "",
+            timeTitleStr = "最近更新时间：2021-12-07 15:52:44&#10;首次审核通过：2021-12-07 08:56:13&#10;内容创建时间：2021-12-03 23:16:44",
+            title = "姐妹成对，快乐成倍💗",
+            type = 1,
+            typeStr = "原创",
+            updateTime = 1638863564000,
+            vedioUrl = "",
+            videoCount = 0,
+            viewCount = 73,
+            viewCountStr = "0",
+            viewed = 0,
+            zteamId = 0
+        )
+    }
 }
