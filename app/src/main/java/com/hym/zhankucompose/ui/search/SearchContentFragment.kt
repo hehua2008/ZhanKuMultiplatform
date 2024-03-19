@@ -81,8 +81,9 @@ class SearchContentFragment : Fragment(), Observer<LifecycleOwner>, TabReselecte
         viewLifecycleOwnerLiveData.observe(this, this)
 
         val activeBundle = savedInstanceState ?: arguments
-        mContentType = ContentType.valueOf(activeBundle!!.getString(CONTENT_TYPE)!!)
-        mPageViewModel.contentType = mContentType
+        activeBundle?.getString(CONTENT_TYPE)?.let {
+            setContentType(ContentType.valueOf(it))
+        }
     }
 
     override fun onCreateView(
@@ -234,5 +235,10 @@ class SearchContentFragment : Fragment(), Observer<LifecycleOwner>, TabReselecte
                 mPageViewModel.setWord(it)
             }
         }
+    }
+
+    fun setContentType(contentType: ContentType) {
+        mContentType = contentType
+        mPageViewModel.contentType = mContentType
     }
 }

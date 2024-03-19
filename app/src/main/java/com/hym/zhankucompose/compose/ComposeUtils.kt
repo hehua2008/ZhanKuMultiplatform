@@ -23,6 +23,7 @@ val SMALL_BUTTON_CONTENT_PADDING = PaddingValues(2.dp)
 
 val NUMBER_REGEX = Regex("\\d*")
 val NON_NUMBER_REGEX = Regex("\\D+")
+val MULTIPLE_SPACE = Regex("\\s{2,}")
 
 fun CharSequence.copyToClipboard(context: Context) {
     val clipboard = ContextCompat.getSystemService(context, ClipboardManager::class.java)!!

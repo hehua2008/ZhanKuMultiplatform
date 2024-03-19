@@ -44,6 +44,7 @@ object Versions {
     const val COMPOSE_ACTIVITY = "1.8.2"
     const val COMPOSE_LIVEDATA = "1.6.3"
     const val COMPOSE_CONSTRAINTLAYOUT = "1.1.0-alpha13"
+    const val COMPOSE_VIEW_BINDING = "1.6.3"
     const val COMPOSE_GLIDE = "1.0.0-beta01"
     const val COMPOSE_MARKDOWN = "0.4.1"
     // endregion

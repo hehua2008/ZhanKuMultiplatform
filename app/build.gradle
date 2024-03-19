@@ -124,6 +124,7 @@ dependencies {
     implementation "androidx.paging:paging-compose:${Versions.ANDROID_PAGING}"
     implementation "androidx.compose.runtime:runtime-livedata:${Versions.COMPOSE_LIVEDATA}"
     implementation "androidx.constraintlayout:constraintlayout-compose:${Versions.COMPOSE_CONSTRAINTLAYOUT}"
+    implementation "androidx.compose.ui:ui-viewbinding:${Versions.COMPOSE_VIEW_BINDING}"
     implementation "com.github.bumptech.glide:compose:${Versions.COMPOSE_GLIDE}"
     //implementation "com.github.jeziellago:compose-markdown:${Versions.COMPOSE_MARKDOWN}"
     implementation "org.jetbrains.kotlinx:kotlinx-collections-immutable:${Versions.COLLECTIONS_IMMUTABLE}"
