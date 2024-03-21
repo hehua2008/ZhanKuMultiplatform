@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,6 +31,7 @@ import com.bumptech.glide.integration.compose.GlideSubcomposition
 import com.bumptech.glide.integration.compose.RequestState
 import com.bumptech.glide.load.DataSource
 import com.hym.zhankucompose.compose.toAnnotatedString
+import kotlin.math.roundToInt
 
 /**
  * @author hehua2008
@@ -46,85 +48,90 @@ fun DetailContentImage(
     onGetSize: ((size: IntSize) -> Unit)? = null,
     onClick: (detailImage: DetailImage) -> Unit
 ) {
+    val aspectRatio = remember(size) {
+        if (size.width == 0 || size.height == 0) 1f else size.width / size.height.toFloat()
+    }
     val enter = remember { fadeIn() }
     val exit = remember { fadeOut() }
 
-    GlideSubcomposition(
-        model = detailImage.data.url,
-        modifier = modifier
-            .fillMaxWidth()
-            .run {
-                if (size.width == 0 || size.height == 0) this
-                else aspectRatio(size.width / size.height.toFloat())
-            }
-            .pointerInput(detailImage, onClick) {
-                detectTapGestures {
-                    onClick(detailImage)
-                }
-            }
-    ) {
-        val snapshotState = state
-
-        val imageContent: @Composable () -> Unit = {
-            Image(
-                painter = painter,
-                contentDescription = detailImage.data.url,
-                modifier = modifier.run {
-                    if (onGetSize == null) this
-                    else onGloballyPositioned {
-                        onGetSize(it.size)
+    BoxWithConstraints {
+        GlideSubcomposition(
+            model = detailImage.data.url,
+            modifier = modifier
+                .fillMaxWidth()
+                .aspectRatio(aspectRatio)
+                .pointerInput(detailImage, onClick) {
+                    detectTapGestures {
+                        onClick(detailImage)
                     }
                 },
-                contentScale = ContentScale.FillWidth
-            )
-        }
+            requestBuilderTransform = {
+                it.override(constraints.maxWidth, (constraints.maxWidth / aspectRatio).roundToInt())
+            }
+        ) {
+            val snapshotState = state
 
-        // If loaded from memory, do not show animation
-        if ((snapshotState as? RequestState.Success)?.dataSource === DataSource.MEMORY_CACHE) {
-            imageContent()
-        } else { // Show animation
-            AnimatedVisibility(
-                visible = (snapshotState is RequestState.Success),
-                enter = enter,
-                exit = exit
-            ) {
-                imageContent()
+            val imageContent: @Composable () -> Unit = {
+                Image(
+                    painter = painter,
+                    contentDescription = detailImage.data.url,
+                    modifier = modifier.run {
+                        if (onGetSize == null) this
+                        else onGloballyPositioned {
+                            onGetSize(it.size)
+                        }
+                    },
+                    contentScale = ContentScale.FillWidth
+                )
             }
 
-            loadingPainter?.let {
+            // If loaded from memory, do not show animation
+            if ((snapshotState as? RequestState.Success)?.dataSource === DataSource.MEMORY_CACHE) {
+                imageContent()
+            } else { // Show animation
                 AnimatedVisibility(
-                    visible = (snapshotState === RequestState.Loading),
+                    visible = (snapshotState is RequestState.Success),
                     enter = enter,
                     exit = exit
                 ) {
-                    Image(
-                        painter = it,
-                        contentDescription = "Loading",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(color = MaterialTheme.colorScheme.surfaceContainer),
-                        contentScale = ContentScale.Inside,
-                        alpha = 0.5f
-                    )
+                    imageContent()
                 }
 
-            }
+                loadingPainter?.let {
+                    AnimatedVisibility(
+                        visible = (snapshotState === RequestState.Loading),
+                        enter = enter,
+                        exit = exit
+                    ) {
+                        Image(
+                            painter = it,
+                            contentDescription = "Loading",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(color = MaterialTheme.colorScheme.surfaceContainer),
+                            contentScale = ContentScale.Inside,
+                            alpha = 0.5f
+                        )
+                    }
 
-            failurePainter?.let {
-                AnimatedVisibility(
-                    visible = (snapshotState === RequestState.Failure),
-                    enter = enter,
-                    exit = exit
-                ) {
-                    Image(
-                        painter = it,
-                        contentDescription = "Failure",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(color = MaterialTheme.colorScheme.surfaceContainer),
-                        contentScale = ContentScale.Inside,
-                        alpha = 0.5f
-                    )
+                }
+
+                failurePainter?.let {
+                    AnimatedVisibility(
+                        visible = (snapshotState === RequestState.Failure),
+                        enter = enter,
+                        exit = exit
+                    ) {
+                        Image(
+                            painter = it,
+                            contentDescription = "Failure",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(color = MaterialTheme.colorScheme.surfaceContainer),
+                            contentScale = ContentScale.Inside,
+                            alpha = 0.5f
+                        )
+                    }
                 }
             }
         }
