@@ -1,69 +1,67 @@
 plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
-    id 'kotlin-kapt'
-    id 'kotlin-parcelize'
-    id 'com.google.devtools.ksp'
-    id 'dagger.hilt.android.plugin'
-    //id 'compose.track'
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.kotlinParcelize)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.kapt)
+    alias(libs.plugins.hilt)
+    //id("compose.track")
 }
 
 android {
-    compileSdk Versions.COMPILE_SDK
+    namespace = "com.hym.zhankucompose"
+    compileSdk = libs.versions.android.compileSdk.get().toInteger()
 
     defaultConfig {
-        applicationId "com.hym.zhankucompose"
-        minSdkVersion Versions.MIN_SDK
-        targetSdkVersion Versions.TARGET_SDK
-        versionCode 1
-        versionName "1.0"
+        applicationId = "com.hym.zhankucompose"
+        minSdk = libs.versions.android.minSdk.get().toInteger()
+        targetSdk = libs.versions.android.targetSdk.get().toInteger()
+        versionCode = 1
+        versionName = "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
     }
 
     buildFeatures {
-        viewBinding true
-        compose true
+        viewBinding = true
+        compose = true
     }
 
     /*
     sourceSets {
         debug {
-            java.srcDirs += ['build/generated/data_binding_base_class_source_out/debug/out']
+            java.srcDirs += ["build/generated/data_binding_base_class_source_out/debug/out"]
         }
         release {
-            java.srcDirs += ['build/generated/data_binding_base_class_source_out/release/out']
-        }
+            java.srcDirs += ["build/generated/data_binding_base_class_source_out/release/out"]
+    }
     }
     */
 
     buildTypes {
         debug {
-            applicationIdSuffix ".debug"
+            applicationIdSuffix = ".debug"
         }
         release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(11))
+        }
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Versions.COMPOSE_COMPILER
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -75,66 +73,92 @@ hilt {
 }
 
 kapt {
-    correctErrorTypes true
+    correctErrorTypes = true
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:${Versions.KOTLIN}"
-    implementation "androidx.core:core-ktx:${Versions.ANDROID_CORE}"
-    implementation "androidx.appcompat:appcompat:${Versions.ANDROID_APPCOMPAT}"
-    implementation "androidx.fragment:fragment-ktx:${Versions.ANDROID_FRAGMENT}"
-    implementation "com.google.android.material:material:${Versions.GOOGLE_MATERIAL}"
-    implementation "androidx.annotation:annotation:${Versions.ANDROID_ANNOTATION}"
-    implementation "androidx.constraintlayout:constraintlayout:${Versions.ANDROID_CONSTRAINTLAYOUT}"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.ANDROID_LIFECYCLE}"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.ANDROID_LIFECYCLE}"
-    implementation "androidx.work:work-runtime-ktx:${Versions.ANDROID_WORK}"
-    implementation "com.squareup.okhttp3:okhttp:${Versions.OKHTTP3}"
-    implementation "com.squareup.retrofit2:retrofit:${Versions.RETROFIT2}"
-    implementation "com.squareup.retrofit2:converter-gson:${Versions.RETROFIT2}"
-    implementation 'android.arch.lifecycle:common-java8:1.1.1'
-    implementation "androidx.paging:paging-runtime-ktx:${Versions.ANDROID_PAGING}"
-    implementation "com.google.android.flexbox:flexbox:${Versions.GOOGLE_FLEXBOX}"
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.ANDROID_SWIPEREFRESHLAYOUT}"
-    implementation "com.github.bumptech.glide:glide:${Versions.GLIDE}"
-    implementation("com.github.bumptech.glide:recyclerview-integration:${Versions.GLIDE}") {
+    // kotlin
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.collections.immutable)
+
+    // androidx
+    implementation(libs.androidx.annotation)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.paging.runtime.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
+
+    // androidx media3
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.exoplayer.dash)
+    implementation(libs.androidx.media3.exoplayer.hls)
+    implementation(libs.androidx.media3.exoplayer.rtsp)
+    implementation(libs.androidx.media3.ui)
+
+    // squareup
+    implementation(libs.squareup.okhttp3.okhttp)
+    implementation(libs.squareup.retrofit2.retrofit)
+    implementation(libs.squareup.retrofit2.converter.gson)
+
+    // glide
+    implementation(libs.glide)
+    implementation(libs.glide.recyclerview) {
         transitive = false
     }
-    implementation "com.github.bumptech.glide:okhttp3-integration:${Versions.GLIDE}"
-    implementation "jp.wasabeef:glide-transformations:${Versions.GLIDE_TRANSFORMATIONS}"
-    implementation "jp.co.cyberagent.android:gpuimage:${Versions.GPUIMAGE}"
-    ksp "com.github.bumptech.glide:ksp:${Versions.GLIDE}"
-    //kapt "com.github.bumptech.glide:compiler:${Versions.GLIDE}"
-    //annotationProcessor "com.github.bumptech.glide:compiler:${Versions.GLIDE}"
-    implementation "com.google.dagger:hilt-android:${Versions.GOOGLE_HILT}"
-    kapt "com.google.dagger:hilt-compiler:${Versions.GOOGLE_HILT}"
-    implementation "androidx.media3:media3-exoplayer:${Versions.ANDROID_MEDIA3}"
-    implementation "androidx.media3:media3-exoplayer-dash:${Versions.ANDROID_MEDIA3}"
-    implementation "androidx.media3:media3-exoplayer-hls:${Versions.ANDROID_MEDIA3}"
-    implementation "androidx.media3:media3-exoplayer-rtsp:${Versions.ANDROID_MEDIA3}"
-    implementation "androidx.media3:media3-ui:${Versions.ANDROID_MEDIA3}"
-    implementation "org.jsoup:jsoup:${Versions.JSOUP}"
-    implementation project(path: ':ssiv:library')
-    implementation "androidx.activity:activity-compose:${Versions.COMPOSE_ACTIVITY}"
-    implementation platform("androidx.compose:compose-bom:${Versions.COMPOSE_BOM}")
-    implementation "androidx.compose.ui:ui"
-    implementation "androidx.compose.ui:ui-graphics"
-    implementation "androidx.compose.ui:ui-tooling-preview"
-    implementation "androidx.compose.material3:material3"
-    implementation "androidx.paging:paging-compose:${Versions.ANDROID_PAGING}"
-    implementation "androidx.compose.runtime:runtime-livedata:${Versions.COMPOSE_LIVEDATA}"
-    implementation "androidx.constraintlayout:constraintlayout-compose:${Versions.COMPOSE_CONSTRAINTLAYOUT}"
-    implementation "androidx.compose.ui:ui-viewbinding:${Versions.COMPOSE_VIEW_BINDING}"
-    implementation "com.github.bumptech.glide:compose:${Versions.COMPOSE_GLIDE}"
-    //implementation "com.github.jeziellago:compose-markdown:${Versions.COMPOSE_MARKDOWN}"
-    implementation "org.jetbrains.kotlinx:kotlinx-collections-immutable:${Versions.COLLECTIONS_IMMUTABLE}"
-    debugImplementation project(path: ':logcollector')
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:${Versions.LEAKCANARY}"
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation platform("androidx.compose:compose-bom:${Versions.COMPOSE_BOM}")
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4"
-    debugImplementation "androidx.compose.ui:ui-tooling"
-    debugImplementation "androidx.compose.ui:ui-test-manifest"
+    implementation(libs.glide.okhttp3)
+    implementation(libs.glide.transformations)
+    implementation(libs.gpuimage)
+    ksp(libs.glide.ksp)
+
+    // hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.kapt)
+
+    // compose
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.paging.compose)
+    implementation(libs.androidx.compose.livedata)
+    implementation(libs.androidx.constraintlayout.compose)
+    implementation(libs.androidx.compose.ui.viewbinding)
+    implementation(libs.glide.compose)
+    //implementation(libs.compose.markdown)
+
+    // google
+    implementation(libs.google.material)
+    implementation(libs.google.flexbox)
+
+    // others
+    implementation(libs.jsoup)
+
+    // local
+    implementation(project(":ssiv:library"))
+
+    // debug
+    debugImplementation(project(":logcollector"))
+    debugImplementation(libs.squareup.leakcanary.android)
+
+    // debug compose
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // test
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+
+    // test compose
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
 }

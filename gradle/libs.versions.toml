@@ -1,0 +1,129 @@
+[versions]
+agp = "8.3.1"
+
+# sdk
+android-compileSdk = "34"
+android-minSdk = "24"
+android-targetSdk = "34"
+
+# kotlin
+kotlin = "1.9.23"
+kotlinxCoroutines = "1.8.0"
+kotlinxImmutable = "0.3.7"
+ksp = "1.9.23-1.0.19"
+
+# androidx
+androidxLifecycle = "2.7.0"
+androidxPaging = "3.2.1"
+androidxMedia3 = "1.3.0"
+
+# compose
+composeCompiler = "1.5.11"
+composeBom = "2024.02.02"
+
+# squareup
+okhttp = "4.12.0"
+retrofit = "2.9.0"
+
+# glide
+glide = "5.0.0-rc01"
+
+# hilt
+hilt = "2.51"
+hiltExt = "1.2.0"
+
+# test
+junit = "4.13.2"
+androidJunit = "1.1.5"
+espressoCore = "3.5.1"
+
+[libraries]
+# test
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidJunit" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+
+# kotlin
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
+kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxImmutable" }
+
+# androix
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version = "1.7.1" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.12.0" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version = "1.6.1" }
+androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version = "1.6.2" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidxLifecycle" }
+androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "androidxLifecycle" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version = "2.1.4" }
+androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version = "1.1.0" }
+androidx-paging-runtime-ktx = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "androidxPaging" }
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version = "2.9.0" }
+
+# androidx media3
+androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "androidxMedia3" }
+androidx-media3-exoplayer-dash = { group = "androidx.media3", name = "media3-exoplayer-dash", version.ref = "androidxMedia3" }
+androidx-media3-exoplayer-hls = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "androidxMedia3" }
+androidx-media3-exoplayer-rtsp = { group = "androidx.media3", name = "media3-exoplayer-rtsp", version.ref = "androidxMedia3" }
+androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "androidxMedia3" }
+
+# android compoose ui
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-compose-ui-viewbinding = { group = "androidx.compose.ui", name = "ui-viewbinding" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+
+androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+
+# androix compose
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.8.2" }
+androidx-compose-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version = "1.6.4" }
+androidx-constraintlayout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version = "1.1.0-alpha13" }
+androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "androidxPaging" }
+
+# squareup
+squareup-okhttp3-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+squareup-retrofit2-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+squareup-retrofit2-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+squareup-leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version = "2.12" }
+
+# glide
+glide-ksp = { group = "com.github.bumptech.glide", name = "ksp", version.ref = "glide" }
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+glide-recyclerview = { group = "com.github.bumptech.glide", name = "recyclerview-integration", version.ref = "glide" }
+glide-okhttp3 = { group = "com.github.bumptech.glide", name = "okhttp3-integration", version.ref = "glide" }
+glide-compose = { group = "com.github.bumptech.glide", name = "compose", version = "1.0.0-beta01" }
+glide-transformations = { group = "jp.wasabeef", name = "glide-transformations", version = "4.3.0" }
+gpuimage = { group = "jp.co.cyberagent.android", name = "gpuimage", version = "2.1.0" }
+
+# hilt
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-kapt = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltExt" }
+
+# google
+google-material = { group = "com.google.android.material", name = "material", version = "1.11.0" }
+google-flexbox = { group = "com.google.android.flexbox", name = "flexbox", version = "3.0.0" }
+google-gson = { group = "com.google.code.gson", name = "gson", version = "2.10.1" }
+
+# others
+jsoup = { group = "org.jsoup", name = "jsoup", version = "1.17.1" }
+compose-markdown = { group = "com.github.jeziellago", name = "compose-markdown", version = "0.4.1" }
+
+[plugins]
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+androidTest = { id = "com.android.test", version.ref = "agp" }
+
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlinParcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }

@@ -1,52 +1,51 @@
 plugins {
-    id 'com.android.library'
-    id 'kotlin-android'
-    id 'kotlin-kapt'
-    id 'kotlin-parcelize'
-    id 'com.google.devtools.ksp'
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.kotlinParcelize)
+    alias(libs.plugins.kapt)
+    alias(libs.plugins.ksp)
 }
 
 android {
-    compileSdk Versions.COMPILE_SDK
+    namespace = "com.hym.photoviewer"
+    compileSdk = libs.versions.android.compileSdk.get().toInteger()
 
     defaultConfig {
-        minSdk Versions.MIN_SDK
-        targetSdk Versions.TARGET_SDK
-        versionCode 1
-        versionName "1.0"
+        minSdk = libs.versions.android.minSdk.get().toInteger()
+        targetSdk = libs.versions.android.targetSdk.get().toInteger()
+        versionCode = 1
+        versionName = "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles = ["consumer-rules.pro"]
     }
 
     buildFeatures {
-        viewBinding true
+        viewBinding = true
     }
 
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
+
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(11))
+        }
     }
 }
 
 dependencies {
-    implementation "androidx.core:core-ktx:${Versions.ANDROID_CORE}"
-    implementation "androidx.appcompat:appcompat:${Versions.ANDROID_APPCOMPAT}"
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.ANDROID_SWIPEREFRESHLAYOUT}"
-    implementation "com.google.android.material:material:${Versions.GOOGLE_MATERIAL}"
-    implementation "com.github.bumptech.glide:glide:${Versions.GLIDE}"
-    //kapt "com.github.bumptech.glide:compiler:${Versions.GLIDE}"
-    ksp "com.github.bumptech.glide:ksp:${Versions.GLIDE}"
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.google.material)
+    implementation(libs.glide)
+    ksp(libs.glide.ksp)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }

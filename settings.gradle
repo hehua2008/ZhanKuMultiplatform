@@ -1,6 +1,31 @@
-include ':app'
+pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url = uri("https://jitpack.io") }
+        maven { url = uri("") }
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+        maven { url = uri("") }
+    }
+}
+
 rootProject.name = "ZhanKuCompose"
-include ':photoviewer'
-include ':photoviewerdemo'
-include ':ssiv:library'
-include ':logcollector'
+include(":app")
+include(":photoviewer")
+include(":photoviewerdemo")
+include(":ssiv:library")
+include(":logcollector")
