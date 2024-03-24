@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="buttonGroupRecyclerViewStyle" format="reference" />
-
-    <declare-styleable name="ButtonGroupRecyclerView">
-        <attr name="singleSelection" format="boolean" />
-        <attr name="checkedButtonPos" format="integer" />
-        <attr name="selectionRequired" format="boolean" />
-    </declare-styleable>
-
     <declare-styleable name="RatioConstraintLayout">
         <attr name="widthHeightRatio" format="string" />
     </declare-styleable>
