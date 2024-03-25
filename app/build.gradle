@@ -113,6 +113,7 @@ dependencies {
         transitive = false
     }
     implementation(libs.glide.okhttp3)
+    implementation(libs.glide.avif)
     implementation(libs.glide.transformations)
     implementation(libs.gpuimage)
     ksp(libs.glide.ksp)

@@ -98,6 +98,7 @@ glide-ksp = { group = "com.github.bumptech.glide", name = "ksp", version.ref = "
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-recyclerview = { group = "com.github.bumptech.glide", name = "recyclerview-integration", version.ref = "glide" }
 glide-okhttp3 = { group = "com.github.bumptech.glide", name = "okhttp3-integration", version.ref = "glide" }
+glide-avif = { group = "com.github.bumptech.glide", name = "avif-integration", version.ref = "glide" }
 glide-compose = { group = "com.github.bumptech.glide", name = "compose", version = "1.0.0-beta01" }
 glide-transformations = { group = "jp.wasabeef", name = "glide-transformations", version = "4.3.0" }
 gpuimage = { group = "jp.co.cyberagent.android", name = "gpuimage", version = "2.1.0" }
