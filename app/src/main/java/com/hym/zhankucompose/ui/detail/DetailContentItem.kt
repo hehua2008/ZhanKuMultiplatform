@@ -89,49 +89,38 @@ fun DetailContentImage(
             if ((snapshotState as? RequestState.Success)?.dataSource === DataSource.MEMORY_CACHE) {
                 imageContent()
             } else { // Show animation
+                val isSuccess = (snapshotState is RequestState.Success)
+
                 AnimatedVisibility(
-                    visible = (snapshotState is RequestState.Success),
+                    visible = isSuccess,
                     enter = enter,
                     exit = exit
                 ) {
                     imageContent()
                 }
 
-                loadingPainter?.let {
-                    AnimatedVisibility(
-                        visible = (snapshotState === RequestState.Loading),
-                        enter = enter,
-                        exit = exit
-                    ) {
-                        Image(
-                            painter = it,
-                            contentDescription = "Loading",
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(color = MaterialTheme.colorScheme.surfaceContainer),
-                            contentScale = ContentScale.Inside,
-                            alpha = 0.5f
-                        )
-                    }
+                if (loadingPainter == null && failurePainter == null) return@GlideSubcomposition
 
+                val placeholder = when {
+                    (snapshotState === RequestState.Loading) && loadingPainter != null -> loadingPainter
+                    (snapshotState === RequestState.Failure) && failurePainter != null -> failurePainter
+                    else -> loadingPainter ?: return@GlideSubcomposition // animate to show image
                 }
 
-                failurePainter?.let {
-                    AnimatedVisibility(
-                        visible = (snapshotState === RequestState.Failure),
-                        enter = enter,
-                        exit = exit
-                    ) {
-                        Image(
-                            painter = it,
-                            contentDescription = "Failure",
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(color = MaterialTheme.colorScheme.surfaceContainer),
-                            contentScale = ContentScale.Inside,
-                            alpha = 0.5f
-                        )
-                    }
+                AnimatedVisibility(
+                    visible = !isSuccess,
+                    enter = enter,
+                    exit = exit
+                ) {
+                    Image(
+                        painter = placeholder,
+                        contentDescription = "Placeholder",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(color = MaterialTheme.colorScheme.surfaceContainer),
+                        contentScale = ContentScale.Inside,
+                        alpha = 0.5f
+                    )
                 }
             }
         }
