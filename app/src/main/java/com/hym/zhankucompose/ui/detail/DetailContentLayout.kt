@@ -1,6 +1,7 @@
 package com.hym.zhankucompose.ui.detail
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.hym.zhankucompose.R
@@ -23,6 +25,7 @@ import com.hym.zhankucompose.compose.COMMON_PADDING
 import com.hym.zhankucompose.ui.photoviewer.UrlPhotoInfo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlin.math.roundToInt
 
 /**
  * @author hehua2008
@@ -67,63 +70,74 @@ fun DetailContentLayout(
         }
     }
 
-    LazyColumn(
-        modifier = modifier,
-        state = lazyListState,
-        verticalArrangement = Arrangement.spacedBy(COMMON_PADDING),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (headerContent != null) {
-            item(key = "HeaderContent") {
-                headerContent(Modifier)
-            }
-        }
+    BoxWithConstraints {
+        val maxWidth = constraints.maxWidth
 
-        items(
-            count = detailContents.size,
-            key = { detailContents[it].id },
-            contentType = {
-                when (detailContents[it]) {
-                    is DetailImage -> DetailContent.CONTENT_IMAGE
-                    is DetailVideo -> DetailContent.CONTENT_VIDEO
-                    is DetailText -> DetailContent.CONTENT_TEXT
+        LazyColumn(
+            modifier = modifier,
+            state = lazyListState,
+            verticalArrangement = Arrangement.spacedBy(COMMON_PADDING),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (headerContent != null) {
+                item(key = "HeaderContent") {
+                    headerContent(Modifier)
                 }
             }
-        ) { index ->
-            when (val detailContent = detailContents[index]) {
-                is DetailImage -> {
-                    DetailContentImage(
-                        detailImage = detailContent,
-                        loadingPainter = loadingPainter,
-                        failurePainter = failurePainter,
-                        size = sizeCache[index]
-                            ?: IntSize(detailContent.data.width, detailContent.data.height),
-                        onGetSize = { sizeCache[index] = it }
-                    ) { detailImage ->
-                        onImageClick(photoInfos, imageList.indexOf(detailImage))
+
+            items(
+                count = detailContents.size,
+                key = { detailContents[it].id },
+                contentType = {
+                    when (detailContents[it]) {
+                        is DetailImage -> DetailContent.CONTENT_IMAGE
+                        is DetailVideo -> DetailContent.CONTENT_VIDEO
+                        is DetailText -> DetailContent.CONTENT_TEXT
                     }
                 }
+            ) { index ->
+                when (val detailContent = detailContents[index]) {
+                    is DetailImage -> {
+                        val size = sizeCache[index] ?: detailContent.data.run {
+                            if (maxWidth != Constraints.Infinity && width > 0 && height > 0) {
+                                IntSize(
+                                    maxWidth, (maxWidth * height / width.toFloat()).roundToInt()
+                                )
+                            } else null
+                        }
 
-                is DetailVideo -> {
-                    DetailContentVideo(detailVideo = detailContent)
-                }
+                        DetailContentImage(
+                            detailImage = detailContent,
+                            loadingPainter = loadingPainter,
+                            failurePainter = failurePainter,
+                            size = size,
+                            onGetSize = { sizeCache[index] = it }
+                        ) { detailImage ->
+                            onImageClick(photoInfos, imageList.indexOf(detailImage))
+                        }
+                    }
 
-                is DetailText -> {
-                    DetailContentText(
-                        detailText = detailContent,
-                        modifier = Modifier.padding(horizontal = COMMON_PADDING),
-                        textStyle = bodyTextStyle
-                    )
+                    is DetailVideo -> {
+                        DetailContentVideo(detailVideo = detailContent)
+                    }
+
+                    is DetailText -> {
+                        DetailContentText(
+                            detailText = detailContent,
+                            modifier = Modifier.padding(horizontal = COMMON_PADDING),
+                            textStyle = bodyTextStyle
+                        )
+                    }
                 }
             }
-        }
 
-        item(key = "BottomContent") {
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(300.dp)
-            )
+            item(key = "BottomContent") {
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(300.dp)
+                )
+            }
         }
     }
 }

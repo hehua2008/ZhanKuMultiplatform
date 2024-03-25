@@ -1,12 +1,12 @@
 package com.hym.zhankucompose.ui.detail
 
+import android.graphics.drawable.Drawable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +14,9 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -30,8 +32,11 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideSubcomposition
 import com.bumptech.glide.integration.compose.RequestState
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
+import com.hym.zhankucompose.compose.rememberMutableState
 import com.hym.zhankucompose.compose.toAnnotatedString
-import kotlin.math.roundToInt
 
 /**
  * @author hehua2008
@@ -42,86 +47,111 @@ import kotlin.math.roundToInt
 fun DetailContentImage(
     detailImage: DetailImage,
     modifier: Modifier = Modifier,
-    size: IntSize = IntSize(detailImage.data.width, detailImage.data.height),
     loadingPainter: Painter? = null,
     failurePainter: Painter? = null,
+    size: IntSize? = null,
     onGetSize: ((size: IntSize) -> Unit)? = null,
     onClick: (detailImage: DetailImage) -> Unit
 ) {
-    val aspectRatio = remember(size) {
-        if (size.width == 0 || size.height == 0) 1f else size.width / size.height.toFloat()
-    }
+    var overrideSize by rememberMutableState(size) { size }
     val enter = remember { fadeIn() }
     val exit = remember { fadeOut() }
 
-    BoxWithConstraints {
-        GlideSubcomposition(
-            model = detailImage.data.url,
-            modifier = modifier
-                .fillMaxWidth()
-                .aspectRatio(aspectRatio)
-                .pointerInput(detailImage, onClick) {
-                    detectTapGestures {
-                        onClick(detailImage)
+    GlideSubcomposition(
+        model = detailImage.data.url,
+        modifier = modifier
+            .fillMaxWidth()
+            .aspectRatio(
+                overrideSize?.run {
+                    if (width <= 0 || height <= 0) 1f else width / height.toFloat()
+                } ?: 1f
+            )
+            .pointerInput(detailImage, onClick) {
+                detectTapGestures {
+                    onClick(detailImage)
+                }
+            },
+        requestBuilderTransform = { request ->
+            overrideSize?.let {
+                request.override(it.width, it.height)
+            } ?: request.listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>,
+                    isFirstResource: Boolean
+                ): Boolean = false
+
+                override fun onResourceReady(
+                    resource: Drawable,
+                    model: Any,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    val intSize = IntSize(resource.intrinsicWidth, resource.intrinsicHeight)
+                    if (intSize.width > 0 && intSize.height > 0 && overrideSize != intSize) {
+                        overrideSize = intSize
+                        onGetSize?.invoke(intSize)
+                        return true
+                    }
+                    return false
+                }
+            })
+        }
+    ) {
+        val snapshotState = state
+
+        val imageContent: @Composable () -> Unit = {
+            Image(
+                painter = painter,
+                contentDescription = detailImage.data.url,
+                modifier = modifier.run {
+                    if (onGetSize == null) this
+                    else onGloballyPositioned {
+                        onGetSize(it.size)
                     }
                 },
-            requestBuilderTransform = {
-                it.override(constraints.maxWidth, (constraints.maxWidth / aspectRatio).roundToInt())
-            }
-        ) {
-            val snapshotState = state
+                contentScale = ContentScale.FillWidth
+            )
+        }
 
-            val imageContent: @Composable () -> Unit = {
-                Image(
-                    painter = painter,
-                    contentDescription = detailImage.data.url,
-                    modifier = modifier.run {
-                        if (onGetSize == null) this
-                        else onGloballyPositioned {
-                            onGetSize(it.size)
-                        }
-                    },
-                    contentScale = ContentScale.FillWidth
-                )
-            }
+        // If loaded from memory, do not show animation
+        if ((snapshotState as? RequestState.Success)?.dataSource === DataSource.MEMORY_CACHE) {
+            imageContent()
+        } else { // Show animation
+            val isSuccess = (snapshotState is RequestState.Success)
 
-            // If loaded from memory, do not show animation
-            if ((snapshotState as? RequestState.Success)?.dataSource === DataSource.MEMORY_CACHE) {
+            AnimatedVisibility(
+                visible = isSuccess,
+                enter = enter,
+                exit = exit
+            ) {
                 imageContent()
-            } else { // Show animation
-                val isSuccess = (snapshotState is RequestState.Success)
+            }
 
-                AnimatedVisibility(
-                    visible = isSuccess,
-                    enter = enter,
-                    exit = exit
-                ) {
-                    imageContent()
-                }
+            if (loadingPainter == null && failurePainter == null) return@GlideSubcomposition
 
-                if (loadingPainter == null && failurePainter == null) return@GlideSubcomposition
+            val placeholder = when {
+                (snapshotState === RequestState.Loading) && loadingPainter != null -> loadingPainter
+                (snapshotState === RequestState.Failure) && failurePainter != null -> failurePainter
+                else -> loadingPainter ?: return@GlideSubcomposition // animate to show image
+            }
 
-                val placeholder = when {
-                    (snapshotState === RequestState.Loading) && loadingPainter != null -> loadingPainter
-                    (snapshotState === RequestState.Failure) && failurePainter != null -> failurePainter
-                    else -> loadingPainter ?: return@GlideSubcomposition // animate to show image
-                }
-
-                AnimatedVisibility(
-                    visible = !isSuccess,
-                    enter = enter,
-                    exit = exit
-                ) {
-                    Image(
-                        painter = placeholder,
-                        contentDescription = "Placeholder",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(color = MaterialTheme.colorScheme.surfaceContainer),
-                        contentScale = ContentScale.Inside,
-                        alpha = 0.5f
-                    )
-                }
+            AnimatedVisibility(
+                visible = !isSuccess,
+                enter = enter,
+                exit = exit
+            ) {
+                Image(
+                    painter = placeholder,
+                    contentDescription = "Placeholder",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = MaterialTheme.colorScheme.surfaceContainer),
+                    contentScale = ContentScale.Inside,
+                    alpha = 0.5f
+                )
             }
         }
     }
