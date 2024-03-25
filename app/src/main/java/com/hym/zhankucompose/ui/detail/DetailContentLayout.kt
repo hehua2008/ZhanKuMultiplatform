@@ -14,12 +14,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.bumptech.glide.integration.compose.rememberGlidePreloadingData
 import com.hym.zhankucompose.R
 import com.hym.zhankucompose.compose.COMMON_PADDING
 import com.hym.zhankucompose.ui.photoviewer.UrlPhotoInfo
@@ -46,11 +48,54 @@ fun DetailContentLayout(
         ImageVector.vectorResource(R.drawable.vector_image_broken)
     )
     val sizeCache = remember(detailContents) {
-        MutableList<IntSize?>(detailContents.size) { null }
+        mutableMapOf<DetailImage, IntSize>()
     }
 
-    val imageList = remember(detailContents) {
-        detailContents.filterIsInstance<DetailImage>().toImmutableList()
+    val (imageList, nearestImageIndexes) = remember(detailContents) {
+        val images = mutableListOf<DetailImage>()
+        val imageIndexesInContents = mutableListOf<Int>()
+
+        for (index in 0..detailContents.size - 1) {
+            val detailContent = detailContents[index]
+            if (detailContent is DetailImage) {
+                images.add(detailContent)
+                imageIndexesInContents.add(index)
+            }
+        }
+
+        if (images.isEmpty()) {
+            return@remember images.toImmutableList() to IntArray(0)
+        }
+
+        val nearestImageIndexesInImages = IntArray(detailContents.size)
+
+        // Head: 0
+        val firstImageIndexInContents = imageIndexesInContents[0]
+        for (index in 0..firstImageIndexInContents) {
+            nearestImageIndexesInImages[index] = 0
+        }
+
+        // Center: 1 .. imageIndexesInContents.size - 2
+        for (imageIndexInImages in 1..imageIndexesInContents.size - 2) {
+            val previousImageIndexInContents = imageIndexesInContents[imageIndexInImages - 1]
+            val imageIndexInContents = imageIndexesInContents[imageIndexInImages]
+            val center = (previousImageIndexInContents + imageIndexInContents) / 2
+            for (index in previousImageIndexInContents + 1..center) {
+                nearestImageIndexesInImages[index] = imageIndexInImages - 1
+            }
+            for (index in center + 1..imageIndexInContents) {
+                nearestImageIndexesInImages[index] = imageIndexInImages
+            }
+        }
+
+        // Tail: imageIndexesInContents.size - 1
+        val lastImageIndexInImages = imageIndexesInContents.size - 1
+        val lastImageIndexesInContents = imageIndexesInContents[lastImageIndexInImages]
+        for (index in lastImageIndexesInContents + 1..nearestImageIndexesInImages.size - 1) {
+            nearestImageIndexesInImages[index] = lastImageIndexInImages
+        }
+
+        images.toImmutableList() to nearestImageIndexesInImages
     }
     val photoInfos = remember(imageList) {
         imageList.map {
@@ -72,6 +117,27 @@ fun DetailContentLayout(
 
     BoxWithConstraints {
         val maxWidth = constraints.maxWidth
+
+        val glidePreloadingData = if (imageList.isEmpty()) null else
+            rememberGlidePreloadingData(
+                data = imageList,
+                preloadImageSize = Size(1f, 1f),
+                numberOfItemsToPreload = 2
+            ) { item, requestBuilder ->
+                // preloadImageSize is applied for you, but .load() is not because determining the
+                // model from the underlying data isn't trivial. Don't forget to call .load()!
+                val size = sizeCache[item] ?: item.data.run {
+                    if (maxWidth != Constraints.Infinity && width > 0 && height > 0) {
+                        IntSize(
+                            maxWidth, (maxWidth * height / width.toFloat()).roundToInt()
+                        )
+                    } else null
+                }
+                requestBuilder.load(item.data.url).onlyRetrieveFromCache(true).run {
+                    if (size == null) this
+                    else override(size.width, size.height)
+                }
+            }
 
         LazyColumn(
             modifier = modifier,
@@ -96,9 +162,11 @@ fun DetailContentLayout(
                     }
                 }
             ) { index ->
-                when (val detailContent = detailContents[index]) {
+                val detailContent = detailContents[index]
+                val triggerPreload = glidePreloadingData?.get(nearestImageIndexes[index])
+                when (detailContent) {
                     is DetailImage -> {
-                        val size = sizeCache[index] ?: detailContent.data.run {
+                        val size = sizeCache[detailContent] ?: detailContent.data.run {
                             if (maxWidth != Constraints.Infinity && width > 0 && height > 0) {
                                 IntSize(
                                     maxWidth, (maxWidth * height / width.toFloat()).roundToInt()
@@ -111,7 +179,7 @@ fun DetailContentLayout(
                             loadingPainter = loadingPainter,
                             failurePainter = failurePainter,
                             size = size,
-                            onGetSize = { sizeCache[index] = it }
+                            onGetSize = { sizeCache[detailContent] = it }
                         ) { detailImage ->
                             onImageClick(photoInfos, imageList.indexOf(detailImage))
                         }
