@@ -66,6 +66,7 @@ class SearchContentFragment : Fragment(), Observer<LifecycleOwner>, TabReselecte
 
     private val mMainViewModel: MainViewModel by activityViewModels()
     private val mPageViewModel: SearchContentPageViewModel by viewModels()
+    private var mComposeView: ComposeView? = null
     private lateinit var mContentType: ContentType
 
     private var scrollToTop: () -> Unit = EMPTY_BLOCK
@@ -90,6 +91,7 @@ class SearchContentFragment : Fragment(), Observer<LifecycleOwner>, TabReselecte
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
+            mComposeView = this
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 ComposeTheme {
@@ -226,6 +228,8 @@ class SearchContentFragment : Fragment(), Observer<LifecycleOwner>, TabReselecte
 
     override fun onDestroyView() {
         super.onDestroyView()
+        mComposeView?.disposeComposition()
+        mComposeView = null
         scrollToTop = EMPTY_BLOCK
     }
 

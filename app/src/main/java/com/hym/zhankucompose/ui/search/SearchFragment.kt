@@ -40,6 +40,7 @@ class SearchFragment : Fragment() {
     }
 
     private val mainViewModel: MainViewModel by activityViewModels()
+    private var mComposeView: ComposeView? = null
 
     @OptIn(ExperimentalFoundationApi::class)
     override fun onCreateView(
@@ -48,6 +49,7 @@ class SearchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val composeView = ComposeView(requireContext())
+        mComposeView = composeView
         composeView.setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
         composeView.setContent {
             ComposeTheme {
@@ -112,5 +114,11 @@ class SearchFragment : Fragment() {
             }
         }
         return composeView
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mComposeView?.disposeComposition()
+        mComposeView = null
     }
 }

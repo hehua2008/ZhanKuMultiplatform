@@ -58,6 +58,7 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCa
     }
 
     private val mPageViewModel: AuthorPageViewModel by viewModels()
+    private var mComposeView: ComposeView? = null
     private lateinit var mAuthor: CreatorObj
 
     private var scrollToTop: () -> Unit = EMPTY_BLOCK
@@ -81,6 +82,7 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCa
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
+            mComposeView = this
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 ComposeTheme {
@@ -178,6 +180,8 @@ class AuthorItemFragment : Fragment(), Observer<LifecycleOwner>, TabReselectedCa
 
     override fun onDestroyView() {
         super.onDestroyView()
+        mComposeView?.disposeComposition()
+        mComposeView = null
         scrollToTop = EMPTY_BLOCK
     }
 
