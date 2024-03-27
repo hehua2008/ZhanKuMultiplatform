@@ -21,7 +21,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.em
@@ -59,7 +58,6 @@ fun PreviewItem(
     onImageClick: () -> Unit = EMPTY_BLOCK,
     onAuthorClick: () -> Unit = EMPTY_BLOCK
 ) {
-    val context = LocalContext.current
     val titleTextStyle = MaterialTheme.typography.titleSmall.let {
         remember(it) {
             it.copy(fontWeight = FontWeight.Bold)
@@ -142,7 +140,7 @@ fun PreviewItem(
                     }
                     .padding(top = COMMON_PADDING)
                 /*.combinedClickable(
-                    onLongClick = { content.creatorObj.username.copyToClipboard(context) },
+                    onLongClick = { content.creatorObj.username.copyToClipboard() },
                     onClick = onAuthorClick
                 )*/,
                 shape = ShapeDefaults.Small,
@@ -167,7 +165,7 @@ fun PreviewItem(
                 }
                 .padding(top = COMMON_PADDING)
                 .combinedClickable(
-                    onLongClick = { content.formatTitle.copyToClipboard(context) },
+                    onLongClick = { content.formatTitle.copyToClipboard() },
                     onClick = EMPTY_BLOCK
                 ),
             style = titleTextStyle,

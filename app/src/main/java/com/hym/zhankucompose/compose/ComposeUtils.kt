@@ -2,12 +2,12 @@ package com.hym.zhankucompose.compose
 
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.hym.zhankucompose.MyApplication
 
 /**
  * @author hehua2008
@@ -25,7 +25,8 @@ val NUMBER_REGEX = Regex("\\d*")
 val NON_NUMBER_REGEX = Regex("\\D+")
 val MULTIPLE_SPACE = Regex("\\s{2,}")
 
-fun CharSequence.copyToClipboard(context: Context) {
+fun CharSequence.copyToClipboard() {
+    val context = MyApplication.INSTANCE
     val clipboard = ContextCompat.getSystemService(context, ClipboardManager::class.java)!!
     val clipData = ClipData.newPlainText(null, this)
     clipboard.setPrimaryClip(clipData)
