@@ -1,11 +1,20 @@
 package com.hym.zhankucompose.network
 
-import com.google.gson.GsonBuilder
-import com.hym.zhankucompose.model.*
+import com.hym.zhankucompose.model.ArticleDetailsResponse
+import com.hym.zhankucompose.model.ContentPageResponse
+import com.hym.zhankucompose.model.ContentType
+import com.hym.zhankucompose.model.RecommendLevel
+import com.hym.zhankucompose.model.SearchContentResponse
+import com.hym.zhankucompose.model.SearchDesignerResponse
+import com.hym.zhankucompose.model.SortOrder
+import com.hym.zhankucompose.model.TopCateResponse
+import com.hym.zhankucompose.model.WorkDetailsResponse
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -89,7 +98,6 @@ interface NetworkService {
     companion object {
         @JvmStatic
         fun main(vararg args: String) {
-            val gson = GsonBuilder().registerTypeAdapterFactory(ZkTypeAdapterFactory).create()
             val client = OkHttpClient.Builder()
                 .addInterceptor(HeaderInterceptor())
                 .addNetworkInterceptor {
@@ -104,7 +112,7 @@ interface NetworkService {
             val retrofit = Retrofit.Builder()
                 .client(client)
                 .baseUrl(Constants.API_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
                 .build()
             val networkService = retrofit.create(NetworkService::class.java)
             runBlocking {

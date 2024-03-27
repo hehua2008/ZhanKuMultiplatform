@@ -1,17 +1,17 @@
 package com.hym.zhankucompose.model
 
-import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /**
  * GET https://api.zcool.com.cn/v2/api/topCate?app=android
  * GET https://api.zcool.com.cn/v2/api/getAllCategoryListContainArticle.do?app=android
  */
-@Keep
+@Serializable
 data class TopCateResponse(
     override val code: Int,
 
-    @SerializedName("data")
+    @SerialName("data")
     override val dataContent: List<TopCate>?,
 
     override val msg: String

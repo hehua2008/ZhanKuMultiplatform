@@ -1,17 +1,17 @@
 package com.hym.zhankucompose.model
 
-import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /**
  * 设计师
  * GET https://api.zcool.com.cn/v2/api/search/designer/v3?app=android&p=1&ps=10&word=
  */
-@Keep
+@Serializable
 data class SearchDesignerResponse(
     override val code: Int,
 
-    @SerializedName("data")
+    @SerialName("data")
     override val dataContent: SearchDesigner?,
 
     override val msg: String

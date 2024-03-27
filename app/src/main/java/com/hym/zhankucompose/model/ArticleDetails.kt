@@ -1,6 +1,6 @@
 package com.hym.zhankucompose.model
 
-import androidx.annotation.Keep
+import kotlinx.serialization.Serializable
 
 /**
 {
@@ -10,7 +10,7 @@ import androidx.annotation.Keep
 "articledata": {..}
 }
  */
-@Keep
+@Serializable
 data class ArticleDetails(
     val articleImageList: List<ArticleImage>,
     val articledata: ArticleData,

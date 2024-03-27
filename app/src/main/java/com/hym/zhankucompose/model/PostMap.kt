@@ -1,6 +1,6 @@
 package com.hym.zhankucompose.model
 
-import androidx.annotation.Keep
+import kotlinx.serialization.Serializable
 
 /**
 {
@@ -12,7 +12,7 @@ import androidx.annotation.Keep
 "postGroup": 1
 }
  */
-@Keep
+@Serializable
 data class PostMap(
     val createTime: Long,
     val dr: Int,

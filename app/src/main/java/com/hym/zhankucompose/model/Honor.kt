@@ -1,6 +1,6 @@
 package com.hym.zhankucompose.model
 
-import androidx.annotation.Keep
+import kotlinx.serialization.Serializable
 
 /**
 {
@@ -12,7 +12,7 @@ import androidx.annotation.Keep
 "url": "https://www.zcool.com.cn/toDesigners.do"
 }
  */
-@Keep
+@Serializable
 data class Honor(
     val id: Int,
     val image: String,

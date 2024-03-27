@@ -1,7 +1,7 @@
 package com.hym.zhankucompose.model
 
-import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /**
 {
@@ -9,9 +9,9 @@ import com.google.gson.annotations.SerializedName
 "objectType": 78
 }
  */
-@Keep
+@Serializable
 data class ContentWrapper(
-    @SerializedName("object")
+    @SerialName("object")
     val content: Content,
     val objectType: Int
 )

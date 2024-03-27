@@ -1,6 +1,6 @@
 package com.hym.zhankucompose.model
 
-import androidx.annotation.Keep
+import kotlinx.serialization.Serializable
 
 /**
 {
@@ -10,7 +10,7 @@ import androidx.annotation.Keep
 "middleImg": "https://img.zcool.cn/community/02jgwoesokgnu4gwk4642n3536.jpg?x-oss-process=image/auto-orient,1/resize,m_lfit,w_800,limit_1/sharpen,100/quality,q_100"
 }
  */
-@Keep
+@Serializable
 data class ArticleImage(
     val bigImg: String,
     val img: String,

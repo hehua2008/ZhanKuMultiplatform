@@ -3,10 +3,15 @@ package com.hym.zhankucompose.hilt
 import android.app.Application
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
-import com.google.gson.GsonBuilder
 import com.hym.zhankucompose.R
-import com.hym.zhankucompose.model.ZkTypeAdapterFactory
-import com.hym.zhankucompose.network.*
+import com.hym.zhankucompose.model.Cate
+import com.hym.zhankucompose.model.SubCate
+import com.hym.zhankucompose.model.TopCate
+import com.hym.zhankucompose.network.Constants
+import com.hym.zhankucompose.network.CookieManager
+import com.hym.zhankucompose.network.HeaderInterceptor
+import com.hym.zhankucompose.network.LogInterceptor
+import com.hym.zhankucompose.network.NetworkService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.EntryPoint
@@ -14,10 +19,14 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
 import okhttp3.Cache
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.io.File
 import javax.inject.Singleton
 
@@ -25,6 +34,16 @@ import javax.inject.Singleton
  * @author hehua2008
  * @date 2022/8/4
  */
+private val JsonDefault = Json {
+    ignoreUnknownKeys = true
+    SerializersModule {
+        polymorphic(Cate::class) {
+            subclass(TopCate::class, TopCate.TopCateTypeAdapter)
+            subclass(SubCate::class, SubCate.SubCateTypeAdapter)
+        }
+    }
+}
+
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
@@ -55,11 +74,7 @@ class NetworkModule {
         return Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl(Constants.API_URL)
-            .addConverterFactory(
-                GsonConverterFactory.create(
-                    GsonBuilder().registerTypeAdapterFactory(ZkTypeAdapterFactory).create()
-                )
-            )
+            .addConverterFactory(JsonDefault.asConverterFactory("application/json".toMediaType()))
             .callbackExecutor(Dispatchers.IO.asExecutor())
             .build()
     }

@@ -3,6 +3,7 @@ package com.hym.zhankucompose.model
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 
 /**
 {
@@ -23,6 +24,7 @@ import androidx.compose.runtime.Immutable
 "type": 1
 }
  */
+@Serializable
 @Immutable
 abstract class Cate : Parcelable {
     abstract val backgroundImage: String
@@ -51,9 +53,9 @@ abstract class Cate : Parcelable {
 
     abstract val statusId: Int
 
-    abstract val subCateList: List<SubCate>
-
     abstract val type: Int
+
+    abstract val subCateList: List<SubCate>
 
     final override fun hashCode(): Int = id
 
@@ -93,8 +95,8 @@ abstract class Cate : Parcelable {
             orderNo: Int,
             parent: Int,
             statusId: Int,
-            subCateList: List<SubCate>,
-            type: Int
+            type: Int,
+            subCateList: List<SubCate>
         ): T
 
         override fun createFromParcel(source: Parcel): T {

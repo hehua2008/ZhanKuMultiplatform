@@ -1,13 +1,13 @@
 package com.hym.zhankucompose.model
 
-import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@Keep
+@Serializable
 data class ArticleDetailsResponse(
     override val code: Int,
 
-    @SerializedName("data")
+    @SerialName("data")
     override val dataContent: ArticleDetails?,
 
     override val msg: String

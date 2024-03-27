@@ -1,6 +1,6 @@
 package com.hym.zhankucompose.model
 
-import androidx.annotation.Keep
+import kotlinx.serialization.Serializable
 
 /**
 {
@@ -76,7 +76,7 @@ import androidx.annotation.Keep
 "xueli": 0
 }
  */
-@Keep
+@Serializable
 data class Member(
     val articleCount: Int,
     val avatar: String,
@@ -146,6 +146,6 @@ data class Member(
     val webShow: Int,
     val wechat: String,
     val wechatPrivacy: Int,
-    val workExperienceList: List<Any>,
+    //val workExperienceList: List<Any>,
     val xueli: Int
 )

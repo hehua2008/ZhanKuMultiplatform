@@ -1,7 +1,7 @@
 package com.hym.zhankucompose.model
 
-import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 
 /**
 {
@@ -21,7 +21,7 @@ import androidx.compose.runtime.Immutable
 "width": 0
 }
  */
-@Keep
+@Serializable
 @Immutable
 data class ProductVideosIframe(
     val createTime: Long,

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.kotlinParcelize)
+    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kapt)
     alias(libs.plugins.hilt)
@@ -81,6 +82,7 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.kotlinx.serialization.json)
 
     // androidx
     implementation(libs.androidx.annotation)
@@ -105,7 +107,8 @@ dependencies {
     // squareup
     implementation(libs.squareup.okhttp3.okhttp)
     implementation(libs.squareup.retrofit2.retrofit)
-    implementation(libs.squareup.retrofit2.converter.gson)
+    implementation(libs.squareup.retrofit2.converter.kotlinx.serialization)
+    //implementation(libs.squareup.retrofit2.converter.gson)
 
     // glide
     implementation(libs.glide)

@@ -1,7 +1,7 @@
 package com.hym.zhankucompose.model
 
-import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 
 /**
 {
@@ -13,7 +13,7 @@ import androidx.compose.runtime.Immutable
 "sharewords": "成都约拍～<br>可惜的是橘子林都被套袋了[z大哭]"
 }
  */
-@Keep
+@Serializable
 @Immutable
 data class WorkDetails(
     val curPage: Int,

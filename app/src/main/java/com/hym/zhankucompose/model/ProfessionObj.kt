@@ -1,6 +1,6 @@
 package com.hym.zhankucompose.model
 
-import androidx.annotation.Keep
+import kotlinx.serialization.Serializable
 
 /**
 {
@@ -9,7 +9,7 @@ import androidx.annotation.Keep
 "nameEn": "Educators"
 }
  */
-@Keep
+@Serializable
 data class ProfessionObj(
     val id: Int,
     val name: String,

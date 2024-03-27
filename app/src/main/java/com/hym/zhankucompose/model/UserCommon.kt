@@ -1,6 +1,6 @@
 package com.hym.zhankucompose.model
 
-import androidx.annotation.Keep
+import kotlinx.serialization.Serializable
 
 /**
 {
@@ -14,7 +14,7 @@ import androidx.annotation.Keep
 "guanzhuStatus": 0
 }
  */
-@Keep
+@Serializable
 data class UserCommon(
     val birthdayStr: String,
     val constellation: String,

@@ -1,7 +1,7 @@
 package com.hym.zhankucompose.model
 
-import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 
 /**
 {
@@ -12,7 +12,7 @@ import androidx.compose.runtime.Immutable
 "updateTime": 1496734472000
 }
  */
-@Keep
+@Serializable
 @Immutable
 data class ProductTag(
     val createTime: Long,

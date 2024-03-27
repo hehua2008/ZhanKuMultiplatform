@@ -1,209 +1,130 @@
 package com.hym.zhankucompose.model
 
-import com.google.gson.TypeAdapter
-import com.google.gson.stream.JsonReader
-import com.google.gson.stream.JsonToken
-import com.google.gson.stream.JsonWriter
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.descriptors.element
+import kotlinx.serialization.encoding.CompositeDecoder
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.encoding.decodeStructure
+import kotlinx.serialization.encoding.encodeStructure
 
-abstract class CateTypeAdapter<T : Cate> : TypeAdapter<T>() {
+abstract class CateTypeAdapter<T : Cate>(private val clazz: Class<T>) : KSerializer<T> {
     abstract val cateCreator: Cate.CateCreator<T>
 
-    override fun read(reader: JsonReader): T? {
-        if (reader.peek() == JsonToken.NULL) {
-            reader.nextNull()
-            return null
-        }
-        var backgroundImage: String? = null
-        var commonOrderNo: Int? = null
-        var description: String? = null
-        var descriptionEn: String? = null
-        var icon: String? = null
-        var iconHover: String? = null
-        var id: Int? = null
-        var level: Int? = null
-        var name: String? = null
-        var nameEn: String? = null
-        var orderNo: Int? = null
-        var parent: Int? = null
-        var statusId: Int? = null
-        var subCateList: List<SubCate>? = null
-        var type: Int? = null
-        reader.beginObject()
-        while (reader.hasNext()) {
-            when (reader.nextName()) {
-                "backgroundImage" -> {
-                    when (reader.peek()) {
-                        JsonToken.STRING -> backgroundImage = reader.nextString()
-                        JsonToken.NULL -> reader.nextNull()
-                        else -> reader.skipValue()
-                    }
-                }
-                "commonOrderNo" -> {
-                    when (reader.peek()) {
-                        JsonToken.NUMBER -> commonOrderNo = reader.nextInt()
-                        JsonToken.NULL -> reader.nextNull()
-                        else -> reader.skipValue()
-                    }
-                }
-                "description" -> {
-                    when (reader.peek()) {
-                        JsonToken.STRING -> description = reader.nextString()
-                        JsonToken.NULL -> reader.nextNull()
-                        else -> reader.skipValue()
-                    }
-                }
-                "descriptionEn" -> {
-                    when (reader.peek()) {
-                        JsonToken.STRING -> descriptionEn = reader.nextString()
-                        JsonToken.NULL -> reader.nextNull()
-                        else -> reader.skipValue()
-                    }
-                }
-                "icon" -> {
-                    when (reader.peek()) {
-                        JsonToken.STRING -> icon = reader.nextString()
-                        JsonToken.NULL -> reader.nextNull()
-                        else -> reader.skipValue()
-                    }
-                }
-                "iconHover" -> {
-                    when (reader.peek()) {
-                        JsonToken.STRING -> iconHover = reader.nextString()
-                        JsonToken.NULL -> reader.nextNull()
-                        else -> reader.skipValue()
-                    }
-                }
-                "id" -> {
-                    when (reader.peek()) {
-                        JsonToken.NUMBER -> id = reader.nextInt()
-                        JsonToken.NULL -> reader.nextNull()
-                        else -> reader.skipValue()
-                    }
-                }
-                "level" -> {
-                    when (reader.peek()) {
-                        JsonToken.NUMBER -> level = reader.nextInt()
-                        JsonToken.NULL -> reader.nextNull()
-                        else -> reader.skipValue()
-                    }
-                }
-                "name" -> {
-                    when (reader.peek()) {
-                        JsonToken.STRING -> name = reader.nextString()
-                        JsonToken.NULL -> reader.nextNull()
-                        else -> reader.skipValue()
-                    }
-                }
-                "nameEn" -> {
-                    when (reader.peek()) {
-                        JsonToken.STRING -> nameEn = reader.nextString()
-                        JsonToken.NULL -> reader.nextNull()
-                        else -> reader.skipValue()
-                    }
-                }
-                "orderNo" -> {
-                    when (reader.peek()) {
-                        JsonToken.NUMBER -> orderNo = reader.nextInt()
-                        JsonToken.NULL -> reader.nextNull()
-                        else -> reader.skipValue()
-                    }
-                }
-                "parent" -> {
-                    when (reader.peek()) {
-                        JsonToken.NUMBER -> parent = reader.nextInt()
-                        JsonToken.NULL -> reader.nextNull()
-                        else -> reader.skipValue()
-                    }
-                }
-                "statusId" -> {
-                    when (reader.peek()) {
-                        JsonToken.NUMBER -> statusId = reader.nextInt()
-                        JsonToken.NULL -> reader.nextNull()
-                        else -> reader.skipValue()
-                    }
-                }
-                "subCateList" -> {
-                    when (reader.peek()) {
-                        JsonToken.BEGIN_ARRAY -> {
-                            val tempList = mutableListOf<SubCate>()
-                            reader.beginArray()
-                            while (reader.hasNext()) {
-                                when (reader.peek()) {
-                                    JsonToken.BEGIN_OBJECT -> SubCate.SubCateTypeAdapter.read(reader)
-                                        ?.let { tempList.add(it) }
-                                    JsonToken.NULL -> reader.nextNull()
-                                    else -> reader.skipValue()
-                                }
-                            }
-                            reader.endArray()
-                            subCateList = tempList
-                        }
-                        JsonToken.NULL -> reader.nextNull()
-                        else -> reader.skipValue()
-                    }
-                }
-                "type" -> {
-                    when (reader.peek()) {
-                        JsonToken.NUMBER -> type = reader.nextInt()
-                        JsonToken.NULL -> reader.nextNull()
-                        else -> reader.skipValue()
-                    }
-                }
-                else -> reader.skipValue()
+    override val descriptor: SerialDescriptor
+        get() = buildClassSerialDescriptor(clazz.simpleName) {
+            element<String>("backgroundImage")
+            element<Int>("commonOrderNo")
+            element<String>("description")
+            element<String>("descriptionEn")
+            element<String>("icon")
+            element<String>("iconHover")
+            element<Int>("id")
+            element<Int>("level")
+            element<String>("name")
+            element<String>("nameEn")
+            element<Int>("orderNo")
+            element<Int>("parent")
+            element<Int>("statusId")
+            element<Int>("type")
+            if (clazz != SubCate::class.java) {
+                element<List<SubCate>>("subCateList")
             }
         }
-        reader.endObject()
-        id?.let {
-            Cate.getCategory<T>(it)?.let { cache ->
-                if (cache.subCateList.isNotEmpty() && subCateList.isNullOrEmpty()) return cache
-                if (cache.description.isNotBlank() && description.isNullOrBlank()) return cache
-            }
-        }
-        return cateCreator.create(
-            backgroundImage = backgroundImage ?: "",
-            commonOrderNo = commonOrderNo ?: 0,
-            description = description ?: "",
-            descriptionEn = descriptionEn ?: "",
-            icon = icon ?: "",
-            iconHover = iconHover ?: "",
-            id = id ?: 0,
-            level = level ?: 0,
-            name = name ?: "",
-            nameEn = nameEn ?: "",
-            orderNo = orderNo ?: 0,
-            parent = parent ?: 0,
-            statusId = statusId ?: 0,
-            subCateList = subCateList ?: emptyList(),
-            type = type ?: 0
-        )
-    }
 
-    override fun write(writer: JsonWriter, obj: T?) {
-        if (obj == null) {
-            writer.nullValue()
-            return
+    override fun deserialize(decoder: Decoder): T =
+        decoder.decodeStructure(descriptor) {
+            var backgroundImage: String? = null
+            var commonOrderNo: Int? = null
+            var description: String? = null
+            var descriptionEn: String? = null
+            var icon: String? = null
+            var iconHover: String? = null
+            var id: Int? = null
+            var level: Int? = null
+            var name: String? = null
+            var nameEn: String? = null
+            var orderNo: Int? = null
+            var parent: Int? = null
+            var statusId: Int? = null
+            var type: Int? = null
+            var subCateList: List<SubCate>? = null
+
+            while (true) {
+                when (val index = decodeElementIndex(descriptor)) {
+                    0 -> backgroundImage = decodeStringElement(descriptor, 0)
+                    1 -> commonOrderNo = decodeIntElement(descriptor, 1)
+                    2 -> description = decodeStringElement(descriptor, 2)
+                    3 -> descriptionEn = decodeStringElement(descriptor, 3)
+                    4 -> icon = decodeStringElement(descriptor, 4)
+                    5 -> iconHover = decodeStringElement(descriptor, 5)
+                    6 -> id = decodeIntElement(descriptor, 6)
+                    7 -> level = decodeIntElement(descriptor, 7)
+                    8 -> name = decodeStringElement(descriptor, 8)
+                    9 -> nameEn = decodeStringElement(descriptor, 9)
+                    10 -> orderNo = decodeIntElement(descriptor, 10)
+                    11 -> parent = decodeIntElement(descriptor, 11)
+                    12 -> statusId = decodeIntElement(descriptor, 12)
+                    13 -> type = decodeIntElement(descriptor, 13)
+                    14 -> subCateList = if (clazz != SubCate::class.java) {
+                        decodeSerializableElement(
+                            descriptor, 14, ListSerializer(SubCate.SubCateTypeAdapter)
+                        )
+                    } else null
+
+                    CompositeDecoder.DECODE_DONE -> break
+                    else -> error("Unexpected index: $index")
+                }
+            }
+            id?.let {
+                Cate.getCategory<T>(it)?.let { cache ->
+                    if (cache.subCateList.isNotEmpty() && subCateList.isNullOrEmpty()) return@decodeStructure cache
+                    if (cache.description.isNotBlank() && description.isNullOrBlank()) return@decodeStructure cache
+                }
+            }
+            return@decodeStructure cateCreator.create(
+                backgroundImage = backgroundImage ?: "",
+                commonOrderNo = commonOrderNo ?: 0,
+                description = description ?: "",
+                descriptionEn = descriptionEn ?: "",
+                icon = icon ?: "",
+                iconHover = iconHover ?: "",
+                id = id ?: 0,
+                level = level ?: 0,
+                name = name ?: "",
+                nameEn = nameEn ?: "",
+                orderNo = orderNo ?: 0,
+                parent = parent ?: 0,
+                statusId = statusId ?: 0,
+                type = type ?: 0,
+                subCateList = subCateList ?: emptyList()
+            )
         }
-        writer.beginObject()
-        writer.name("backgroundImage").value(obj.backgroundImage)
-        writer.name("commonOrderNo").value(obj.commonOrderNo)
-        writer.name("description").value(obj.description)
-        writer.name("descriptionEn").value(obj.descriptionEn)
-        writer.name("icon").value(obj.icon)
-        writer.name("iconHover").value(obj.iconHover)
-        writer.name("id").value(obj.id)
-        writer.name("level").value(obj.level)
-        writer.name("name").value(obj.name)
-        writer.name("nameEn").value(obj.nameEn)
-        writer.name("orderNo").value(obj.orderNo)
-        writer.name("parent").value(obj.parent)
-        writer.name("statusId").value(obj.statusId)
-        writer.name("subCateList")
-        writer.beginArray()
-        obj.subCateList.forEach {
-            SubCate.SubCateTypeAdapter.write(writer, it)
+
+    override fun serialize(encoder: Encoder, value: T) {
+        encoder.encodeStructure(descriptor) {
+            encodeStringElement(descriptor, 0, value.backgroundImage)
+            encodeIntElement(descriptor, 1, value.commonOrderNo)
+            encodeStringElement(descriptor, 2, value.description)
+            encodeStringElement(descriptor, 3, value.descriptionEn)
+            encodeStringElement(descriptor, 4, value.icon)
+            encodeStringElement(descriptor, 5, value.iconHover)
+            encodeIntElement(descriptor, 6, value.id)
+            encodeIntElement(descriptor, 7, value.level)
+            encodeStringElement(descriptor, 8, value.name)
+            encodeStringElement(descriptor, 9, value.nameEn)
+            encodeIntElement(descriptor, 10, value.orderNo)
+            encodeIntElement(descriptor, 11, value.parent)
+            encodeIntElement(descriptor, 12, value.statusId)
+            encodeIntElement(descriptor, 13, value.type)
+            if (clazz != SubCate::class.java) {
+                encodeSerializableElement(
+                    descriptor, 14, ListSerializer(SubCate.SubCateTypeAdapter), value.subCateList
+                )
+            }
         }
-        writer.endArray()
-        writer.name("type").value(obj.type)
-        writer.endObject()
     }
 }

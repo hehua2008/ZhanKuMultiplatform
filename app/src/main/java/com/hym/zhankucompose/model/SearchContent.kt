@@ -1,6 +1,6 @@
 package com.hym.zhankucompose.model
 
-import androidx.annotation.Keep
+import kotlinx.serialization.Serializable
 
 /**
 {
@@ -18,7 +18,7 @@ import androidx.annotation.Keep
 "totalPages": 0
 }
  */
-@Keep
+@Serializable
 data class SearchContent(
     val content: List<ContentWrapper>,
     val first: Boolean,
