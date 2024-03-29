@@ -106,6 +106,8 @@ dependencies {
 
     // squareup
     implementation(libs.squareup.okhttp3.okhttp)
+    implementation(libs.squareup.okhttp3.logging)
+    implementation(platform(libs.squareup.retrofit2.bom))
     implementation(libs.squareup.retrofit2.retrofit)
     implementation(libs.squareup.retrofit2.converter.kotlinx.serialization)
     //implementation(libs.squareup.retrofit2.converter.gson)
