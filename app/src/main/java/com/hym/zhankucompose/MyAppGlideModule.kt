@@ -39,7 +39,7 @@ class MyAppGlideModule : AppGlideModule() {
         val appContext = context.applicationContext
         val accessor =
             EntryPointAccessors.fromApplication(appContext, NetworkModule.Accessor::class.java)
-        val factory: OkHttpUrlLoader.Factory = OkHttpUrlLoader.Factory(accessor.okHttpClient())
+        val factory: OkHttpUrlLoader.Factory = OkHttpUrlLoader.Factory(accessor.imageOkHttpClient())
         registry.replace(GlideUrl::class.java, InputStream::class.java, factory)
     }
 }

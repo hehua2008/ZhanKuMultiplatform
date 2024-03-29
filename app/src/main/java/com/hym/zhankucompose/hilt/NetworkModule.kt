@@ -11,6 +11,8 @@ import com.hym.zhankucompose.network.Constants
 import com.hym.zhankucompose.network.ConverterFactoryDelegate
 import com.hym.zhankucompose.network.CookieManager
 import com.hym.zhankucompose.network.HeaderInterceptor
+import com.hym.zhankucompose.network.ImageInterceptor
+import com.hym.zhankucompose.network.ImageNetInterceptor
 import com.hym.zhankucompose.network.LogInterceptor
 import com.hym.zhankucompose.network.NetworkService
 import dagger.Module
@@ -29,6 +31,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.io.File
+import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -68,6 +71,17 @@ class NetworkModule {
             .addNetworkInterceptor(LogInterceptor())
             .cache(Cache(okHttpCacheDir, 200 * 1024 * 1024))
             //.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 8888)))
+            //.eventListenerFactory(TrackEventListener.Factory())
+            .build()
+    }
+
+    @Named("ImageOkHttp")
+    @Singleton
+    @Provides
+    fun provideImageOkHttp(okHttpClient: OkHttpClient): OkHttpClient {
+        return okHttpClient.newBuilder()
+            .addInterceptor(ImageInterceptor())
+            .addNetworkInterceptor(ImageNetInterceptor())
             .build()
     }
 
@@ -98,6 +112,9 @@ class NetworkModule {
     @InstallIn(SingletonComponent::class)
     interface Accessor {
         fun okHttpClient(): OkHttpClient
+
+        @Named("ImageOkHttp")
+        fun imageOkHttpClient(): OkHttpClient
 
         fun retrofit(): Retrofit
 
