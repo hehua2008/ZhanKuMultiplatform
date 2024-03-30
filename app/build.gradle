@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kapt)
     alias(libs.plugins.hilt)
-    //id("compose.track")
+    id("compose.track")
 }
 
 android {
@@ -148,6 +148,7 @@ dependencies {
 
     // local
     implementation(project(":ssiv:library"))
+    implementation(project(":composetrack"))
 
     // debug
     debugImplementation(project(":logcollector"))
