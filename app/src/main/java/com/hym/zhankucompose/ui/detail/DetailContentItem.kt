@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,6 +55,7 @@ fun DetailContentImage(
     onClick: (detailImage: DetailImage) -> Unit
 ) {
     var overrideSize by rememberMutableState(size) { size }
+    val updatedOnGetSize by rememberUpdatedState(onGetSize)
     val enter = remember { fadeIn() }
     val exit = remember { fadeOut() }
 
@@ -92,7 +94,7 @@ fun DetailContentImage(
                     val intSize = IntSize(resource.intrinsicWidth, resource.intrinsicHeight)
                     if (intSize.width > 0 && intSize.height > 0 && overrideSize != intSize) {
                         overrideSize = intSize
-                        onGetSize?.invoke(intSize)
+                        updatedOnGetSize?.invoke(intSize)
                         return true
                     }
                     return false
