@@ -52,10 +52,8 @@ private val JsonDefaultFactory = JsonDefault.asConverterFactory("application/jso
 
 @Module
 @InstallIn(SingletonComponent::class)
-class NetworkModule {
-    companion object {
-        private const val OKHTTP_CACHE_DIR_NAME = "okhttp"
-    }
+object NetworkModule {
+    private const val OKHTTP_CACHE_DIR_NAME = "okhttp"
 
     @Singleton
     @Provides
