@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit
 class ImageInterceptor : Interceptor {
     companion object {
         private const val TAG = "ImageInterceptor"
+        private val SEMAPHORE_PLACEHOLDER = Semaphore(Int.MIN_VALUE)
     }
 
     private val mSemaphores = ConcurrentHashMap<String, Semaphore>()
@@ -27,14 +28,23 @@ class ImageInterceptor : Interceptor {
         }
 
         val url = request.url.toString()
-        val newSemaphore = Semaphore(0)
-        val preSemaphore = mSemaphores.putIfAbsent(url, newSemaphore)
-        if (preSemaphore == null) { // The first call
+        val preSemaphore = mSemaphores.compute(url) { _, oldSemaphore ->
+            if (oldSemaphore == null) { // The first call
+                SEMAPHORE_PLACEHOLDER
+            } else if (oldSemaphore === SEMAPHORE_PLACEHOLDER) { // The second call
+                Semaphore(0)
+            } else { // The third and subsequent calls
+                oldSemaphore
+            }
+        }!!
+        if (preSemaphore === SEMAPHORE_PLACEHOLDER) { // The first call
             return try {
                 chain.proceed(request)
             } finally {
-                mSemaphores.remove(url)
-                newSemaphore.release(Int.MAX_VALUE)
+                val curSemaphore = mSemaphores.remove(url)!!
+                if (curSemaphore !== SEMAPHORE_PLACEHOLDER) {
+                    curSemaphore.release(Int.MAX_VALUE)
+                }
             }
         } else { // The second and subsequent calls
             try {
