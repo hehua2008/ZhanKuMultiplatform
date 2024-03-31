@@ -51,7 +51,7 @@ public class MMCQ {
      * @param bitmap   Image data [[A, R, G, B], ...]
      * @param maxColor Between [2, 256]
      */
-    public MMCQ(Bitmap bitmap, int maxColor) {
+    public MMCQ(final Bitmap bitmap, int maxColor) {
         this(bitmap, maxColor, 0.85d, 5);
     }
 
@@ -61,7 +61,7 @@ public class MMCQ {
      * @param fraction Between [0.3, 0.9]
      * @param sigbits  5 or 6
      */
-    public MMCQ(Bitmap bitmap, int maxColor, double fraction, int sigbits) {
+    public MMCQ(final Bitmap bitmap, int maxColor, double fraction, int sigbits) {
         if (maxColor < 2 || maxColor > 256) {
             throw new IllegalArgumentException("maxColor should between [2, 256]!");
         }
@@ -81,14 +81,18 @@ public class MMCQ {
         double hScale = 100d / (double) height;
         double wScale = 100d / (double) width;
         double scale = Math.min(hScale, wScale);
+        Bitmap scaledBitmap = bitmap;
         if (scale < 0.8) {
-            bitmap = Bitmap.createScaledBitmap(
+            scaledBitmap = Bitmap.createScaledBitmap(
                     bitmap, (int) (scale * width), (int) (scale * height), false);
         }
-        mWidth = bitmap.getWidth();
-        mHeight = bitmap.getHeight();
+        mWidth = scaledBitmap.getWidth();
+        mHeight = scaledBitmap.getHeight();
         mPixelRGB = new int[mWidth * mHeight];
-        bitmap.getPixels(mPixelRGB, 0, mWidth, 0, 0, mWidth, mHeight);
+        scaledBitmap.getPixels(mPixelRGB, 0, mWidth, 0, 0, mWidth, mHeight);
+        if (scaledBitmap != bitmap) {
+            scaledBitmap.recycle();
+        }
 
         initPixHisto();
     }
