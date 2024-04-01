@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.rememberGlidePreloadingData
 import com.hym.zhankucompose.R
 import com.hym.zhankucompose.compose.COMMON_PADDING
+import com.hym.zhankucompose.player.PlayerProvider
 import com.hym.zhankucompose.ui.photoviewer.UrlPhotoInfo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -37,6 +38,8 @@ import kotlin.math.roundToInt
 fun DetailContentLayout(
     detailContents: ImmutableList<DetailContent<*>>,
     onImageClick: (list: List<UrlPhotoInfo>, index: Int) -> Unit,
+    playerProvider: PlayerProvider,
+    onVideoPlayFailed: (detailVideo: DetailVideo) -> Unit,
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
     headerContent: @Composable ((modifier: Modifier) -> Unit)? = null
@@ -48,7 +51,7 @@ fun DetailContentLayout(
         ImageVector.vectorResource(R.drawable.vector_image_broken)
     )
     val sizeCache = remember(detailContents) {
-        mutableMapOf<DetailImage, IntSize>()
+        mutableMapOf<DetailContent<*>, IntSize>()
     }
 
     val (imageList, nearestImageIndexes) = remember(detailContents) {
@@ -106,6 +109,19 @@ fun DetailContentLayout(
                 height = it.data.oriHeight
             )
         }.toImmutableList()
+    }
+
+    val playPainter = rememberVectorPainter(
+        ImageVector.vectorResource(R.drawable.vector_play_circle)
+    )
+    val pausePainter = rememberVectorPainter(
+        ImageVector.vectorResource(R.drawable.vector_pause_circle)
+    )
+    val replayPainter = rememberVectorPainter(
+        ImageVector.vectorResource(R.drawable.vector_replay_circle)
+    )
+    val playPositionMap = remember(detailContents) {
+        mutableMapOf<DetailVideo, Long>()
     }
 
     val onSurfaceColor = MaterialTheme.colorScheme.onSurface
@@ -186,7 +202,27 @@ fun DetailContentLayout(
                     }
 
                     is DetailVideo -> {
-                        DetailContentVideo(detailVideo = detailContent)
+                        val size = sizeCache[detailContent] ?: detailContent.data.run {
+                            if (maxWidth != Constraints.Infinity && width > 0 && height > 0) {
+                                IntSize(
+                                    maxWidth, (maxWidth * height / width.toFloat()).roundToInt()
+                                )
+                            } else null
+                        }
+
+                        DetailContentVideo(
+                            detailVideo = detailContent,
+                            playPainter = playPainter,
+                            pausePainter = pausePainter,
+                            replayPainter = replayPainter,
+                            playerProvider = playerProvider,
+                            onVideoPlayFailed = onVideoPlayFailed,
+                            size = size,
+                            onGetSize = { sizeCache[detailContent] = it },
+                            playPosition = playPositionMap[detailContent]
+                        ) { detailVideo, position ->
+                            playPositionMap[detailVideo] = position
+                        }
                     }
 
                     is DetailText -> {

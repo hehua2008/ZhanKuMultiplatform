@@ -68,6 +68,7 @@ import com.hym.zhankucompose.ui.ThemeColorRetriever
 import com.hym.zhankucompose.ui.photoviewer.PhotoViewerActivity
 import com.hym.zhankucompose.ui.photoviewer.UrlPhotoInfo
 import com.hym.zhankucompose.ui.theme.ComposeTheme
+import com.hym.zhankucompose.ui.webview.WebViewActivity
 import com.hym.zhankucompose.util.MMCQ
 import com.hym.zhankucompose.work.DownloadWorker
 import dagger.hilt.android.AndroidEntryPoint
@@ -316,6 +317,14 @@ class DetailActivity : BaseActivity() {
                             lazyListState = lazyListState,
                             onImageClick = { list, index ->
                                 launchPhotoViewerActivity(list, index)
+                            },
+                            playerProvider = detailViewModel.playerProvider,
+                            onVideoPlayFailed = { detailVideo ->
+                                this@DetailActivity.startActivity(
+                                    Intent(this@DetailActivity, WebViewActivity::class.java)
+                                        .putExtra(WebViewActivity.WEB_URL, detailVideo.data.url)
+                                        .putExtra(WebViewActivity.WEB_TITLE, detailVideo.data.name)
+                                )
                             }
                         ) {
                             headerContent?.invoke(

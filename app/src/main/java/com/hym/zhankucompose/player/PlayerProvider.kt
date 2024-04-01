@@ -2,7 +2,6 @@ package com.hym.zhankucompose.player
 
 import android.util.Log
 import androidx.core.util.Pools
-import androidx.media3.common.ForwardingPlayer
 import androidx.media3.common.Player
 
 class PlayerProvider(maxPoolSize: Int = 3) {
@@ -32,13 +31,8 @@ class PlayerProvider(maxPoolSize: Int = 3) {
     }
 
     @Synchronized
-    private fun forEachActivePlayer(action: (player: Player) -> Unit) {
-        mActivePlayers.forEach(action)
-    }
-
-    @Synchronized
     fun pauseOtherActivePlayers(player: Player?) {
-        forEachActivePlayer {
+        mActivePlayers.forEach {
             if (it !== player) {
                 it.pause()
             }
@@ -47,35 +41,24 @@ class PlayerProvider(maxPoolSize: Int = 3) {
 
     @Synchronized
     fun onCleared() {
-        forEachActivePlayer { PlayerFactory.destroy(it) }
+        mActivePlayers.forEach {
+            PlayerFactory.destroy(it)
+        }
         mActivePlayers.clear()
         mPlayerPool.onCleared()
     }
 
-    private inner class PlayerWrapper(player: Player) : ForwardingPlayer(player), Player.Listener {
-        init {
-            // I have no idea why some times we can't receive Player.STATE_READY state !!!
-            // addListener(this)
-        }
-
+    private inner class PlayerWrapper(val delegate: Player) : Player by delegate {
         override fun play() {
-            //if (playbackState == Player.STATE_READY) {
             pauseOtherActivePlayers(this)
-            //}
-            super.play()
+            delegate.play()
         }
 
         override fun setPlayWhenReady(playWhenReady: Boolean) {
-            if (playWhenReady/* && playbackState == Player.STATE_READY*/) {
+            if (playWhenReady) {
                 pauseOtherActivePlayers(this)
             }
-            super.setPlayWhenReady(playWhenReady)
-        }
-
-        override fun onPlaybackStateChanged(playbackState: Int) {
-            if (playbackState == Player.STATE_READY) {
-                pauseOtherActivePlayers(this)
-            }
+            delegate.playWhenReady = playWhenReady
         }
     }
 

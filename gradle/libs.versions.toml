@@ -69,6 +69,9 @@ androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplaye
 androidx-media3-exoplayer-dash = { group = "androidx.media3", name = "media3-exoplayer-dash", version.ref = "androidxMedia3" }
 androidx-media3-exoplayer-hls = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "androidxMedia3" }
 androidx-media3-exoplayer-rtsp = { group = "androidx.media3", name = "media3-exoplayer-rtsp", version.ref = "androidxMedia3" }
+androidx-media3-exoplayer-smoothstreaming = { group = "androidx.media3", name = "media3-exoplayer-smoothstreaming", version.ref = "androidxMedia3" }
+androidx-media3-datasource-okhttp = { group = "androidx.media3", name = "media3-datasource-okhttp", version.ref = "androidxMedia3" }
+androidx-media3-datasource-rtmp = { group = "androidx.media3", name = "media3-datasource-rtmp", version.ref = "androidxMedia3" }
 androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "androidxMedia3" }
 
 # android compoose ui
@@ -121,6 +124,7 @@ google-gson = { group = "com.google.code.gson", name = "gson", version = "2.10.1
 
 # others
 jsoup = { group = "org.jsoup", name = "jsoup", version = "1.17.1" }
+rtmp-client = { group = "io.antmedia", name = "rtmp-client", version = "3.2.0" }
 compose-markdown = { group = "com.github.jeziellago", name = "compose-markdown", version = "0.4.1" }
 
 [plugins]
