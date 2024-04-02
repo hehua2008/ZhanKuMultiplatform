@@ -1,4 +1,4 @@
-package com.hym.zhankucompose.ui.photoviewer
+package com.hym.zhankucompose.photo
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -66,7 +66,7 @@ data class ResPhotoInfo(
 data class BitmapPhotoInfo(
     override val original: Bitmap,
     override val thumb: Bitmap = original,
-    override val description: String = original.toString(),
+    override val description: String = "Bitmap(byteCount=${original.byteCount}, ${original.width}x${original.height})",
     override val width: Int = -1,
     override val height: Int = -1
 ) : PhotoInfo<Bitmap>
@@ -74,7 +74,7 @@ data class BitmapPhotoInfo(
 data class DrawablePhotoInfo(
     override val original: Drawable,
     override val thumb: Drawable = original,
-    override val description: String = original.toString(),
+    override val description: String = "${original.javaClass.simpleName}(${original.intrinsicWidth}x${original.intrinsicHeight})",
     override val width: Int = -1,
     override val height: Int = -1
 ) : PhotoInfo<Drawable>
@@ -82,7 +82,7 @@ data class DrawablePhotoInfo(
 data class ByteArrayPhotoInfo(
     override val original: ByteArray,
     override val thumb: ByteArray = original,
-    override val description: String = original.toString(),
+    override val description: String = "ByteArray(${original.size})",
     override val width: Int = -1,
     override val height: Int = -1
 ) : PhotoInfo<ByteArray> {

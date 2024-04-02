@@ -27,11 +27,11 @@ import com.bumptech.glide.RequestManager
 import com.hym.zhankucompose.GlideAppExtension
 import com.hym.zhankucompose.R
 import com.hym.zhankucompose.model.ProductVideo
+import com.hym.zhankucompose.photo.UrlPhotoInfo
 import com.hym.zhankucompose.player.CustomPlayerView
 import com.hym.zhankucompose.player.PlayerProvider
 import com.hym.zhankucompose.ui.ImageViewHeightListener
 import com.hym.zhankucompose.ui.RatioImageView
-import com.hym.zhankucompose.ui.photoviewer.UrlPhotoInfo
 import com.hym.zhankucompose.ui.webview.WebViewActivity
 import com.hym.zhankucompose.util.getActivity
 

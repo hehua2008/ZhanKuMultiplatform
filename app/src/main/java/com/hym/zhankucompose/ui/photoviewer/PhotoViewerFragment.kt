@@ -29,6 +29,7 @@ import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.davemorrissey.labs.subscaleview.UriProvider
 import com.hym.zhankucompose.databinding.FragmentPhotoViewerBinding
+import com.hym.zhankucompose.photo.PhotoInfo
 import com.hym.zhankucompose.ui.ProgressBarWrapper
 import java.io.File
 import java.util.concurrent.CancellationException

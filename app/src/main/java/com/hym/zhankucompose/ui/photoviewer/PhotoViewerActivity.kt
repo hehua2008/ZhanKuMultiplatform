@@ -16,6 +16,7 @@ import androidx.viewpager.widget.ViewPager
 import com.hym.zhankucompose.BaseActivity
 import com.hym.zhankucompose.R
 import com.hym.zhankucompose.databinding.ActivityPhotoViewerBinding
+import com.hym.zhankucompose.photo.UrlPhotoInfo
 import com.hym.zhankucompose.work.DownloadWorker
 
 class PhotoViewerActivity : BaseActivity(), ViewPager.OnPageChangeListener,

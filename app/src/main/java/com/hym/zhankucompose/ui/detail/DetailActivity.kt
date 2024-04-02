@@ -64,9 +64,9 @@ import com.hym.zhankucompose.R
 import com.hym.zhankucompose.compose.COMMON_PADDING
 import com.hym.zhankucompose.compose.rememberMutableState
 import com.hym.zhankucompose.model.ContentType
+import com.hym.zhankucompose.photo.UrlPhotoInfo
 import com.hym.zhankucompose.ui.ThemeColorRetriever
 import com.hym.zhankucompose.ui.photoviewer.PhotoViewerActivity
-import com.hym.zhankucompose.ui.photoviewer.UrlPhotoInfo
 import com.hym.zhankucompose.ui.theme.ComposeTheme
 import com.hym.zhankucompose.ui.webview.WebViewActivity
 import com.hym.zhankucompose.util.MMCQ

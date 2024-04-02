@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.rememberGlidePreloadingData
 import com.hym.zhankucompose.R
 import com.hym.zhankucompose.compose.COMMON_PADDING
+import com.hym.zhankucompose.photo.UrlPhotoInfo
 import com.hym.zhankucompose.player.PlayerProvider
-import com.hym.zhankucompose.ui.photoviewer.UrlPhotoInfo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlin.math.roundToInt
