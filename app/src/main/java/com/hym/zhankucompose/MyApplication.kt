@@ -2,7 +2,12 @@ package com.hym.zhankucompose
 
 import android.app.Application
 import android.graphics.Bitmap
-import androidx.lifecycle.*
+import android.net.ConnectivityManager
+import androidx.lifecycle.HasDefaultViewModelProviderFactory
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.Deferred
@@ -13,6 +18,9 @@ import kotlinx.coroutines.runBlocking
 class MyApplication : Application(), ViewModelStoreOwner, HasDefaultViewModelProviderFactory {
     override fun onCreate() {
         super.onCreate()
+
+        // Eagerly initialize ConnectivityManager with the application context to avoid memory leak.
+        getSystemService(ConnectivityManager::class.java)
 
         //setTheme(R.style.Theme_ZhanKuCompose)
         theme.applyStyle(R.style.Theme_ZhanKuCompose, true)
