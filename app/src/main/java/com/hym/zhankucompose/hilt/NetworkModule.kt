@@ -20,7 +20,6 @@ import com.hym.zhankucompose.network.Constants
 import com.hym.zhankucompose.network.ConverterFactoryDelegate
 import com.hym.zhankucompose.network.CookieManager
 import com.hym.zhankucompose.network.HeaderInterceptor
-import com.hym.zhankucompose.network.ImageInterceptor
 import com.hym.zhankucompose.network.ImageNetInterceptor
 import com.hym.zhankucompose.network.LogInterceptor
 import com.hym.zhankucompose.network.NetworkService
@@ -88,7 +87,7 @@ object NetworkModule {
     @Provides
     fun provideImageOkHttp(okHttpClient: OkHttpClient): OkHttpClient {
         return okHttpClient.newBuilder()
-            .addInterceptor(ImageInterceptor())
+            //.addInterceptor(ImageInterceptor())
             .addNetworkInterceptor(ImageNetInterceptor())
             .build()
     }
