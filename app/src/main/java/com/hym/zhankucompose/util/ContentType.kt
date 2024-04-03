@@ -8,6 +8,7 @@ import kotlinx.collections.immutable.toImmutableList
  */
 object ContentType {
     const val MMS_MESSAGE = "application/vnd.wap.mms-message"
+
     // The phony content type for generic PDUs (e.g. ReadOrig.ind, Notification.ind, Delivery.ind).
     const val MMS_GENERIC = "application/vnd.wap.mms-generic"
     const val MULTIPART_MIXED = "application/vnd.wap.multipart.mixed"
@@ -24,6 +25,25 @@ object ContentType {
     const val IMAGE_WBMP = "image/vnd.wap.wbmp"
     const val IMAGE_PNG = "image/png"
     const val IMAGE_X_MS_BMP = "image/x-ms-bmp"
+
+    const val IMAGE_WEBP = "image/webp"
+    const val IMAGE_BMP = "image/bmp"
+    const val IMAGE_HEIF = "image/heif"
+    const val IMAGE_HEIC = "image/heic"
+    const val IMAGE_AVIF = "image/avif"
+
+    const val IMAGE_ICO = "image/x-ico"
+    const val IMAGE_ARW = "image/x-sony-arw"
+    const val IMAGE_CR2 = "image/x-canon-cr2"
+    const val IMAGE_DNG = "image/x-adobe-dng"
+    const val IMAGE_NEF = "image/x-nikon-nef"
+    const val IMAGE_NRW = "image/x-nikon-nrw"
+    const val IMAGE_ORF = "image/x-olympus-orf"
+    const val IMAGE_RAF = "image/x-fuji-raf"
+    const val IMAGE_RW2 = "image/x-panasonic-rw2"
+    const val IMAGE_PEF = "image/x-pentax-pef"
+    const val IMAGE_SRW = "image/x-samsung-srw"
+
     const val AUDIO_UNSPECIFIED = "audio/*"
     const val AUDIO_AAC = "audio/aac"
     const val AUDIO_AMR = "audio/amr"
@@ -73,6 +93,13 @@ object ContentType {
         sSupportedContentTypes.add(IMAGE_JPG)
         sSupportedContentTypes.add(IMAGE_X_MS_BMP)
         //supportedContentTypes.add(IMAGE_SVG) not yet supported.
+
+        sSupportedContentTypes.add(IMAGE_WEBP)
+        sSupportedContentTypes.add(IMAGE_BMP)
+        sSupportedContentTypes.add(IMAGE_HEIF)
+        sSupportedContentTypes.add(IMAGE_HEIC)
+        sSupportedContentTypes.add(IMAGE_AVIF)
+
         sSupportedContentTypes.add(AUDIO_AAC)
         sSupportedContentTypes.add(AUDIO_AMR)
         sSupportedContentTypes.add(AUDIO_IMELODY)
