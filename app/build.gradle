@@ -156,6 +156,7 @@ dependencies {
     // local
     implementation(project(":ssiv:library"))
     implementation(project(":composetrack"))
+    implementation(project(":subsamplingimage:library"))
 
     // debug
     debugImplementation(project(":logcollector"))

@@ -66,7 +66,7 @@ import com.hym.zhankucompose.compose.rememberMutableState
 import com.hym.zhankucompose.model.ContentType
 import com.hym.zhankucompose.photo.UrlPhotoInfo
 import com.hym.zhankucompose.ui.ThemeColorRetriever
-import com.hym.zhankucompose.ui.photoviewer.PhotoViewerActivity
+import com.hym.zhankucompose.ui.imagepager.ZoomImagePagerActivity
 import com.hym.zhankucompose.ui.theme.ComposeTheme
 import com.hym.zhankucompose.ui.webview.WebViewActivity
 import com.hym.zhankucompose.util.MMCQ
@@ -94,7 +94,7 @@ class DetailActivity : BaseActivity() {
 
     private val detailViewModel: DetailViewModel by viewModels()
 
-    private lateinit var photoViewerActivityLauncher: ActivityResultLauncher<Pair<List<UrlPhotoInfo>, Int>>
+    private lateinit var zoomImagePagerActivityLauncher: ActivityResultLauncher<Pair<List<UrlPhotoInfo>, Int>>
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -116,7 +116,7 @@ class DetailActivity : BaseActivity() {
 
         (intent.getParcelableExtra(KEY_COLOR) as? MMCQ.ThemeColor)?.let { updateThemeColor(it) }
 
-        initPhotoViewerActivityLauncher()
+        initZoomImagePagerActivityLauncher()
 
         setContent {
             ComposeTheme {
@@ -316,7 +316,7 @@ class DetailActivity : BaseActivity() {
                             detailContents = detailContents ?: persistentListOf(),
                             lazyListState = lazyListState,
                             onImageClick = { list, index ->
-                                launchPhotoViewerActivity(list, index)
+                                launchZoomImagePagerActivity(list, index)
                             },
                             playerProvider = detailViewModel.playerProvider,
                             onVideoPlayFailed = { detailVideo ->
@@ -398,37 +398,37 @@ class DetailActivity : BaseActivity() {
         detailViewModel.setDetailTypeAndId(mContentType, mContentId)
     }
 
-    private fun initPhotoViewerActivityLauncher() {
+    private fun initZoomImagePagerActivityLauncher() {
         val contract =
             object : ActivityResultContract<Pair<List<UrlPhotoInfo>, Int>, Pair<Int, Rect?>?>() {
                 override fun createIntent(
                     context: Context,
                     input: Pair<List<UrlPhotoInfo>, Int>
                 ): Intent {
-                    return Intent(context, PhotoViewerActivity::class.java)
+                    return Intent(context, ZoomImagePagerActivity::class.java)
                         .putParcelableArrayListExtra(
-                            PhotoViewerActivity.PHOTO_INFOS,
+                            ZoomImagePagerActivity.PHOTO_INFOS,
                             ArrayList(input.first)
                         )
-                        .putExtra(PhotoViewerActivity.CURRENT_POSITION, input.second)
+                        .putExtra(ZoomImagePagerActivity.CURRENT_POSITION, input.second)
                 }
 
                 override fun parseResult(resultCode: Int, intent: Intent?): Pair<Int, Rect?>? {
                     intent ?: return null
-                    val position = intent.getIntExtra(PhotoViewerActivity.CURRENT_POSITION, 0)
+                    val position = intent.getIntExtra(ZoomImagePagerActivity.CURRENT_POSITION, 0)
                     val screenLocation =
-                        intent.getParcelableExtra<Rect>(PhotoViewerActivity.SCREEN_LOCATION)
+                        intent.getParcelableExtra<Rect>(ZoomImagePagerActivity.SCREEN_LOCATION)
                     return position to screenLocation
                 }
             }
 
-        photoViewerActivityLauncher = registerForActivityResult(contract) { result ->
+        zoomImagePagerActivityLauncher = registerForActivityResult(contract) { result ->
             detailViewModel.positionAndScreenLocation = result
         }
     }
 
-    fun launchPhotoViewerActivity(photoInfos: List<UrlPhotoInfo>, position: Int) {
-        photoViewerActivityLauncher.launch(
+    fun launchZoomImagePagerActivity(photoInfos: List<UrlPhotoInfo>, position: Int) {
+        zoomImagePagerActivityLauncher.launch(
             photoInfos to position,
             ActivityOptionsCompat.makeCustomAnimation(this, 0, android.R.anim.fade_out)
         )

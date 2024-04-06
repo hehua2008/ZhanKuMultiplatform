@@ -177,7 +177,9 @@ class DetailContentAdapter(private val playerProvider: PlayerProvider) :
                     }
                     // Get the item at this position every time since currentList may be changed.
                     val detailImage = getItem(position) as DetailImage
-                    activity.launchPhotoViewerActivity(photoInfos, imageList.indexOf(detailImage))
+                    activity.launchZoomImagePagerActivity(
+                        photoInfos, imageList.indexOf(detailImage)
+                    )
                 }
             }
             mRequestManager?.run {
