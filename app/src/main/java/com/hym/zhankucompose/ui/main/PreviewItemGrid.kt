@@ -31,8 +31,8 @@ import com.hym.zhankucompose.R
 import com.hym.zhankucompose.compose.COMMON_PADDING
 import com.hym.zhankucompose.model.Content
 import com.hym.zhankucompose.ui.NetworkStateLayout
-import com.hym.zhankucompose.ui.author.AuthorItemFragment
 import com.hym.zhankucompose.ui.detail.DetailActivity
+import com.hym.zhankucompose.ui.tag.EXTRA_AUTHOR
 import com.hym.zhankucompose.ui.tag.TagActivity
 import com.hym.zhankucompose.util.getActivity
 
@@ -117,7 +117,7 @@ fun PreviewItemGrid(
                     onAuthorClick = {
                         val context = view.context
                         val intent = Intent(context, TagActivity::class.java)
-                            .putExtra(AuthorItemFragment.AUTHOR, previewItem.creatorObj)
+                            .putExtra(EXTRA_AUTHOR, previewItem.creatorObj)
                         context.startActivity(intent)
                     }
                 )

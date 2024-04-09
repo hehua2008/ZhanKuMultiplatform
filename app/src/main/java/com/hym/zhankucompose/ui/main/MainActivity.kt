@@ -2,30 +2,49 @@ package com.hym.zhankucompose.ui.main
 
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
-import androidx.viewpager.widget.ViewPager
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SecondaryScrollableTabRow
+import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.viewinterop.AndroidViewBinding
+import androidx.compose.ui.zIndex
+import androidx.core.view.ViewCompat
 import com.hym.zhankucompose.BaseActivity
 import com.hym.zhankucompose.MyAppViewModel
-import com.hym.zhankucompose.databinding.ActivityMainBinding
+import com.hym.zhankucompose.databinding.FragmentSearchBinding
 import com.hym.zhankucompose.getAppViewModel
-import com.hym.zhankucompose.model.TopCate
-import com.hym.zhankucompose.ui.TabReselectedCallback
+import com.hym.zhankucompose.ui.theme.ComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.math.abs
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
-class MainActivity : BaseActivity(), OnTabSelectedListener {
+class MainActivity : BaseActivity() {
     companion object {
         private const val TAG = "MainActivity"
     }
 
-    private lateinit var binding: ActivityMainBinding
-    private val sectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
-    private val mTopCates: MutableList<TopCate> = mutableListOf()
-
-    private var mInitialFragmentPosition = 1
-
+    @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         // Add callback before fragmentManager
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
@@ -33,58 +52,91 @@ class MainActivity : BaseActivity(), OnTabSelectedListener {
                 moveTaskToBack(false)
             }
         })
+
+        enableEdgeToEdge()
+
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        binding.viewPager.adapter = sectionsPagerAdapter
-        binding.viewPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
-            override fun onPageSelected(position: Int) {
-                val distance = abs(position - mInitialFragmentPosition)
-                if (binding.viewPager.offscreenPageLimit < distance) {
-                    binding.viewPager.offscreenPageLimit = distance
+        setContent {
+            ComposeTheme {
+                val density = LocalDensity.current
+                val systemBarsTop = WindowInsets.systemBars.getTop(density)
+                val paddingTop = remember(density, systemBarsTop) {
+                    with(density) { systemBarsTop.toDp() }
                 }
-            }
 
-            override fun onPageScrolled(
-                position: Int, positionOffset: Float, positionOffsetPixels: Int
-            ) {
-                val maxDistance = abs(position - mInitialFragmentPosition).let {
-                    when {
-                        positionOffset == 0f -> it // Only position is visible
-                        position == sectionsPagerAdapter.count - 1 -> it // Last position
-                        else -> it.coerceAtLeast(abs(position + 1 - mInitialFragmentPosition))
+                Column {
+                    val categoryItems by getAppViewModel<MyAppViewModel>().categoryItems.observeAsState(
+                        persistentListOf()
+                    )
+
+                    val pagerState = rememberPagerState(0) { 1 + categoryItems.size }
+                    var selectedIndex by remember { mutableIntStateOf(0) }
+
+                    LaunchedEffect(null) {
+                        snapshotFlow { categoryItems }
+                            .collectLatest {
+                                selectedIndex = if (categoryItems.isEmpty()) 0 else 1
+                            }
+                    }
+
+                    LaunchedEffect(pagerState) {
+                        snapshotFlow { selectedIndex }
+                            .collectLatest {
+                                pagerState.animateScrollToPage(it)
+                            }
+                    }
+
+                    SecondaryScrollableTabRow(selectedTabIndex = pagerState.currentPage) {
+                        val tabTextStyle = MaterialTheme.typography.titleMedium
+
+                        Tab(
+                            selected = (pagerState.currentPage == 0),
+                            onClick = { selectedIndex = 0 },
+                            modifier = Modifier.padding(top = paddingTop),
+                            text = {
+                                Text(
+                                    text = "🔍",
+                                    fontWeight = if (pagerState.currentPage == 0) FontWeight.Bold else FontWeight.Normal,
+                                    style = tabTextStyle
+                                )
+                            }
+                        )
+                        categoryItems.forEachIndexed { index, topCate ->
+                            Tab(
+                                selected = (pagerState.currentPage == 1 + index),
+                                onClick = { selectedIndex = 1 + index },
+                                modifier = Modifier.padding(top = paddingTop),
+                                text = {
+                                    Text(
+                                        text = topCate.name,
+                                        fontWeight = if (pagerState.currentPage == 1 + index) FontWeight.Bold else FontWeight.Normal,
+                                        style = tabTextStyle
+                                    )
+                                }
+                            )
+                        }
+                    }
+
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.zIndex(-1f), // Fix PullToRefresh overlap issue
+                        beyondBoundsPageCount = 1 + categoryItems.size
+                    ) { page ->
+                        when (page) {
+                            0 -> AndroidViewBinding(
+                                factory = FragmentSearchBinding::inflate,
+                                onReset = {}
+                            ) {
+                                // Nested scrolling interop is enabled when nested scroll is enabled
+                                // for the root View
+                                ViewCompat.setNestedScrollingEnabled(searchContainer, true)
+                            }
+
+                            else -> PreviewItemPage(topCate = categoryItems[page - 1])
+                        }
                     }
                 }
-                if (binding.viewPager.offscreenPageLimit < maxDistance) {
-                    binding.viewPager.offscreenPageLimit = maxDistance
-                }
-            }
-        })
-        binding.tabs.setupWithViewPager(binding.viewPager)
-        binding.tabs.addOnTabSelectedListener(this)
-
-        getAppViewModel<MyAppViewModel>().categoryItems.observe(this) { categoryItems ->
-            mTopCates.clear()
-            mTopCates.addAll(categoryItems)
-            if (binding.viewPager.offscreenPageLimit < 1) {
-                binding.viewPager.offscreenPageLimit = 1
-            }
-            sectionsPagerAdapter.setCategoryItems(mTopCates)
-            binding.viewPager.currentItem = if (mTopCates.isEmpty()) 0 else mInitialFragmentPosition
-        }
-    }
-
-    override fun onTabSelected(tab: TabLayout.Tab) {
-    }
-
-    override fun onTabUnselected(tab: TabLayout.Tab) {
-    }
-
-    override fun onTabReselected(tab: TabLayout.Tab) {
-        sectionsPagerAdapter.currentFragment?.let {
-            if (it is TabReselectedCallback) {
-                it.onTabReselected()
             }
         }
     }

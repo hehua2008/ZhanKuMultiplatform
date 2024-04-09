@@ -58,8 +58,9 @@ import com.hym.zhankucompose.model.Cate
 import com.hym.zhankucompose.model.CreatorObj
 import com.hym.zhankucompose.model.TopCate
 import com.hym.zhankucompose.model.WorkDetails
-import com.hym.zhankucompose.ui.author.AuthorItemFragment
-import com.hym.zhankucompose.ui.main.PreviewItemFragment
+import com.hym.zhankucompose.ui.tag.EXTRA_AUTHOR
+import com.hym.zhankucompose.ui.tag.EXTRA_SUB_CATE
+import com.hym.zhankucompose.ui.tag.EXTRA_TOP_CATE
 import com.hym.zhankucompose.ui.tag.TagActivity
 import com.hym.zhankucompose.ui.webview.WebViewActivity
 import kotlinx.collections.immutable.ImmutableList
@@ -169,13 +170,13 @@ fun DetailHeaderLayout(
                 val tagCate = categories[it]
                 val intent = Intent(context, TagActivity::class.java)
                 if (tagCate is TopCate) {
-                    intent.putExtra(PreviewItemFragment.TOP_CATE, tagCate)
+                    intent.putExtra(EXTRA_TOP_CATE, tagCate)
                 } else {
                     intent.putExtra(
-                        PreviewItemFragment.TOP_CATE,
+                        EXTRA_TOP_CATE,
                         Cate.getCategory<TopCate>(tagCate.parent)
                     )
-                    intent.putExtra(PreviewItemFragment.SUB_CATE, tagCate)
+                    intent.putExtra(EXTRA_SUB_CATE, tagCate)
                 }
                 context.startActivity(intent)
             }
@@ -193,7 +194,7 @@ fun DetailHeaderLayout(
             ) {
                 val onAuthorClick = {
                     val intent = Intent(context, TagActivity::class.java)
-                        .putExtra(AuthorItemFragment.AUTHOR, creatorObj)
+                        .putExtra(EXTRA_AUTHOR, creatorObj)
                     context.startActivity(intent)
                 }
 
