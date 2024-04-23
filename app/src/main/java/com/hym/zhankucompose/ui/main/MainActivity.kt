@@ -26,13 +26,11 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.compose.ui.zIndex
-import androidx.core.view.ViewCompat
 import com.hym.zhankucompose.BaseActivity
 import com.hym.zhankucompose.MyAppViewModel
-import com.hym.zhankucompose.databinding.FragmentSearchBinding
 import com.hym.zhankucompose.getAppViewModel
+import com.hym.zhankucompose.ui.search.SearchPage
 import com.hym.zhankucompose.ui.theme.ComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.collections.immutable.persistentListOf
@@ -124,15 +122,7 @@ class MainActivity : BaseActivity() {
                         beyondBoundsPageCount = 1 + categoryItems.size
                     ) { page ->
                         when (page) {
-                            0 -> AndroidViewBinding(
-                                factory = FragmentSearchBinding::inflate,
-                                onReset = {}
-                            ) {
-                                // Nested scrolling interop is enabled when nested scroll is enabled
-                                // for the root View
-                                ViewCompat.setNestedScrollingEnabled(searchContainer, true)
-                            }
-
+                            0 -> SearchPage()
                             else -> PreviewItemPage(topCate = categoryItems[page - 1])
                         }
                     }
