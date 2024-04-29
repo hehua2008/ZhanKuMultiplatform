@@ -1,3 +1,6 @@
 [submodule "ssiv"]
 	path = ssiv
 	url = git@github.com:hehua2008/subsampling-scale-image-view.git
+[submodule "subsamplingimage"]
+	path = subsamplingimage
+	url = git@github.com:hehua2008/ComposeSubsamplingImage.git

@@ -8,21 +8,23 @@ android-targetSdk = "34"
 
 # kotlin
 kotlin = "1.9.23"
-kotlinxCoroutines = "1.8.0"
+kotlinxCoroutines = "1.8.1"
 kotlinxImmutable = "0.3.7"
 kotlinxSerialization = "1.6.3"
 ksp = "1.9.23-1.0.20"
 
 # androidx
-androidxLifecycle = "2.7.0"
-androidxPaging = "3.2.1"
+androidxLifecycle = "2.8.0"
+androidxPaging = "3.3.0"
 androidxMedia3 = "1.3.1"
 
 # compose
+composePlugin = "1.6.2"
 composeCompiler = "1.5.12"
-composeBom = "2024.04.01"
+composeBom = "2024.05.00"
 
 # squareup
+okio = "3.9.0"
 okhttp = "4.12.0"
 retrofitBom = "2.11.0"
 
@@ -41,6 +43,7 @@ espressoCore = "3.5.1"
 [libraries]
 # test
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidJunit" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 
@@ -51,10 +54,10 @@ kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotli
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
 # androix
-androidx-annotation = { group = "androidx.annotation", name = "annotation", version = "1.7.1" }
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.13.0" }
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version = "1.8.0" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.13.1" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version = "1.6.1" }
-androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version = "1.6.2" }
+androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version = "1.7.1" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidxLifecycle" }
 androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "androidxLifecycle" }
@@ -89,11 +92,12 @@ androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-te
 
 # androix compose
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.9.0" }
-androidx-compose-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version = "1.6.6" }
+androidx-compose-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version = "1.6.7" }
 androidx-constraintlayout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version = "1.1.0-alpha13" }
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "androidxPaging" }
 
 # squareup
+squareup-okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
 squareup-okhttp3-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 squareup-okhttp3-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 squareup-retrofit2-bom = { group = "com.squareup.retrofit2", name = "retrofit-bom", version.ref = "retrofitBom" }
@@ -118,7 +122,7 @@ hilt-kapt = { group = "com.google.dagger", name = "hilt-compiler", version.ref =
 hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltExt" }
 
 # google
-google-material = { group = "com.google.android.material", name = "material", version = "1.11.0" }
+google-material = { group = "com.google.android.material", name = "material", version = "1.12.0" }
 google-flexbox = { group = "com.google.android.flexbox", name = "flexbox", version = "3.0.0" }
 google-gson = { group = "com.google.code.gson", name = "gson", version = "2.10.1" }
 
@@ -126,6 +130,7 @@ google-gson = { group = "com.google.code.gson", name = "gson", version = "2.10.1
 jsoup = { group = "org.jsoup", name = "jsoup", version = "1.17.1" }
 rtmp-client = { group = "io.antmedia", name = "rtmp-client", version = "3.2.0" }
 compose-markdown = { group = "com.github.jeziellago", name = "compose-markdown", version = "0.4.1" }
+napier = { group = "io.github.aakira", name = "napier", version = "2.7.1" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -135,6 +140,9 @@ androidTest = { id = "com.android.test", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinParcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "composePlugin" }
 
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
