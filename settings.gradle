@@ -26,8 +26,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "ZhanKuCompose"
 include(":app")
-include(":photoviewer")
-include(":photoviewerdemo")
 include(":logcollector")
 include(":composetrack")
 include(":composetrack:composetrackstub")

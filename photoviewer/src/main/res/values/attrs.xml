@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <declare-styleable name="PhotoView">
-        <attr name="allowCrop" format="boolean" />
-        <attr name="fixedHeight" format="dimension|integer" />
-        <attr name="enableImageTransforms" format="boolean" />
-        <attr name="maxInitialScale" format="float" />
-    </declare-styleable>
-</resources>

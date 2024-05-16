@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="photo_view_titles">"<xliff:g id="TITLE_0">%1$s</xliff:g>，<xliff:g id="SUBTITLE">%2$s</xliff:g>"</string>
-    <string name="photo_view_count">"第 <xliff:g id="CURRENT_POS">%1$d</xliff:g> 张，共 <xliff:g id="COUNT">%2$d</xliff:g> 张"</string>
-    <string name="load_photo_failed">"无法加载图片"</string>
-    <string name="swipe_to_retry_load">向下滑动重试加载</string>
-    <string name="save_current_photo">保存这张图片</string>
-    <string name="save_all_photos">保存所有图片</string>
-</resources>
