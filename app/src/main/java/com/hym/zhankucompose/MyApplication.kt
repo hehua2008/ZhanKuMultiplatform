@@ -1,14 +1,12 @@
 package com.hym.zhankucompose
 
 import android.app.Application
-import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
@@ -50,8 +48,6 @@ class MyApplication : Application(), ViewModelStoreOwner, HasDefaultViewModelPro
             }
         })
         */
-
-        SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
 
         val deferredList: MutableList<Deferred<*>> = mutableListOf()
         deferredList.add(getAppViewModel<MyAppViewModel>().getCategoryItemsFromNetworkAsync())

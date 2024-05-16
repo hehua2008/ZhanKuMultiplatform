@@ -154,7 +154,6 @@ dependencies {
     implementation(libs.rtmp.client)
 
     // local
-    implementation(project(":ssiv:library"))
     implementation(project(":composetrack"))
     implementation(project(":subsamplingimage:library"))
 

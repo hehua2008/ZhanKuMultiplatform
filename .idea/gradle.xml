@@ -29,8 +29,6 @@
             <option value="$PROJECT_DIR$/logcollector" />
             <option value="$PROJECT_DIR$/photoviewer" />
             <option value="$PROJECT_DIR$/photoviewerdemo" />
-            <option value="$PROJECT_DIR$/ssiv" />
-            <option value="$PROJECT_DIR$/ssiv/library" />
             <option value="$PROJECT_DIR$/subsamplingimage" />
             <option value="$PROJECT_DIR$/subsamplingimage/library" />
           </set>

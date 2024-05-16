@@ -75,12 +75,6 @@
         </activity>
 
         <activity
-            android:name=".ui.photoviewer.PhotoViewerActivity"
-            android:exported="true"
-            android:theme="@style/Theme.ZhanKuCompose.Fullscreen">
-        </activity>
-
-        <activity
             android:name=".ui.imagepager.ZoomImagePagerActivity"
             android:exported="true"
             android:theme="@style/Theme.ZhanKuCompose.Fullscreen">

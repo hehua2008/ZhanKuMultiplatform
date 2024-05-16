@@ -28,7 +28,6 @@ rootProject.name = "ZhanKuCompose"
 include(":app")
 include(":photoviewer")
 include(":photoviewerdemo")
-include(":ssiv:library")
 include(":logcollector")
 include(":composetrack")
 include(":composetrack:composetrackstub")
