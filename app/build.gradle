@@ -111,16 +111,10 @@ dependencies {
     implementation(libs.squareup.okhttp3.okhttp)
     implementation(libs.squareup.okhttp3.logging)
 
-    // glide
-    implementation(libs.glide)
-    implementation(libs.glide.recyclerview) {
-        transitive = false
-    }
-    implementation(libs.glide.okhttp3)
-    implementation(libs.glide.avif)
-    implementation(libs.glide.transformations)
-    implementation(libs.gpuimage)
-    ksp(libs.glide.ksp)
+    // coil
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.ktor)
 
     // hilt
     implementation(libs.hilt.android)
@@ -138,7 +132,6 @@ dependencies {
     implementation(libs.androidx.compose.livedata)
     implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.androidx.compose.ui.viewbinding)
-    implementation(libs.glide.compose)
     //implementation(libs.compose.markdown)
 
     // google

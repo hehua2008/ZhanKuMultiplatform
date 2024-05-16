@@ -41,9 +41,7 @@ import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Visibility
 import androidx.core.text.HtmlCompat
-import com.bumptech.glide.integration.compose.CrossFade
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil3.compose.AsyncImage
 import com.hym.zhankucompose.R
 import com.hym.zhankucompose.compose.BUTTON_CONTENT_PADDING
 import com.hym.zhankucompose.compose.COMMON_PADDING
@@ -71,7 +69,7 @@ import kotlinx.collections.immutable.toImmutableList
  * @author hehua2008
  * @date 2021/12/10
  */
-@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailHeaderLayout(
     titleStr: String,
@@ -198,7 +196,7 @@ fun DetailHeaderLayout(
                     context.startActivity(intent)
                 }
 
-                GlideImage(
+                AsyncImage(
                     model = creatorObj.avatar1x,
                     contentDescription = creatorObj.avatar1x,
                     modifier = Modifier
@@ -206,8 +204,8 @@ fun DetailHeaderLayout(
                         .aspectRatio(1f)
                         .clip(CircleShape)
                         .clickable(onClick = onAuthorClick),
-                    contentScale = ContentScale.Crop,
-                    transition = CrossFade
+                    contentScale = ContentScale.Crop/*,
+                    transition = CrossFade*/
                 )
 
                 RemoveAccessibilityExtraSpace {

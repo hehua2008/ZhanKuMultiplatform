@@ -20,8 +20,5 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -keep class androidx.** { *; }
--keep class com.bumptech.glide.** { *; }
--keep public class * extends com.bumptech.glide.module.AppGlideModule
--keep class com.bumptech.glide.GeneratedAppGlideModuleImpl
 
 -dontwarn org.slf4j.impl.StaticLoggerBinder

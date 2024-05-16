@@ -1,6 +1,5 @@
 package com.hym.zhankucompose.ui.detail
 
-import android.graphics.drawable.Drawable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -29,13 +28,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.core.text.HtmlCompat
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideSubcomposition
-import com.bumptech.glide.integration.compose.RequestState
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
+import coil3.annotation.ExperimentalCoilApi
+import coil3.compose.AsyncImagePainter
+import coil3.compose.SubcomposeAsyncImage
+import coil3.decode.DataSource
 import com.hym.zhankucompose.compose.rememberMutableState
 import com.hym.zhankucompose.compose.toAnnotatedString
 
@@ -43,7 +39,7 @@ import com.hym.zhankucompose.compose.toAnnotatedString
  * @author hehua2008
  * @date 2024/3/17
  */
-@OptIn(ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun DetailContentImage(
     detailImage: DetailImage,
@@ -59,8 +55,9 @@ fun DetailContentImage(
     val enter = remember { fadeIn() }
     val exit = remember { fadeOut() }
 
-    GlideSubcomposition(
+    SubcomposeAsyncImage(
         model = detailImage.data.url,
+        contentDescription = detailImage.data.url,
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(
@@ -73,36 +70,20 @@ fun DetailContentImage(
                     onClick(detailImage)
                 }
             },
-        requestBuilderTransform = { request ->
-            overrideSize?.let {
-                request.override(it.width, it.height)
-            } ?: request.listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Drawable>,
-                    isFirstResource: Boolean
-                ): Boolean = false
-
-                override fun onResourceReady(
-                    resource: Drawable,
-                    model: Any,
-                    target: Target<Drawable>?,
-                    dataSource: DataSource,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    val intSize = IntSize(resource.intrinsicWidth, resource.intrinsicHeight)
-                    if (intSize.width > 0 && intSize.height > 0 && overrideSize != intSize) {
-                        overrideSize = intSize
-                        updatedOnGetSize?.invoke(intSize)
-                        return true
-                    }
-                    return false
+        onState = { state ->
+            val success = state as? AsyncImagePainter.State.Success
+                ?: return@SubcomposeAsyncImage
+            overrideSize ?: run {
+                val image = success.result.image
+                val intSize = IntSize(image.width, image.height)
+                if (intSize.width > 0 && intSize.height > 0 && overrideSize != intSize) {
+                    overrideSize = intSize
+                    updatedOnGetSize?.invoke(intSize)
                 }
-            })
+            }
         }
     ) {
-        val snapshotState = state
+        val snapshotState = painter.state
 
         val imageContent: @Composable () -> Unit = {
             Image(
@@ -119,10 +100,10 @@ fun DetailContentImage(
         }
 
         // If loaded from memory, do not show animation
-        if ((snapshotState as? RequestState.Success)?.dataSource === DataSource.MEMORY_CACHE) {
+        if ((snapshotState as? AsyncImagePainter.State.Success)?.result?.dataSource === DataSource.MEMORY_CACHE) {
             imageContent()
         } else { // Show animation
-            val isSuccess = (snapshotState is RequestState.Success)
+            val isSuccess = (snapshotState is AsyncImagePainter.State.Success)
 
             AnimatedVisibility(
                 visible = isSuccess,
@@ -132,12 +113,12 @@ fun DetailContentImage(
                 imageContent()
             }
 
-            if (loadingPainter == null && failurePainter == null) return@GlideSubcomposition
+            if (loadingPainter == null && failurePainter == null) return@SubcomposeAsyncImage
 
             val placeholder = when {
-                (snapshotState === RequestState.Loading) && loadingPainter != null -> loadingPainter
-                (snapshotState === RequestState.Failure) && failurePainter != null -> failurePainter
-                else -> loadingPainter ?: return@GlideSubcomposition // animate to show image
+                (snapshotState is AsyncImagePainter.State.Loading) && loadingPainter != null -> loadingPainter
+                (snapshotState is AsyncImagePainter.State.Error) && failurePainter != null -> failurePainter
+                else -> loadingPainter ?: return@SubcomposeAsyncImage // animate to show image
             }
 
             AnimatedVisibility(

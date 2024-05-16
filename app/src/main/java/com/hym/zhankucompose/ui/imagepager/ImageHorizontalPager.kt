@@ -15,24 +15,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.IntSize
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hym.compose.subsamplingimage.DefaultImageBitmapRegionDecoderFactory
 import com.hym.compose.subsamplingimage.SubsamplingImage
 import com.hym.compose.subsamplingimage.SubsamplingState
+import com.hym.compose.subsamplingimage.recycle
 import com.hym.compose.zoom.rememberZoomState
 import com.hym.zhankucompose.R
-import com.hym.zhankucompose.photo.PhotoInfo
+import com.hym.zhankucompose.photo.UrlPhotoInfo
+import com.hym.zhankucompose.ui.CommonViewModel
 import kotlinx.collections.immutable.ImmutableList
-import okio.Path.Companion.toOkioPath
+import okio.FileSystem
+import okio.Path
 
 /**
  * @author hehua2008
@@ -43,14 +42,13 @@ private const val TAG = "ImageHorizontalPager"
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ImageHorizontalPager(
-    photoInfoList: ImmutableList<PhotoInfo<*>>,
+    commonViewModel: CommonViewModel = viewModel(),
+    photoInfoList: ImmutableList<UrlPhotoInfo>,
     modifier: Modifier = Modifier,
     initialIndex: Int = 0,
     beyondBoundsPageCount: Int = 1,
     pagerState: PagerState = rememberPagerState(initialPage = initialIndex) { photoInfoList.size }
 ) {
-    val context = LocalContext.current
-    val requestManager = remember(context) { Glide.with(context) }
     val loadingPainter = rememberVectorPainter(
         ImageVector.vectorResource(R.drawable.vector_image)
     )
@@ -92,23 +90,24 @@ fun ImageHorizontalPager(
             doubleClickZoomScale = 4f
         )
         val photoInfo = remember(photoInfoList, page) { photoInfoList[page] }
+        var photoPath by remember { mutableStateOf<Path?>(null) }
 
         SubsamplingImage(
             zoomState = zoomState,
-            sourceDecoderProvider = remember(requestManager, photoInfo.original) {
+            sourceDecoderProvider = remember(photoInfo.original) {
                 {
-                    val path = requestManager.asFile()
-                        .load(photoInfo.original)
-                        .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.DATA))
-                        .submit()
-                        .get()
-                        .toOkioPath(true)
-                    DefaultImageBitmapRegionDecoderFactory(path)
+                    val url = photoInfo.original
+                    commonViewModel.prepareGetFile(url) { bytesSentTotal, contentLength ->
+                        Log.d(TAG, "Downloading($bytesSentTotal/$contentLength) $url")
+                    }.let { path ->
+                        photoPath = path
+                        DefaultImageBitmapRegionDecoderFactory(path)
+                    }
                 }
             },
-            previewProvider = remember(requestManager, photoInfo.thumb) {
+            previewProvider = remember(photoInfo.thumb) {
                 {
-                    requestManager.asBitmap().load(photoInfo.thumb).submit().get().asImageBitmap()
+                    commonViewModel.getImageBitmap(photoInfo.thumb)
                 }
             },
             sourceIntSize = IntSize(photoInfo.width, photoInfo.height),
@@ -138,6 +137,7 @@ fun ImageHorizontalPager(
                     Log.e(TAG, "loadEvent:[$page] SourceLoadError for $photoInfo", loadEvent.e)
                     showLoading = false
                     showFailure = true
+                    photoPath?.let { FileSystem.SYSTEM.delete(it) }
                 }
 
                 is SubsamplingState.LoadEvent.TileLoadError -> {
@@ -146,11 +146,12 @@ fun ImageHorizontalPager(
 
                 is SubsamplingState.LoadEvent.DisposePreview -> {
                     Log.d(TAG, "loadEvent:[$page] DisposePreview for $photoInfo")
-                    //loadEvent.preview.recycle()
+                    loadEvent.preview.recycle()
                 }
 
                 SubsamplingState.LoadEvent.Destroyed -> {
                     Log.d(TAG, "loadEvent:[$page] Destroyed for $photoInfo")
+                    photoPath?.let { FileSystem.SYSTEM.delete(it) }
                 }
             }
         }

@@ -6,52 +6,66 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.Toast
-import com.bumptech.glide.Glide
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import com.hym.zhankucompose.MyApplication
-import kotlinx.coroutines.*
+import com.hym.zhankucompose.hilt.NetworkModule
+import com.hym.zhankucompose.network.prepareGetFile
+import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okio.FileSystem
+import okio.Path
+import okio.Sink
+import okio.Source
+import okio.buffer
+import okio.sink
 import java.io.File
 import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
 
 object PictureUtils {
-    private const val TAG = "PictureUtils"
-    private const val DIR_NAME = "ZhanKu"
+    private val TAG = "PictureUtils"
+    private val DIR_NAME = "ZhanKu"
 
-    @JvmStatic
-    fun download(imgUrls: List<String>) {
+    fun download(snackbarHostState: SnackbarHostState? = null, imgUrls: List<String>) {
         if (imgUrls.isEmpty()) return
-        download(*imgUrls.toTypedArray())
+        download(snackbarHostState, *imgUrls.toTypedArray())
     }
 
-    @JvmStatic
-    fun download(vararg imgUrls: String) {
+    fun download(snackbarHostState: SnackbarHostState? = null, vararg imgUrls: String) {
         if (imgUrls.isEmpty()) return
-        GlobalScope.launch(Dispatchers.Main) {
-            downloadCoroutine(*imgUrls)
+        GlobalScope.launch {
+            coroutineDownload(snackbarHostState, *imgUrls)
         }
     }
 
-    suspend fun downloadCoroutine(imgUrls: List<String>): List<String> {
+    suspend fun coroutineDownload(
+        snackbarHostState: SnackbarHostState? = null,
+        imgUrls: List<String>
+    ): List<String> {
         if (imgUrls.isEmpty()) return emptyList()
-        return downloadCoroutine(*imgUrls.toTypedArray())
+        return coroutineDownload(snackbarHostState, *imgUrls.toTypedArray())
     }
 
-    suspend fun downloadCoroutine(vararg imgUrls: String): List<String> {
+    suspend fun coroutineDownload(
+        snackbarHostState: SnackbarHostState? = null,
+        vararg imgUrls: String
+    ): List<String> {
         if (imgUrls.isEmpty()) return emptyList()
         return withContext(Dispatchers.Main) {
             val context = MyApplication.INSTANCE
-            val imgFiles = mutableListOf<File>()
+            val accessor =
+                EntryPointAccessors.fromApplication(context, NetworkModule.Accessor::class.java)
+            val httpClient = accessor.httpClient()
+            val imgFiles = mutableListOf<Path>()
             val startMsg = "Start to download ${imgUrls.size} images"
             Log.d(TAG, startMsg)
-            Toast.makeText(context, startMsg, Toast.LENGTH_SHORT).show()
+            snackbarHostState?.showSnackbar(message = startMsg)
             val failedUrls = mutableListOf<String>()
             imgUrls.forEachIndexed { index, url ->
-                val futureTarget = Glide.with(context)
-                    .download(url)
-                    .submit()
-
                 val deferred = async(Dispatchers.IO) {
                     val name = Uri.parse(url).lastPathSegment?.let {
                         if (it.lastIndexOf('.') == -1) "$it.jpg" else it
@@ -65,10 +79,12 @@ object PictureUtils {
                             values.put(MediaStore.Images.Media.MIME_TYPE, "image/png")
                             values.put(MediaStore.Images.Media.TITLE, "Image.png")
                         }
+
                         name.endsWith(".gif") -> {
                             values.put(MediaStore.Images.Media.MIME_TYPE, "image/gif")
                             values.put(MediaStore.Images.Media.TITLE, "Image.gif")
                         }
+
                         else -> {
                             values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
                             values.put(MediaStore.Images.Media.TITLE, "Image.jpg")
@@ -88,28 +104,33 @@ object PictureUtils {
                         return@async null
                     }
                     val src = try {
-                        futureTarget.get()
+                        val path = FileSystem.SYSTEM_TEMPORARY_DIRECTORY / name
+                        httpClient.prepareGetFile(url, path)
+                        path
                     } catch (e: Exception) {
                         Log.e(TAG, "download $url failed", e)
                         return@async null
                     }
-                    var output: OutputStream? = null
-                    var input: InputStream? = null
+                    var source: Source? = null
+                    var sink: Sink? = null
                     try {
-                        output = resolver.openOutputStream(insertUri)
+                        val output = resolver.openOutputStream(insertUri)
                         if (output == null) {
                             Log.e(TAG, "openOutputStream for $insertUri failed")
                             return@async null
                         }
-                        input = src.inputStream()
-                        input.copyTo(output)
+                        sink = output.sink().buffer()
+                        source = FileSystem.SYSTEM.source(src).buffer()
+                        do {
+                            val count = source.read(sink.buffer, 8192)
+                        } while (count > 0)
                         return@async src
                     } catch (e: IOException) {
                         Log.e(TAG, "copy $src to $insertUri failed", e)
                         return@async null
                     } finally {
-                        output?.close()
-                        input?.close()
+                        sink?.close()
+                        source?.close()
                     }
                 }
 
@@ -120,14 +141,16 @@ object PictureUtils {
                         failedUrls.add(url)
                         val failedMsg = "Failed to download ${index + 1})/${imgUrls.size}: $url"
                         Log.w(TAG, failedMsg)
-                        Toast.makeText(context, failedMsg, Toast.LENGTH_SHORT).show()
+                        snackbarHostState?.showSnackbar(
+                            message = failedMsg, duration = SnackbarDuration.Long
+                        )
                     }
                 }
             }
 
             val completeMsg = "Saved ${imgFiles.size} images"
             Log.d(TAG, completeMsg)
-            Toast.makeText(context, completeMsg, Toast.LENGTH_LONG).show()
+            snackbarHostState?.showSnackbar(message = completeMsg, duration = SnackbarDuration.Long)
             failedUrls
         }
     }

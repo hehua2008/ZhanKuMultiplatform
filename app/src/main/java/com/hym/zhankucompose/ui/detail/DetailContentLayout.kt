@@ -14,14 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import com.bumptech.glide.integration.compose.rememberGlidePreloadingData
 import com.hym.zhankucompose.R
 import com.hym.zhankucompose.compose.COMMON_PADDING
 import com.hym.zhankucompose.photo.UrlPhotoInfo
@@ -134,27 +132,6 @@ fun DetailContentLayout(
     BoxWithConstraints {
         val maxWidth = constraints.maxWidth
 
-        val glidePreloadingData = if (imageList.isEmpty()) null else
-            rememberGlidePreloadingData(
-                data = imageList,
-                preloadImageSize = Size(1f, 1f),
-                numberOfItemsToPreload = 2
-            ) { item, requestBuilder ->
-                // preloadImageSize is applied for you, but .load() is not because determining the
-                // model from the underlying data isn't trivial. Don't forget to call .load()!
-                val size = sizeCache[item] ?: item.data.run {
-                    if (maxWidth != Constraints.Infinity && width > 0 && height > 0) {
-                        IntSize(
-                            maxWidth, (maxWidth * height / width.toFloat()).roundToInt()
-                        )
-                    } else null
-                }
-                requestBuilder.load(item.data.url).onlyRetrieveFromCache(true).run {
-                    if (size == null) this
-                    else override(size.width, size.height)
-                }
-            }
-
         LazyColumn(
             modifier = modifier,
             state = lazyListState,
@@ -178,8 +155,8 @@ fun DetailContentLayout(
                     }
                 }
             ) { index ->
+                // TODO: Preload image
                 val detailContent = detailContents[index]
-                val triggerPreload = glidePreloadingData?.get(nearestImageIndexes[index])
                 when (detailContent) {
                     is DetailImage -> {
                         val size = sizeCache[detailContent] ?: detailContent.data.run {

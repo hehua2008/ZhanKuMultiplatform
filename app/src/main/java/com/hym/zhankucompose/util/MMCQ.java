@@ -1,6 +1,5 @@
 package com.hym.zhankucompose.util;
 
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -8,6 +7,7 @@ import android.util.Log;
 import android.util.SparseLongArray;
 
 import androidx.annotation.IntDef;
+import androidx.compose.ui.graphics.ImageBitmap;
 import androidx.core.graphics.ColorUtils;
 
 import java.lang.annotation.Retention;
@@ -51,7 +51,7 @@ public class MMCQ {
      * @param bitmap   Image data [[A, R, G, B], ...]
      * @param maxColor Between [2, 256]
      */
-    public MMCQ(final Bitmap bitmap, int maxColor) {
+    public MMCQ(final ImageBitmap bitmap, int maxColor) {
         this(bitmap, maxColor, 0.85d, 5);
     }
 
@@ -61,38 +61,30 @@ public class MMCQ {
      * @param fraction Between [0.3, 0.9]
      * @param sigbits  5 or 6
      */
-    public MMCQ(final Bitmap bitmap, int maxColor, double fraction, int sigbits) {
+    public MMCQ(final ImageBitmap bitmap, int maxColor, double fraction, int sigbits) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        if (width > 100 || height > 100) {
+            throw new IllegalArgumentException("width/height of bitmap should be less than 100!");
+        }
+        mWidth = width;
+        mHeight = height;
         if (maxColor < 2 || maxColor > 256) {
-            throw new IllegalArgumentException("maxColor should between [2, 256]!");
+            throw new IllegalArgumentException("maxColor should be between [2, 256]!");
         }
         mMaxColor = maxColor;
         if (fraction < 0.3 || fraction > 0.9) {
-            throw new IllegalArgumentException("fraction should between [0.3, 0.9]!");
+            throw new IllegalArgumentException("fraction should be between [0.3, 0.9]!");
         }
         mFraction = fraction;
         if (sigbits < 5 || sigbits > 6) {
-            throw new IllegalArgumentException("sigbits should between [5, 6]!");
+            throw new IllegalArgumentException("sigbits should be between [5, 6]!");
         }
         mSigbits = sigbits;
         mRshift = 8 - mSigbits;
 
-        int height = bitmap.getHeight();
-        int width = bitmap.getWidth();
-        double hScale = 100d / (double) height;
-        double wScale = 100d / (double) width;
-        double scale = Math.min(hScale, wScale);
-        Bitmap scaledBitmap = bitmap;
-        if (scale < 0.8) {
-            scaledBitmap = Bitmap.createScaledBitmap(
-                    bitmap, (int) (scale * width), (int) (scale * height), false);
-        }
-        mWidth = scaledBitmap.getWidth();
-        mHeight = scaledBitmap.getHeight();
-        mPixelRGB = new int[mWidth * mHeight];
-        scaledBitmap.getPixels(mPixelRGB, 0, mWidth, 0, 0, mWidth, mHeight);
-        if (scaledBitmap != bitmap) {
-            scaledBitmap.recycle();
-        }
+        mPixelRGB = new int[width * height];
+        bitmap.readPixels(mPixelRGB, 0, 0, width, height, 0, width);
 
         initPixHisto();
     }

@@ -31,14 +31,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import com.bumptech.glide.Glide
 import com.hym.zhankucompose.R
 import com.hym.zhankucompose.compose.EMPTY_BLOCK
 import com.hym.zhankucompose.compose.FlingVelocityListener
@@ -46,7 +44,6 @@ import com.hym.zhankucompose.compose.NestedScrollConnectionDelegate
 import com.hym.zhankucompose.compose.listenableFlingBehavior
 import com.hym.zhankucompose.compose.plus
 import com.hym.zhankucompose.compose.rememberMutableFloatState
-import com.hym.zhankucompose.compose.rememberMutableState
 import com.hym.zhankucompose.model.Content
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -123,8 +120,6 @@ fun PreviewLayout(
     val stopFastScrollVelocityThreshold by rememberMutableFloatState(density) {
         with(density) { 1000.dp.toPx() }
     }
-    val context = LocalContext.current
-    val requestManager by rememberMutableState(context) { Glide.with(context) }
     val flingVelocityListener = remember {
         // startFastScrollVelocityThreshold, stopFastScrollVelocityThreshold and requestManager will
         // always refer to the latest value.
@@ -135,7 +130,6 @@ fun PreviewLayout(
                 if (abs(initialVelocity) >= startFastScrollVelocityThreshold) {
                     fastScrollStarted = true
                     Log.d(TAG, "startFastScroll at $initialVelocity px/sec")
-                    requestManager.pauseRequestsRecursive()
                 }
                 if (!lazyGridState.canScrollForward ||
                     (initialVelocity < 0f && lazyGridState.canScrollBackward)
@@ -148,7 +142,6 @@ fun PreviewLayout(
                 if (fastScrollStarted && abs(remainingVelocity) < stopFastScrollVelocityThreshold) {
                     fastScrollStarted = false
                     Log.d(TAG, "stopFastScroll at $remainingVelocity px/sec")
-                    requestManager.resumeRequestsRecursive()
                 }
             }
 
@@ -156,7 +149,6 @@ fun PreviewLayout(
                 if (fastScrollStarted) {
                     fastScrollStarted = false
                     Log.d(TAG, "stopFastScroll")
-                    requestManager.resumeRequestsRecursive()
                 }
             }
         }

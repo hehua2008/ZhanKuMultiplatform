@@ -16,7 +16,6 @@ import com.hym.zhankucompose.R
 import com.hym.zhankucompose.network.CookieManager
 import com.hym.zhankucompose.network.FileStorage
 import com.hym.zhankucompose.network.HeaderInterceptor
-import com.hym.zhankucompose.network.ImageNetInterceptor
 import com.hym.zhankucompose.network.LogInterceptor
 import com.hym.zhankucompose.network.NetworkConstants
 import com.hym.zhankucompose.network.NetworkService
@@ -43,7 +42,6 @@ import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okio.FileSystem
 import java.io.File
-import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -71,16 +69,6 @@ object NetworkModule {
             .cache(Cache(okHttpCacheDir, 200 * 1024 * 1024))
             //.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 8888)))
             //.eventListenerFactory(TrackEventListener.Factory())
-            .build()
-    }
-
-    @Named("ImageOkHttp")
-    @Singleton
-    @Provides
-    fun provideImageOkHttp(okHttpClient: OkHttpClient): OkHttpClient {
-        return okHttpClient.newBuilder()
-            //.addInterceptor(ImageInterceptor())
-            .addNetworkInterceptor(ImageNetInterceptor())
             .build()
     }
 
@@ -204,8 +192,7 @@ object NetworkModule {
     interface Accessor {
         fun okHttpClient(): OkHttpClient
 
-        @Named("ImageOkHttp")
-        fun imageOkHttpClient(): OkHttpClient
+        fun httpClient(): HttpClient
 
         fun networkService(): NetworkService
 

@@ -28,9 +28,7 @@ import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.Visibility
-import com.bumptech.glide.integration.compose.CrossFade
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil3.compose.AsyncImage
 import com.hym.zhankucompose.compose.BUTTON_CONTENT_PADDING
 import com.hym.zhankucompose.compose.COMMON_PADDING
 import com.hym.zhankucompose.compose.EMPTY_BLOCK
@@ -45,8 +43,7 @@ import com.hym.zhankucompose.model.Content
  */
 @OptIn(
     ExperimentalFoundationApi::class,
-    ExperimentalMaterial3Api::class,
-    ExperimentalGlideComposeApi::class
+    ExperimentalMaterial3Api::class
 )
 @Composable
 fun PreviewItem(
@@ -89,7 +86,7 @@ fun PreviewItem(
             chainStyle = ChainStyle.SpreadInside
         )
 
-        GlideImage(
+        AsyncImage(
             model = content.cover1x,
             contentDescription = content.cover,
             modifier = Modifier
@@ -104,11 +101,11 @@ fun PreviewItem(
                 .fillMaxSize()
                 .clip(ShapeDefaults.Small)
                 .clickable(onClick = onImageClick),
-            contentScale = ContentScale.Crop,
-            transition = CrossFade
+            contentScale = ContentScale.Crop/*,
+            transition = CrossFade*/
         )
 
-        GlideImage(
+        AsyncImage(
             model = content.creatorObj.avatar1x,
             contentDescription = content.creatorObj.avatar,
             modifier = Modifier
@@ -123,9 +120,8 @@ fun PreviewItem(
                 }
                 .clip(CircleShape)
                 .clickable(onClick = onAuthorClick),
-            contentScale = ContentScale.Crop,
-            transition = CrossFade/*,
-            requestBuilderTransform = { it.circleCrop() }*/
+            contentScale = ContentScale.Crop/*,
+            transition = CrossFade*/
         )
 
         RemoveAccessibilityExtraSpace {

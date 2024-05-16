@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -18,14 +19,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil3.compose.AsyncImage
 import com.hym.zhankucompose.BaseActivity
 import com.hym.zhankucompose.R
 import com.hym.zhankucompose.model.CreatorObj
@@ -42,7 +43,7 @@ const val EXTRA_SUB_CATE = "SUB_CATE"
 
 @AndroidEntryPoint
 class TagActivity : BaseActivity() {
-    @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
 
@@ -70,12 +71,11 @@ class TagActivity : BaseActivity() {
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 if (author != null) {
-                                    GlideImage(
+                                    AsyncImage(
                                         model = author.avatar1x,
-                                        contentDescription = author.username
-                                    ) {
-                                        it.optionalCircleCrop()
-                                    }
+                                        contentDescription = author.username,
+                                        modifier = Modifier.clip(CircleShape)
+                                    )
                                 }
                                 Text(
                                     text = mTitle,

@@ -7,10 +7,20 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import androidx.work.*
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.Data
+import androidx.work.ForegroundInfo
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
+import androidx.work.WorkerParameters
+import com.hym.zhankucompose.R
 import com.hym.zhankucompose.util.PictureUtils
 import java.util.concurrent.TimeUnit
-import com.hym.zhankucompose.R
 
 /**
  * @author hehua2008
@@ -86,7 +96,8 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
 
     override suspend fun doWork(): Result {
         val imgUrls: Array<String> = inputData.getStringArray(KEY_URLS) ?: return Result.success()
-        val failedUrls = PictureUtils.downloadCoroutine(*imgUrls)
+        // TODO: Fix show Snackbar
+        val failedUrls = PictureUtils.coroutineDownload(null, *imgUrls)
         return Result.success()
     }
 }
