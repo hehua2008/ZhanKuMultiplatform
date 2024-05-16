@@ -26,10 +26,14 @@ composeBom = "2024.05.00"
 # squareup
 okio = "3.9.0"
 okhttp = "4.12.0"
-retrofitBom = "2.11.0"
 
 # glide
 glide = "5.0.0-rc01"
+
+# ktor
+#ktor = "2.3.11" # Too much memory leak: https://youtrack.jetbrains.com/issue/KTOR-5049/Memory-leak-in-Darwin-engine
+#ktor = "3.0.0-beta-1" # Could not find "io.ktor:ktor-utils-cinterop-threadUtils": https://youtrack.jetbrains.com/issue/KTOR-6995/Could-not-find-io.ktorktor-utils-cinterop-threadUtils-on-KMP-project
+ktor = "3.0.0-beta-2-eap-932"
 
 # hilt
 hilt = "2.51"
@@ -100,10 +104,6 @@ androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", 
 squareup-okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
 squareup-okhttp3-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 squareup-okhttp3-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
-squareup-retrofit2-bom = { group = "com.squareup.retrofit2", name = "retrofit-bom", version.ref = "retrofitBom" }
-squareup-retrofit2-retrofit = { group = "com.squareup.retrofit2", name = "retrofit" }
-squareup-retrofit2-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson" }
-squareup-retrofit2-converter-kotlinx-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization" }
 squareup-leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version = "2.12" }
 
 # glide
@@ -125,6 +125,15 @@ hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.r
 google-material = { group = "com.google.android.material", name = "material", version = "1.12.0" }
 google-flexbox = { group = "com.google.android.flexbox", name = "flexbox", version = "3.0.0" }
 google-gson = { group = "com.google.code.gson", name = "gson", version = "2.10.1" }
+
+# ktor
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
+ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
+ktor-client-encoding = { group = "io.ktor", name = "ktor-client-encoding", version.ref = "ktor" }
+ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 # others
 jsoup = { group = "org.jsoup", name = "jsoup", version = "1.17.1" }

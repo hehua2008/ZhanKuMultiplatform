@@ -110,10 +110,6 @@ dependencies {
     // squareup
     implementation(libs.squareup.okhttp3.okhttp)
     implementation(libs.squareup.okhttp3.logging)
-    implementation(platform(libs.squareup.retrofit2.bom))
-    implementation(libs.squareup.retrofit2.retrofit)
-    implementation(libs.squareup.retrofit2.converter.kotlinx.serialization)
-    //implementation(libs.squareup.retrofit2.converter.gson)
 
     // glide
     implementation(libs.glide)
@@ -148,6 +144,14 @@ dependencies {
     // google
     implementation(libs.google.material)
     implementation(libs.google.flexbox)
+
+    // ktor
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.encoding)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
 
     // others
     implementation(libs.jsoup)

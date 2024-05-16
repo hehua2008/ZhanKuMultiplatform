@@ -12,11 +12,6 @@ class HeaderInterceptor : Interceptor {
         val request = chain.request()
         val host = request.url.host
         val newRequest = request.newBuilder().run {
-            if (Constants.HOST == host || Constants.API_HOST == host) {
-                Constants.BASE_HEADERS.forEach { (name, value) ->
-                    header(name, value)
-                }
-            }
             if (request.body == null && request.method == "GET" && request.header("Cache-Control") == null) {
                 cacheControl(CacheControl.Builder().maxAge(60, TimeUnit.SECONDS).build())
             }

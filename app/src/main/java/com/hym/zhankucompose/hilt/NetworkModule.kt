@@ -2,6 +2,7 @@ package com.hym.zhankucompose.hilt
 
 import android.app.Application
 import android.graphics.drawable.Drawable
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.media3.database.DatabaseProvider
 import androidx.media3.database.StandaloneDatabaseProvider
@@ -11,33 +12,36 @@ import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
 import androidx.media3.datasource.okhttp.OkHttpDataSource
-import com.bumptech.glide.load.engine.cache.DiskCache
 import com.hym.zhankucompose.R
-import com.hym.zhankucompose.model.Cate
-import com.hym.zhankucompose.model.SubCate
-import com.hym.zhankucompose.model.TopCate
-import com.hym.zhankucompose.network.Constants
-import com.hym.zhankucompose.network.ConverterFactoryDelegate
 import com.hym.zhankucompose.network.CookieManager
+import com.hym.zhankucompose.network.FileStorage
 import com.hym.zhankucompose.network.HeaderInterceptor
 import com.hym.zhankucompose.network.ImageNetInterceptor
 import com.hym.zhankucompose.network.LogInterceptor
+import com.hym.zhankucompose.network.NetworkConstants
 import com.hym.zhankucompose.network.NetworkService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asExecutor
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.HttpRequestRetry
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.UserAgent
+import io.ktor.client.plugins.cache.HttpCache
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.cookies.ConstantCookiesStorage
+import io.ktor.client.plugins.cookies.HttpCookies
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.http.URLProtocol
+import io.ktor.serialization.kotlinx.json.json
 import okhttp3.Cache
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import okio.FileSystem
 import java.io.File
 import javax.inject.Named
 import javax.inject.Singleton
@@ -46,18 +50,6 @@ import javax.inject.Singleton
  * @author hehua2008
  * @date 2022/8/4
  */
-private val JsonDefault = Json {
-    ignoreUnknownKeys = true
-    SerializersModule {
-        polymorphic(Cate::class) {
-            subclass(TopCate::class, TopCate.TopCateTypeAdapter)
-            subclass(SubCate::class, SubCate.SubCateTypeAdapter)
-        }
-    }
-}
-
-private val JsonDefaultFactory = JsonDefault.asConverterFactory("application/json".toMediaType())
-
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
@@ -94,19 +86,66 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl(Constants.API_URL)
-            .addConverterFactory(ConverterFactoryDelegate(JsonDefaultFactory))
-            .callbackExecutor(Dispatchers.IO.asExecutor())
-            .build()
+    fun provideHttpClient(): HttpClient {
+        return HttpClient {
+            //expectSuccess = true
+            followRedirects = true
+
+            install(DefaultRequest) {
+                url {
+                    protocol = URLProtocol.HTTPS
+                }
+            }
+
+            install(UserAgent) {
+                agent = NetworkConstants.USER_AGENT
+            }
+
+            install(HttpRequestRetry) {
+                retryOnServerErrors(maxRetries = 3)
+                exponentialDelay()
+            }
+
+            install(ContentNegotiation) {
+                json(NetworkConstants.JsonDefault)
+            }
+
+            install(HttpCookies) {
+                storage = ConstantCookiesStorage()
+            }
+
+            /*
+            install(ContentEncoding) {
+                deflate(1.0f)
+                gzip(0.9f)
+            }
+            */
+
+            install(HttpCache) {
+                val cacheFile = FileSystem.SYSTEM_TEMPORARY_DIRECTORY / "KtorHttpCache"
+                publicStorage(FileStorage(cacheFile))
+            }
+
+            install(HttpTimeout) {
+                requestTimeoutMillis = 60_000
+            }
+
+            install(Logging) {
+                logger = object : Logger {
+                    override fun log(message: String) {
+                        Log.d("HttpClient", message)
+                    }
+                }
+                level = LogLevel.HEADERS
+                //sanitizeHeader { header -> header == HttpHeaders.Authorization }
+            }
+        }
     }
 
     @Singleton
     @Provides
-    fun provideNetworkService(retrofit: Retrofit): NetworkService {
-        return retrofit.create(NetworkService::class.java)
+    fun provideNetworkService(httpClient: HttpClient): NetworkService {
+        return NetworkService(httpClient)
     }
 
     @Singleton
@@ -150,8 +189,7 @@ object NetworkModule {
         // An on-the-fly cache should evict media when reaching a maximum disk space limit.
         val exoCache = SimpleCache(
             exoCacheDir,
-            // Keep the same cache size as image cache
-            LeastRecentlyUsedCacheEvictor(DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE.toLong()),
+            LeastRecentlyUsedCacheEvictor(250 * 1024 * 1024),
             exoDatabaseProvider
         )
 
@@ -168,8 +206,6 @@ object NetworkModule {
 
         @Named("ImageOkHttp")
         fun imageOkHttpClient(): OkHttpClient
-
-        fun retrofit(): Retrofit
 
         fun networkService(): NetworkService
 
