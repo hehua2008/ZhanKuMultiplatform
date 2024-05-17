@@ -1,6 +1,9 @@
 package com.hym.zhankucompose.compose
 
+import android.content.res.Resources
 import android.graphics.BitmapFactory
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import coil3.BitmapImage
@@ -10,6 +13,18 @@ import coil3.annotation.ExperimentalCoilApi
  * @author hehua2008
  * @date 2024/4/26
  */
+@OptIn(ExperimentalCoilApi::class)
+object EmptyCoilImage : coil3.Image {
+    override val size: Long = 0
+    override val width: Int = 0
+    override val height: Int = 0
+    override val shareable: Boolean = true
+
+    private val emptyDrawable = ColorDrawable()
+
+    override fun asDrawable(resources: Resources): Drawable = emptyDrawable
+}
+
 fun ByteArray.decodeToImageBitmap(): ImageBitmap {
     val bitmap = BitmapFactory.decodeByteArray(this, 0, size)
     return bitmap.asImageBitmap()

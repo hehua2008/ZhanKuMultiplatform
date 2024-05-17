@@ -21,17 +21,25 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.ImageLoader
+import coil3.annotation.ExperimentalCoilApi
+import coil3.compose.LocalPlatformContext
+import coil3.decode.DecodeResult
+import coil3.decode.Decoder
+import coil3.disk.DiskCache
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import com.hym.compose.subsamplingimage.DefaultImageBitmapRegionDecoderFactory
 import com.hym.compose.subsamplingimage.SubsamplingImage
 import com.hym.compose.subsamplingimage.SubsamplingState
-import com.hym.compose.subsamplingimage.recycle
 import com.hym.compose.zoom.rememberZoomState
 import com.hym.zhankucompose.R
+import com.hym.zhankucompose.compose.EmptyCoilImage
+import com.hym.zhankucompose.compose.toImageBitmap
 import com.hym.zhankucompose.photo.UrlPhotoInfo
 import com.hym.zhankucompose.ui.CommonViewModel
 import kotlinx.collections.immutable.ImmutableList
-import okio.FileSystem
-import okio.Path
+import okhttp3.internal.closeQuietly
 
 /**
  * @author hehua2008
@@ -39,7 +47,7 @@ import okio.Path
  */
 private const val TAG = "ImageHorizontalPager"
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalCoilApi::class)
 @Composable
 fun ImageHorizontalPager(
     commonViewModel: CommonViewModel = viewModel(),
@@ -55,6 +63,9 @@ fun ImageHorizontalPager(
     val failurePainter = rememberVectorPainter(
         ImageVector.vectorResource(R.drawable.vector_image_broken)
     )
+
+    val platformContext = LocalPlatformContext.current
+    val imageLoader = ImageLoader(platformContext)
 
     HorizontalPager(
         state = pagerState,
@@ -90,12 +101,14 @@ fun ImageHorizontalPager(
             doubleClickZoomScale = 4f
         )
         val photoInfo = remember(photoInfoList, page) { photoInfoList[page] }
-        var photoPath by remember { mutableStateOf<Path?>(null) }
+        //var photoPath by remember { mutableStateOf<Path?>(null) }
+        var originalSnapshot by remember { mutableStateOf<DiskCache.Snapshot?>(null) }
 
         SubsamplingImage(
             zoomState = zoomState,
             sourceDecoderProvider = remember(photoInfo.original) {
                 {
+                    /*
                     val url = photoInfo.original
                     commonViewModel.prepareGetFile(url) { bytesSentTotal, contentLength ->
                         Log.d(TAG, "Downloading($bytesSentTotal/$contentLength) $url")
@@ -103,11 +116,37 @@ fun ImageHorizontalPager(
                         photoPath = path
                         DefaultImageBitmapRegionDecoderFactory(path)
                     }
+                    */
+
+                    // To preload a network image only into the disk cache
+                    val imageRequest = ImageRequest.Builder(platformContext)
+                        .data(photoInfo.original)
+                        // Disable reading from/writing to the memory cache.
+                        .memoryCachePolicy(CachePolicy.DISABLED)
+                        // Set a custom `Decoder.Factory` that skips the decoding step.
+                        .decoderFactory { _, _, _ ->
+                            Decoder { DecodeResult(EmptyCoilImage, false) }
+                        }
+                        .build()
+                    val imageResult = imageLoader.execute(imageRequest)
+                    val snapshot = imageLoader.diskCache!!
+                        .openSnapshot(photoInfo.original)!!
+                    originalSnapshot = snapshot
+                    DefaultImageBitmapRegionDecoderFactory(snapshot.data)
                 }
             },
             previewProvider = remember(photoInfo.thumb) {
                 {
-                    commonViewModel.getImageBitmap(photoInfo.thumb)
+                    //commonViewModel.getImageBitmap(photoInfo.thumb)
+
+                    // To preload an image into memory, enqueue or execute an ImageRequest without a Target
+                    val request = ImageRequest.Builder(platformContext)
+                        .data(photoInfo.thumb)
+                        // Optional, but setting a ViewSizeResolver will conserve memory by limiting the size the image should be preloaded into memory at.
+                        //.size(ViewSizeResolver(imageView))
+                        .build()
+                    val imageResult = imageLoader.execute(request)
+                    imageResult.image!!.toImageBitmap()
                 }
             },
             sourceIntSize = IntSize(photoInfo.width, photoInfo.height),
@@ -137,7 +176,8 @@ fun ImageHorizontalPager(
                     Log.e(TAG, "loadEvent:[$page] SourceLoadError for $photoInfo", loadEvent.e)
                     showLoading = false
                     showFailure = true
-                    photoPath?.let { FileSystem.SYSTEM.delete(it) }
+                    //photoPath?.let { FileSystem.SYSTEM.delete(it) }
+                    originalSnapshot?.closeQuietly()
                 }
 
                 is SubsamplingState.LoadEvent.TileLoadError -> {
@@ -146,12 +186,13 @@ fun ImageHorizontalPager(
 
                 is SubsamplingState.LoadEvent.DisposePreview -> {
                     Log.d(TAG, "loadEvent:[$page] DisposePreview for $photoInfo")
-                    loadEvent.preview.recycle()
+                    //loadEvent.preview.recycle()
                 }
 
                 SubsamplingState.LoadEvent.Destroyed -> {
                     Log.d(TAG, "loadEvent:[$page] Destroyed for $photoInfo")
-                    photoPath?.let { FileSystem.SYSTEM.delete(it) }
+                    //photoPath?.let { FileSystem.SYSTEM.delete(it) }
+                    originalSnapshot?.closeQuietly()
                 }
             }
         }
