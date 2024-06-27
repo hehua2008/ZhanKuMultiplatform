@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import com.hym.zhankucompose.compose.decodeToImageBitmap
 import com.hym.zhankucompose.network.prepareGetBytes
+import com.hym.zhankucompose.network.use
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -27,9 +28,10 @@ import javax.inject.Inject
 class CommonViewModel @Inject constructor(private val httpClient: HttpClient) :
     ViewModel() {
     suspend fun getImageBitmap(url: String): ImageBitmap {
-        val response = httpClient.get(url)
-        val byteArray: ByteArray = response.body()
-        return byteArray.decodeToImageBitmap()
+        httpClient.get(url).use { response ->
+            val byteArray: ByteArray = response.body()
+            return byteArray.decodeToImageBitmap()
+        }
     }
 
     suspend fun getFile(
@@ -46,30 +48,31 @@ class CommonViewModel @Inject constructor(private val httpClient: HttpClient) :
         }
         //FileSystem.SYSTEM.delete(dataFile)
 
-        val response = httpClient.get(url) {
+        httpClient.get(url) {
             onDownload { bytesSentTotal, contentLength ->
                 onProgress?.invoke(bytesSentTotal, contentLength)
             }
-        }
-        val bodyChannel = response.bodyAsChannel()
+        }.use { response ->
+            val bodyChannel = response.bodyAsChannel()
 
-        val now = getTimeMillis()
-        val tmpFile = FileSystem.SYSTEM_TEMPORARY_DIRECTORY / "ktor_$md5-$now.tmp"
-        //FileSystem.SYSTEM.delete(tmpFile)
+            val now = getTimeMillis()
+            val tmpFile = FileSystem.SYSTEM_TEMPORARY_DIRECTORY / "ktor_$md5-$now.tmp"
+            //FileSystem.SYSTEM.delete(tmpFile)
 
-        FileSystem.SYSTEM.sink(tmpFile, true).buffer().use { bufferedSink ->
-            val bytes = ByteArray(8192)
-            while (true) {
-                val count = bodyChannel.readAvailable(bytes)
-                if (count <= 0) break
-                bufferedSink.write(bytes, 0, count)
+            FileSystem.SYSTEM.sink(tmpFile, true).buffer().use { bufferedSink ->
+                val bytes = ByteArray(8192)
+                while (true) {
+                    val count = bodyChannel.readAvailable(bytes)
+                    if (count <= 0) break
+                    bufferedSink.write(bytes, 0, count)
+                }
+                bufferedSink.flush()
             }
-            bufferedSink.flush()
-        }
 
-        // "ktor_$md5-$now.tmp"" -> "ktor_$md5.data"
-        FileSystem.SYSTEM.atomicMove(tmpFile, dataFile)
-        return dataFile
+            // "ktor_$md5-$now.tmp"" -> "ktor_$md5.data"
+            FileSystem.SYSTEM.atomicMove(tmpFile, dataFile)
+            return dataFile
+        }
     }
 
     suspend fun prepareGetFile(

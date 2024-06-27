@@ -23,7 +23,9 @@ class NetworkService(private val httpClient: HttpClient) {
                 path("v2/api/topCate")
                 parameters.append("app", app)
             }
-        }.body()
+        }.use { response ->
+            response.body()
+        }
     }
 
     // https://api.zcool.com.cn/v2/api/discoverListNew?app=android&p=1&ps=10&activity=0&recommendLevel=3&contentType=0
@@ -54,7 +56,9 @@ class NetworkService(private val httpClient: HttpClient) {
                 lastId?.let { parameters.append("lastId", "$it") }
                 parameters.append("contentType", "$contentType")
             }
-        }.body()
+        }.use { response ->
+            response.body()
+        }
     }
 
     // https://api.zcool.com.cn/v2/api/u/601779?app=android&p=1&ps=10&sort=8
@@ -76,7 +80,9 @@ class NetworkService(private val httpClient: HttpClient) {
                 parameters.append("sort", "$sort")
                 lastId?.let { parameters.append("lastId", "$it") }
             }
-        }.body()
+        }.use { response ->
+            response.body()
+        }
     }
 
     // https://api.zcool.com.cn/v2/api/getAllCategoryListContainArticle.do?app=android
@@ -87,7 +93,9 @@ class NetworkService(private val httpClient: HttpClient) {
                 path("v2/api/getAllCategoryListContainArticle.do")
                 parameters.append("app", app)
             }
-        }.body()
+        }.use { response ->
+            response.body()
+        }
     }
 
     // https://api.zcool.com.cn/v2/api/work/ZNTY3NDkxOTI=.html?app=android
@@ -101,7 +109,9 @@ class NetworkService(private val httpClient: HttpClient) {
                 path("v2/api/work/$workId")
                 parameters.append("app", app)
             }
-        }.body()
+        }.use { response ->
+            response.body()
+        }
     }
 
     // https://api.zcool.com.cn/v2/api/article/ZMTQ0MDY4NA==.html?app=android
@@ -115,7 +125,9 @@ class NetworkService(private val httpClient: HttpClient) {
                 path("v2/api/article/$articleId")
                 parameters.append("app", app)
             }
-        }.body()
+        }.use { response ->
+            response.body()
+        }
     }
 
     //https://api.zcool.com.cn/v2/api/search/contentList?app=android&p=1&ps=10&type=3&word=
@@ -145,7 +157,9 @@ class NetworkService(private val httpClient: HttpClient) {
                 parameters.append("type", "$type")
                 parameters.append("word", word)
             }
-        }.body()
+        }.use { response ->
+            response.body()
+        }
     }
 
     //https://api.zcool.com.cn/v2/api/search/designer/v3?app=android&p=1&ps=10&word=
@@ -164,6 +178,8 @@ class NetworkService(private val httpClient: HttpClient) {
                 parameters.append("ps", "$pageSize")
                 parameters.append("word", word)
             }
-        }.body()
+        }.use { response ->
+            response.body()
+        }
     }
 }
