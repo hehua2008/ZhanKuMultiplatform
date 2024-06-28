@@ -6,8 +6,7 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import com.hym.zhankucompose.MyApplication
-import com.hym.zhankucompose.hilt.NetworkModule
-import dagger.hilt.android.EntryPointAccessors
+import com.hym.zhankucompose.di.GlobalComponent
 import java.util.concurrent.atomic.AtomicInteger
 
 object PlayerFactory {
@@ -15,9 +14,7 @@ object PlayerFactory {
 
     private val APP_CONTEXT: Application by lazy { MyApplication.INSTANCE }
     private val COUNT = AtomicInteger(0)
-    private val cacheDataSourceFactory =
-        EntryPointAccessors.fromApplication(APP_CONTEXT, NetworkModule.Accessor::class.java)
-            .exoCacheDataSourceFactory()
+    private val cacheDataSourceFactory = GlobalComponent.Instance.exoCacheDataSourceFactory
 
     fun create(): Player {
         val count = COUNT.incrementAndGet()

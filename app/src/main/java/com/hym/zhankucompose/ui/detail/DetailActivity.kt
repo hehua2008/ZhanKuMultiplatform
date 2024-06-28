@@ -71,14 +71,12 @@ import com.hym.zhankucompose.ui.theme.ComposeTheme
 import com.hym.zhankucompose.ui.webview.WebViewActivity
 import com.hym.zhankucompose.util.MMCQ
 import com.hym.zhankucompose.work.DownloadWorker
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-@AndroidEntryPoint
 class DetailActivity : BaseActivity() {
     companion object {
         const val KEY_TITLE = "TITLE"

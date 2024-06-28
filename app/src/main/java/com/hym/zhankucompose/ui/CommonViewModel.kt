@@ -3,9 +3,9 @@ package com.hym.zhankucompose.ui
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import com.hym.zhankucompose.compose.decodeToImageBitmap
+import com.hym.zhankucompose.di.GlobalComponent
 import com.hym.zhankucompose.network.prepareGetBytes
 import com.hym.zhankucompose.network.use
-import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.onDownload
@@ -18,14 +18,12 @@ import okio.FileSystem
 import okio.Path
 import okio.buffer
 import okio.use
-import javax.inject.Inject
 
 /**
  * @author hehua2008
  * @date 2024/5/12
  */
-@HiltViewModel
-class CommonViewModel @Inject constructor(private val httpClient: HttpClient) :
+class CommonViewModel(private val httpClient: HttpClient = GlobalComponent.Instance.httpClient) :
     ViewModel() {
     suspend fun getImageBitmap(url: String): ImageBitmap {
         httpClient.get(url).use { response ->

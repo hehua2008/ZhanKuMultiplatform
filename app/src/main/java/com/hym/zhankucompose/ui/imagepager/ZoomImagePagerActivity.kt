@@ -48,11 +48,9 @@ import com.hym.zhankucompose.BaseActivity
 import com.hym.zhankucompose.R
 import com.hym.zhankucompose.photo.UrlPhotoInfo
 import com.hym.zhankucompose.ui.theme.ComposeTheme
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.collectLatest
 
-@AndroidEntryPoint
 class ZoomImagePagerActivity : BaseActivity() {
     companion object {
         private const val TAG = "ZoomImagePagerActivity"

@@ -9,6 +9,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.hym.zhankucompose.di.GlobalComponent
 import com.hym.zhankucompose.model.Content
 import com.hym.zhankucompose.model.ContentType
 import com.hym.zhankucompose.model.RecommendLevel
@@ -18,13 +19,10 @@ import com.hym.zhankucompose.network.NetworkService
 import com.hym.zhankucompose.paging.LoadParamsHolder
 import com.hym.zhankucompose.paging.SearchContentPagingSource
 import com.hym.zhankucompose.paging.TotalPagesCallback
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-@HiltViewModel
-class SearchContentPageViewModel @Inject constructor(private val networkService: NetworkService) :
+class SearchContentPageViewModel(private val networkService: NetworkService = GlobalComponent.Instance.networkService) :
     ViewModel() {
     companion object {
         private const val TAG = "SearchContentPageViewModel"

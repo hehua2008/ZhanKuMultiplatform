@@ -1,4 +1,4 @@
-package com.hym.zhankucompose.hilt
+package com.hym.zhankucompose.di
 
 import android.app.Application
 import android.graphics.drawable.Drawable
@@ -12,6 +12,7 @@ import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
 import androidx.media3.datasource.okhttp.OkHttpDataSource
+import com.hym.zhankucompose.MyApplication
 import com.hym.zhankucompose.R
 import com.hym.zhankucompose.network.CookieManager
 import com.hym.zhankucompose.network.FileStorage
@@ -19,11 +20,6 @@ import com.hym.zhankucompose.network.HeaderInterceptor
 import com.hym.zhankucompose.network.LogInterceptor
 import com.hym.zhankucompose.network.NetworkConstants
 import com.hym.zhankucompose.network.NetworkService
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.HttpRequestRetry
@@ -38,23 +34,48 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okio.FileSystem
 import java.io.File
-import javax.inject.Singleton
 
 /**
  * @author hehua2008
  * @date 2022/8/4
  */
-@Module
-@InstallIn(SingletonComponent::class)
-object NetworkModule {
-    private const val OKHTTP_CACHE_DIR_NAME = "okhttp"
-    private const val EXO_CACHE_DIR_NAME = "exocache"
+@Component
+@ApplicationScope
+abstract class GlobalComponent {
+    companion object {
+        private const val OKHTTP_CACHE_DIR_NAME = "okhttp"
+        private const val EXO_CACHE_DIR_NAME = "exocache"
 
-    @Singleton
+        val Instance: GlobalComponent = GlobalComponent::class.create()
+    }
+
+    abstract val okHttpClient: OkHttpClient
+
+    abstract val httpClient: HttpClient
+
+    abstract val networkService: NetworkService
+
+    abstract val transparentDrawable: Drawable
+
+    abstract val exoDataSourceFactory: DataSource.Factory
+
+    abstract val exoDatabaseProvider: DatabaseProvider
+
+    abstract val exoCacheDataSourceFactory: CacheDataSource.Factory
+
+    @ApplicationScope
+    @Provides
+    fun provideApplication(): Application {
+        return MyApplication.INSTANCE
+    }
+
+    @ApplicationScope
     @Provides
     fun provideOkHttp(app: Application, cookieManager: CookieManager): OkHttpClient {
         val okHttpCacheDir = File(app.cacheDir, OKHTTP_CACHE_DIR_NAME)
@@ -72,7 +93,7 @@ object NetworkModule {
             .build()
     }
 
-    @Singleton
+    @ApplicationScope
     @Provides
     fun provideHttpClient(): HttpClient {
         return HttpClient {
@@ -130,19 +151,19 @@ object NetworkModule {
         }
     }
 
-    @Singleton
+    @ApplicationScope
     @Provides
     fun provideNetworkService(httpClient: HttpClient): NetworkService {
         return NetworkService(httpClient)
     }
 
-    @Singleton
+    @ApplicationScope
     @Provides
     fun provideTransparentDrawable(app: Application): Drawable {
         return ContextCompat.getDrawable(app, R.drawable.transparent)!!
     }
 
-    @Singleton
+    @ApplicationScope
     @Provides
     fun provideExoDataSourceFactory(
         app: Application,
@@ -156,13 +177,13 @@ object NetworkModule {
     }
 
     // Note: This should be a singleton in your app.
-    @Singleton
+    @ApplicationScope
     @Provides
     fun provideExoDatabaseProvider(app: Application): DatabaseProvider {
         return StandaloneDatabaseProvider(app)
     }
 
-    @Singleton
+    @ApplicationScope
     @Provides
     fun provideExoCacheDataSourceFactory(
         app: Application,
@@ -185,19 +206,5 @@ object NetworkModule {
         return CacheDataSource.Factory()
             .setCache(exoCache)
             .setUpstreamDataSourceFactory(upstreamDataSourceFactory)
-    }
-
-    @EntryPoint
-    @InstallIn(SingletonComponent::class)
-    interface Accessor {
-        fun okHttpClient(): OkHttpClient
-
-        fun httpClient(): HttpClient
-
-        fun networkService(): NetworkService
-
-        fun transparentDrawable(): Drawable
-
-        fun exoCacheDataSourceFactory(): CacheDataSource.Factory
     }
 }

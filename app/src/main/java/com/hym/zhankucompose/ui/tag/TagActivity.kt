@@ -35,13 +35,11 @@ import com.hym.zhankucompose.model.TopCate
 import com.hym.zhankucompose.ui.author.AuthorItemPage
 import com.hym.zhankucompose.ui.main.PreviewItemPage
 import com.hym.zhankucompose.ui.theme.ComposeTheme
-import dagger.hilt.android.AndroidEntryPoint
 
 const val EXTRA_AUTHOR = "AUTHOR"
 const val EXTRA_TOP_CATE = "TOP_CATE"
 const val EXTRA_SUB_CATE = "SUB_CATE"
 
-@AndroidEntryPoint
 class TagActivity : BaseActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -10,19 +10,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LoadState
+import com.hym.zhankucompose.di.GlobalComponent
 import com.hym.zhankucompose.model.ArticleDetails
 import com.hym.zhankucompose.model.ContentType
 import com.hym.zhankucompose.model.WorkDetails
 import com.hym.zhankucompose.network.NetworkService
 import com.hym.zhankucompose.player.PlayerProvider
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class DetailViewModel @Inject constructor(private val networkService: NetworkService) :
+class DetailViewModel(private val networkService: NetworkService = GlobalComponent.Instance.networkService) :
     ViewModel() {
     companion object {
         private const val TAG = "DetailViewModel"

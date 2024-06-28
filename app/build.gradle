@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kapt)
-    alias(libs.plugins.hilt)
     id("compose.track")
 }
 
@@ -66,8 +65,8 @@ android {
     }
 }
 
-hilt {
-    enableAggregatingTask = true
+ksp {
+    arg("me.tatarka.inject.dumpGraph", "true")
 }
 
 kapt {
@@ -113,9 +112,9 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.ktor)
 
-    // hilt
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.kapt)
+    // Kotlin Inject
+    implementation(libs.kotlinInject.runtime.kmp)
+    ksp(libs.kotlinInject.compiler)
 
     // compose
     implementation(libs.androidx.activity.compose)

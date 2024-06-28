@@ -1,22 +1,18 @@
 package com.hym.zhankucompose.network
 
-import android.content.Context
+import android.app.Application
 import android.util.Log
 import com.hym.zhankucompose.util.HexDump
 import com.hym.zhankucompose.util.StringUtils
-import dagger.hilt.android.qualifiers.ApplicationContext
+import me.tatarka.inject.annotations.Inject
 import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
 import java.io.*
 import java.util.concurrent.ConcurrentHashMap
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class CookieManager @Inject constructor(
-    @ApplicationContext private val mContext: Context
-) : CookieJar {
+@Inject
+class CookieManager(private val mContext: Application) : CookieJar {
     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
         val host = url.toUrl().host
         val cookieSerialize = CookieSerialize(cookies.toMutableList())

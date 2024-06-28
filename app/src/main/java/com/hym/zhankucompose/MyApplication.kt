@@ -7,12 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
-import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 
-@HiltAndroidApp
 class MyApplication : Application(), ViewModelStoreOwner, HasDefaultViewModelProviderFactory {
     override fun onCreate() {
         super.onCreate()

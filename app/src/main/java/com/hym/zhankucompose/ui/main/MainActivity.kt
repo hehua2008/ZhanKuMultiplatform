@@ -32,11 +32,9 @@ import com.hym.zhankucompose.MyAppViewModel
 import com.hym.zhankucompose.getAppViewModel
 import com.hym.zhankucompose.ui.search.SearchPage
 import com.hym.zhankucompose.ui.theme.ComposeTheme
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 
-@AndroidEntryPoint
 class MainActivity : BaseActivity() {
     companion object {
         private const val TAG = "MainActivity"

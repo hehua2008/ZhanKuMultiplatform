@@ -34,9 +34,8 @@ coil = "3.0.0-alpha06"
 #ktor = "3.0.0-beta-1" # Could not find "io.ktor:ktor-utils-cinterop-threadUtils": https://youtrack.jetbrains.com/issue/KTOR-6995/Could-not-find-io.ktorktor-utils-cinterop-threadUtils-on-KMP-project
 ktor = "2.3.12"
 
-# hilt
-hilt = "2.51"
-hiltExt = "1.2.0"
+# Kotlin Inject(https://github.com/evant/kotlin-inject)
+kotlinInject = "0.7.1"
 
 # test
 junit = "4.13.2"
@@ -110,10 +109,9 @@ coil = { group = "io.coil-kt.coil3", name = "coil", version.ref = "coil" }
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network-ktor = { group = "io.coil-kt.coil3", name = "coil-network-ktor", version.ref = "coil" }
 
-# hilt
-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
-hilt-kapt = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
-hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltExt" }
+# Kotlin Inject
+kotlinInject-compiler = { group = "me.tatarka.inject", name = "kotlin-inject-compiler-ksp", version.ref = "kotlinInject" }
+kotlinInject-runtime-kmp = { group = "me.tatarka.inject", name = "kotlin-inject-runtime-kmp", version.ref = "kotlinInject" }
 
 # google
 google-material = { group = "com.google.android.material", name = "material", version = "1.12.0" }
@@ -150,4 +148,3 @@ composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "k
 
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }

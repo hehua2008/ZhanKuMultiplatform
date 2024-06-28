@@ -9,9 +9,8 @@ import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import com.hym.zhankucompose.MyApplication
-import com.hym.zhankucompose.hilt.NetworkModule
+import com.hym.zhankucompose.di.GlobalComponent
 import com.hym.zhankucompose.network.prepareGetFile
-import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -57,9 +56,7 @@ object PictureUtils {
         if (imgUrls.isEmpty()) return emptyList()
         return withContext(Dispatchers.Main) {
             val context = MyApplication.INSTANCE
-            val accessor =
-                EntryPointAccessors.fromApplication(context, NetworkModule.Accessor::class.java)
-            val httpClient = accessor.httpClient()
+            val httpClient = GlobalComponent.Instance.httpClient
             val imgFiles = mutableListOf<Path>()
             val startMsg = "Start to download ${imgUrls.size} images"
             Log.d(TAG, startMsg)

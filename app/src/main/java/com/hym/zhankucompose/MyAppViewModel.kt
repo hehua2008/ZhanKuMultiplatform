@@ -6,9 +6,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.hym.zhankucompose.hilt.NetworkModule
+import com.hym.zhankucompose.di.GlobalComponent
 import com.hym.zhankucompose.model.TopCate
-import dagger.hilt.android.EntryPointAccessors
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Deferred
@@ -25,9 +24,7 @@ class MyAppViewModel(private val app: Application) : AndroidViewModel(app) {
 
     fun getCategoryItemsFromNetworkAsync(): Deferred<Unit> = viewModelScope.async(Dispatchers.IO) {
         try {
-            val accessor =
-                EntryPointAccessors.fromApplication(app, NetworkModule.Accessor::class.java)
-            accessor.networkService().getAllCategoryListContainArticle().run {
+            GlobalComponent.Instance.networkService.getAllCategoryListContainArticle().run {
                 dataContent.also {
                     if (it == null) Log.e(TAG, "getCategoryItemList failed: $msg")
                     else _categoryItems.postValue(it.toImmutableList())
