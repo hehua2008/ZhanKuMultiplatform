@@ -1,7 +1,6 @@
 package com.hym.zhankucompose.ui.imagepager
 
 import android.content.Intent
-import android.graphics.Rect
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
@@ -57,7 +56,6 @@ class ZoomImagePagerActivity : BaseActivity() {
 
         const val PHOTO_INFOS = "PHOTO_INFOS"
         const val CURRENT_POSITION = "CURRENT_POSITION"
-        const val SCREEN_LOCATION = "SCREEN_LOCATION"
     }
 
     private var currentPosition = 0
@@ -163,15 +161,8 @@ class ZoomImagePagerActivity : BaseActivity() {
     }
 
     private fun finish(currentPosition: Int) {
-        val screenLocation = window.decorView.run {
-            IntArray(2).let {
-                getLocationOnScreen(it)
-                Rect(it[0], it[1], it[0] + width, it[1] + height)
-            }
-        }
         val data = Intent()
             .putExtra(CURRENT_POSITION, currentPosition)
-            .putExtra(SCREEN_LOCATION, screenLocation)
         setResult(RESULT_OK, data)
 
         finish()

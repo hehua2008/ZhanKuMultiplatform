@@ -2,7 +2,6 @@ package com.hym.zhankucompose.ui.detail
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Rect
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -50,7 +49,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
@@ -73,6 +71,7 @@ import com.hym.zhankucompose.work.DownloadWorker
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -350,34 +349,12 @@ class DetailActivity : BaseActivity() {
                     }
                 }
 
-                val localView = LocalView.current
-
-                LaunchedEffect(
-                    detailViewModel.positionAndScreenLocation, detailContents, localView
-                ) {
-                    val result = detailViewModel.positionAndScreenLocation ?: return@LaunchedEffect
-                    val detailContentList = detailContents ?: return@LaunchedEffect
-                    val detailImage =
-                        detailContentList.filterIsInstance<DetailImage>().getOrNull(result.first)
-                            ?: return@LaunchedEffect
-                    val tmpArr = IntArray(2)
-                    val screenLocation = result.second ?: localView.rootView.run {
-                        getLocationOnScreen(tmpArr)
-                        Rect(tmpArr[0], tmpArr[1], tmpArr[0] + width, tmpArr[1] + height)
-                    }
-                    val image = detailImage.data
-                    val imageHeight =
-                        if (image.width == 0 || image.height == 0) 0
-                        else (image.height * localView.width / image.width.toFloat()).toInt()
-                    val imageViewScreenTop =
-                        screenLocation.top + (screenLocation.height() - imageHeight) / 2
-                    localView.getLocationOnScreen(tmpArr)
-                    val localViewScreenTop = tmpArr[1]
-                    val offset = imageViewScreenTop - localViewScreenTop
-                    val position = 1 + detailContentList.indexOf(detailImage)
-                    lazyListState.scrollToItem(
-                        position, -offset + with(density) { topAppBarHeight.roundToPx() }
-                    )
+                LaunchedEffect(detailViewModel) {
+                    snapshotFlow { detailViewModel.position }
+                        .collectLatest {
+                            val position = it ?: return@collectLatest
+                            lazyListState.scrollToItem(if (headerContent == null) position else position + 1)
+                        }
                 }
             }
         }
@@ -396,31 +373,28 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun initZoomImagePagerActivityLauncher() {
-        val contract =
-            object : ActivityResultContract<Pair<List<UrlPhotoInfo>, Int>, Pair<Int, Rect?>?>() {
-                override fun createIntent(
-                    context: Context,
-                    input: Pair<List<UrlPhotoInfo>, Int>
-                ): Intent {
-                    return Intent(context, ZoomImagePagerActivity::class.java)
-                        .putParcelableArrayListExtra(
-                            ZoomImagePagerActivity.PHOTO_INFOS,
-                            ArrayList(input.first)
-                        )
-                        .putExtra(ZoomImagePagerActivity.CURRENT_POSITION, input.second)
-                }
-
-                override fun parseResult(resultCode: Int, intent: Intent?): Pair<Int, Rect?>? {
-                    intent ?: return null
-                    val position = intent.getIntExtra(ZoomImagePagerActivity.CURRENT_POSITION, 0)
-                    val screenLocation =
-                        intent.getParcelableExtra<Rect>(ZoomImagePagerActivity.SCREEN_LOCATION)
-                    return position to screenLocation
-                }
+        val contract = object : ActivityResultContract<Pair<List<UrlPhotoInfo>, Int>, Int?>() {
+            override fun createIntent(
+                context: Context,
+                input: Pair<List<UrlPhotoInfo>, Int>
+            ): Intent {
+                return Intent(context, ZoomImagePagerActivity::class.java)
+                    .putParcelableArrayListExtra(
+                        ZoomImagePagerActivity.PHOTO_INFOS,
+                        ArrayList(input.first)
+                    )
+                    .putExtra(ZoomImagePagerActivity.CURRENT_POSITION, input.second)
             }
 
+            override fun parseResult(resultCode: Int, intent: Intent?): Int? {
+                intent ?: return null
+                val position = intent.getIntExtra(ZoomImagePagerActivity.CURRENT_POSITION, 0)
+                return position
+            }
+        }
+
         zoomImagePagerActivityLauncher = registerForActivityResult(contract) { result ->
-            detailViewModel.positionAndScreenLocation = result
+            detailViewModel.position = result
         }
     }
 

@@ -1,6 +1,5 @@
 package com.hym.zhankucompose.ui.detail
 
-import android.graphics.Rect
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,7 +35,7 @@ class DetailViewModel(private val networkService: NetworkService = GlobalCompone
     var loadState by mutableStateOf<LoadState>(NotLoading)
         private set
 
-    var positionAndScreenLocation by mutableStateOf<Pair<Int, Rect?>?>(null)
+    var position by mutableStateOf<Int?>(null)
 
     fun setDetailTypeAndId(type: Int, id: String) {
         viewModelScope.launch(Dispatchers.IO) {
