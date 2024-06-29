@@ -26,7 +26,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 @Immutable
-abstract class Cate : Parcelable {
+sealed class Cate : Parcelable {
     abstract val backgroundImage: String
 
     abstract val commonOrderNo: Int

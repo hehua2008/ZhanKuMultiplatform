@@ -1,6 +1,5 @@
 package com.hym.zhankucompose.ui.main
 
-import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.FlingBehavior
@@ -21,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.times
 import androidx.paging.LoadState
@@ -30,11 +28,11 @@ import androidx.paging.compose.itemKey
 import com.hym.zhankucompose.R
 import com.hym.zhankucompose.compose.COMMON_PADDING
 import com.hym.zhankucompose.model.Content
+import com.hym.zhankucompose.model.ContentType
+import com.hym.zhankucompose.model.CreatorObj
+import com.hym.zhankucompose.model.SubCate
+import com.hym.zhankucompose.model.TopCate
 import com.hym.zhankucompose.ui.NetworkStateLayout
-import com.hym.zhankucompose.ui.detail.DetailActivity
-import com.hym.zhankucompose.ui.tag.EXTRA_AUTHOR
-import com.hym.zhankucompose.ui.tag.TagActivity
-import com.hym.zhankucompose.util.getActivity
 
 /**
  * @author hehua2008
@@ -48,14 +46,14 @@ private val VerticalArrangement = Arrangement.spacedBy(COMMON_PADDING)
 @Composable
 fun PreviewItemGrid(
     lazyPagingItems: LazyPagingItems<Content>,
+    onNavigateToDetails: (contentType: ContentType, contentId: String) -> Unit,
+    onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
     modifier: Modifier = Modifier,
     columnSize: Int = 1,
     lazyGridState: LazyGridState = rememberLazyGridState(),
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
     headerContent: @Composable ((headerModifier: Modifier) -> Unit)? = null
 ) {
-    val view = LocalView.current
-    val activity = remember(view) { view.getActivity() }
     val surfaceContainerColor = MaterialTheme.colorScheme.surfaceContainer
     val horizontalArrangement = remember(columnSize) {
         object : Arrangement.Horizontal by Arrangement.SpaceEvenly {
@@ -106,19 +104,13 @@ fun PreviewItemGrid(
                     commentPainter = commentPainter,
                     favoritePainter = favoritePainter,
                     onImageClick = {
-                        activity?.let {
-                            val intent = Intent(it, DetailActivity::class.java)
-                                .putExtra(DetailActivity.KEY_TITLE, previewItem.formatTitle)
-                                .putExtra(DetailActivity.KEY_CONTENT_TYPE, previewItem.objectType)
-                                .putExtra(DetailActivity.KEY_CONTENT_ID, previewItem.contentId)
-                            it.startActivity(intent)
-                        }
+                        val contentType = ContentType.entries.firstOrNull { type ->
+                            type.value == previewItem.objectType
+                        } ?: ContentType.WORK
+                        onNavigateToDetails(contentType, previewItem.contentId)
                     },
                     onAuthorClick = {
-                        val context = view.context
-                        val intent = Intent(context, TagActivity::class.java)
-                            .putExtra(EXTRA_AUTHOR, previewItem.creatorObj)
-                        context.startActivity(intent)
+                        onNavigateToTagList(previewItem.creatorObj, null, null)
                     }
                 )
             }

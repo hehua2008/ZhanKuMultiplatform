@@ -23,6 +23,8 @@ import com.hym.zhankucompose.compose.SMALL_PADDING_VALUES
 import com.hym.zhankucompose.compose.SimpleLinkText
 import com.hym.zhankucompose.compose.SimpleRadioGroup
 import com.hym.zhankucompose.model.Cate
+import com.hym.zhankucompose.model.ContentType
+import com.hym.zhankucompose.model.CreatorObj
 import com.hym.zhankucompose.model.RecommendLevel
 import com.hym.zhankucompose.model.SubCate
 import com.hym.zhankucompose.model.TopCate
@@ -37,6 +39,8 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 fun PreviewItemPage(
     topCate: TopCate,
+    onNavigateToDetails: (contentType: ContentType, contentId: String) -> Unit,
+    onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
     modifier: Modifier = Modifier,
     initialSubCate: SubCate? = null,
     pageViewModel: PreviewPageViewModel = viewModel(key = topCate.name)
@@ -91,6 +95,8 @@ fun PreviewItemPage(
 
     PreviewLayout(
         lazyPagingItems = lazyPagingItems,
+        onNavigateToDetails = onNavigateToDetails,
+        onNavigateToTagList = onNavigateToTagList,
         modifier = modifier
     ) { headerModifier ->
         Column(

@@ -13,6 +13,7 @@ import com.hym.zhankucompose.model.ContentType
 import com.hym.zhankucompose.model.WorkDetails
 import com.hym.zhankucompose.network.NetworkService
 import com.hym.zhankucompose.player.PlayerProvider
+import com.hym.zhankucompose.util.MMCQ
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -30,6 +31,8 @@ class DetailViewModel(private val networkService: NetworkService = GlobalCompone
     var articleDetails by mutableStateOf<ArticleDetails?>(null)
         private set
 
+    var themeColor by mutableStateOf<MMCQ.ThemeColor?>(null)
+
     val playerProvider = PlayerProvider()
 
     var loadState by mutableStateOf<LoadState>(NotLoading)
@@ -37,11 +40,11 @@ class DetailViewModel(private val networkService: NetworkService = GlobalCompone
 
     var position by mutableStateOf<Int?>(null)
 
-    fun setDetailTypeAndId(type: Int, id: String) {
+    fun setDetailTypeAndId(type: ContentType, id: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 when (type) {
-                    ContentType.WORK.value -> {
+                    ContentType.WORK -> {
                         loadState = LoadState.Loading
 
                         networkService.getWorkDetails(id).run {
@@ -58,7 +61,7 @@ class DetailViewModel(private val networkService: NetworkService = GlobalCompone
                         }
                     }
 
-                    ContentType.ARTICLE.value -> {
+                    ContentType.ARTICLE -> {
                         loadState = LoadState.Loading
 
                         networkService.getArticleDetails(id).run {

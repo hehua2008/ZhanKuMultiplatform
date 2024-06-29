@@ -19,8 +19,11 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.hym.zhankucompose.compose.COMMON_PADDING
 import com.hym.zhankucompose.compose.SimpleLinkText
 import com.hym.zhankucompose.compose.SimpleRadioGroup
+import com.hym.zhankucompose.model.ContentType
 import com.hym.zhankucompose.model.CreatorObj
 import com.hym.zhankucompose.model.SortOrder
+import com.hym.zhankucompose.model.SubCate
+import com.hym.zhankucompose.model.TopCate
 import com.hym.zhankucompose.ui.PagedLayout
 import com.hym.zhankucompose.ui.main.PreviewLayout
 import com.hym.zhankucompose.ui.webview.WebViewActivity
@@ -33,6 +36,8 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 fun AuthorItemPage(
     author: CreatorObj,
+    onNavigateToDetails: (contentType: ContentType, contentId: String) -> Unit,
+    onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
     modifier: Modifier = Modifier,
     pageViewModel: AuthorPageViewModel = viewModel(key = author.username)
 ) {
@@ -69,6 +74,8 @@ fun AuthorItemPage(
 
     PreviewLayout(
         lazyPagingItems = lazyPagingItems,
+        onNavigateToDetails = onNavigateToDetails,
+        onNavigateToTagList = onNavigateToTagList,
         modifier = modifier
     ) { headerModifier ->
         Column(

@@ -35,7 +35,7 @@ import kotlin.math.roundToInt
 @Composable
 fun DetailContentLayout(
     detailContents: ImmutableList<DetailContent<*>>,
-    onImageClick: (list: List<UrlPhotoInfo>, index: Int) -> Unit,
+    onImageClick: (list: ImmutableList<UrlPhotoInfo>, index: Int) -> Unit,
     playerProvider: PlayerProvider,
     onVideoPlayFailed: (detailVideo: DetailVideo) -> Unit,
     modifier: Modifier = Modifier,

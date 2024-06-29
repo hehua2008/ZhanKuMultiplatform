@@ -54,12 +54,9 @@ import com.hym.zhankucompose.compose.SingleLineTextWithDrawable
 import com.hym.zhankucompose.compose.toAnnotatedString
 import com.hym.zhankucompose.model.Cate
 import com.hym.zhankucompose.model.CreatorObj
+import com.hym.zhankucompose.model.SubCate
 import com.hym.zhankucompose.model.TopCate
 import com.hym.zhankucompose.model.WorkDetails
-import com.hym.zhankucompose.ui.tag.EXTRA_AUTHOR
-import com.hym.zhankucompose.ui.tag.EXTRA_SUB_CATE
-import com.hym.zhankucompose.ui.tag.EXTRA_TOP_CATE
-import com.hym.zhankucompose.ui.tag.TagActivity
 import com.hym.zhankucompose.ui.webview.WebViewActivity
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -81,6 +78,7 @@ fun DetailHeaderLayout(
     favoriteCountStr: String,
     shareWordsStr: String = "",
     categories: ImmutableList<Cate> = persistentListOf(),
+    onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
     modifier: Modifier = Modifier,
     onDownloadAllClick: (() -> Unit)? = null
 ) {
@@ -165,18 +163,16 @@ fun DetailHeaderLayout(
                 allSelected = true,
                 itemPadding = SMALL_PADDING_VALUES
             ) {
-                val tagCate = categories[it]
-                val intent = Intent(context, TagActivity::class.java)
-                if (tagCate is TopCate) {
-                    intent.putExtra(EXTRA_TOP_CATE, tagCate)
-                } else {
-                    intent.putExtra(
-                        EXTRA_TOP_CATE,
-                        Cate.getCategory<TopCate>(tagCate.parent)
-                    )
-                    intent.putExtra(EXTRA_SUB_CATE, tagCate)
+                when (val tagCate = categories[it]) {
+                    is TopCate -> {
+                        onNavigateToTagList(null, tagCate, null)
+                    }
+
+                    is SubCate -> {
+                        val topCate = Cate.getCategory<TopCate>(tagCate.parent)
+                        onNavigateToTagList(null, topCate, tagCate)
+                    }
                 }
-                context.startActivity(intent)
             }
 
             Row(
@@ -191,9 +187,7 @@ fun DetailHeaderLayout(
                     .padding(top = COMMON_PADDING)
             ) {
                 val onAuthorClick = {
-                    val intent = Intent(context, TagActivity::class.java)
-                        .putExtra(EXTRA_AUTHOR, creatorObj)
-                    context.startActivity(intent)
+                    onNavigateToTagList(creatorObj, null, null)
                 }
 
                 AsyncImage(
@@ -357,6 +351,7 @@ private fun PreviewDetailHeaderLayout() {
         commentCountStr = workDetails.product.commentCountStr,
         favoriteCountStr = "${workDetails.product.favoriteCount}",
         shareWordsStr = workDetails.sharewords,
+        onNavigateToTagList = { _, _, _ -> },
         modifier = Modifier.background(Color.White)
     )
 }
