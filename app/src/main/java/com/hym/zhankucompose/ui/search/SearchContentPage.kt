@@ -7,15 +7,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hym.zhankucompose.MyAppViewModel
@@ -31,7 +28,6 @@ import com.hym.zhankucompose.model.TopCate
 import com.hym.zhankucompose.ui.PagedLayout
 import com.hym.zhankucompose.ui.main.MainViewModel
 import com.hym.zhankucompose.ui.main.PreviewLayout
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
 /**
@@ -49,31 +45,21 @@ fun SearchContentPage(
         pageViewModel.contentType = contentType
     }
 
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    DisposableEffect(pageViewModel, mainViewModel, lifecycleOwner) {
-        val observer = Observer<String> { pageViewModel.setWord(it) }
-        mainViewModel.word.observe(lifecycleOwner, observer)
-
-        onDispose {
-            mainViewModel.word.removeObserver(observer)
+    LaunchedEffect(pageViewModel, mainViewModel) {
+        mainViewModel.word.collect {
+            pageViewModel.setWord(it)
         }
     }
 
     val lazyPagingItems = pageViewModel.pagingFlow.collectAsLazyPagingItems()
 
-    DisposableEffect(lazyPagingItems, lifecycleOwner) {
-        val observer = Observer<Unit> { lazyPagingItems.refresh() }
-        pageViewModel.mediatorLiveData.observe(lifecycleOwner, observer)
-
-        onDispose {
-            pageViewModel.mediatorLiveData.removeObserver(observer)
+    LaunchedEffect(pageViewModel, lazyPagingItems) {
+        pageViewModel.page.collect {
+            lazyPagingItems.refresh()
         }
     }
 
-    val topCates by getAppViewModel<MyAppViewModel>().categoryItems.observeAsState(
-        persistentListOf()
-    )
+    val topCates = getAppViewModel<MyAppViewModel>().categoryItems
     val topCateList = remember(topCates) {
         mutableListOf(TopCate.All).apply {
             addAll(topCates)
@@ -82,7 +68,7 @@ fun SearchContentPage(
     val topCateListNameList = remember(topCateList) {
         topCateList.map { it.name }.toImmutableList()
     }
-    val topCate by pageViewModel.topCate.observeAsState(TopCate.All)
+    val topCate by pageViewModel.topCate.collectAsState(TopCate.All)
     val defaultCategoryIndex = remember(topCateList, topCate) {
         topCateList.indexOf(topCate).let { if (it < 0) 0 else it }
     }
@@ -110,9 +96,9 @@ fun SearchContentPage(
         ).toImmutableList()
     }
 
-    val activePage by pageViewModel.page.observeAsState(1)
-    val lastPage by pageViewModel.totalPages.observeAsState(1)
-    val pageSizeIndex by pageViewModel.pageSizeIndex.observeAsState(0)
+    val activePage by pageViewModel.page.collectAsState(1)
+    val lastPage by pageViewModel.totalPages.collectAsState(1)
+    val pageSizeIndex by pageViewModel.pageSizeIndex.collectAsState(0)
 
     PreviewLayout(
         lazyPagingItems = lazyPagingItems,

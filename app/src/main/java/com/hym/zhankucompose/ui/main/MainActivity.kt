@@ -18,7 +18,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,7 +31,6 @@ import com.hym.zhankucompose.MyAppViewModel
 import com.hym.zhankucompose.getAppViewModel
 import com.hym.zhankucompose.ui.search.SearchPage
 import com.hym.zhankucompose.ui.theme.ComposeTheme
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 
 class MainActivity : BaseActivity() {
@@ -62,10 +60,7 @@ class MainActivity : BaseActivity() {
                 }
 
                 Column {
-                    val categoryItems by getAppViewModel<MyAppViewModel>().categoryItems.observeAsState(
-                        persistentListOf()
-                    )
-
+                    val categoryItems = getAppViewModel<MyAppViewModel>().categoryItems
                     val pagerState = rememberPagerState(0) { 1 + categoryItems.size }
                     var selectedIndex by remember { mutableIntStateOf(0) }
 

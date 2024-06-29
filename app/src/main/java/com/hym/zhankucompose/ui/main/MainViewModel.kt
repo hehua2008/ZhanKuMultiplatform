@@ -1,12 +1,12 @@
 package com.hym.zhankucompose.ui.main
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.hym.zhankucompose.flow.MutableSharedData
+import com.hym.zhankucompose.flow.SharedData
 
 class MainViewModel : ViewModel() {
-    private val _word = MutableLiveData<String>("")
-    val word: LiveData<String> = _word
+    private val _word = MutableSharedData<String>("")
+    val word: SharedData<String> = _word
 
     fun setSearchWord(word: String) {
         val trim = word.trim()

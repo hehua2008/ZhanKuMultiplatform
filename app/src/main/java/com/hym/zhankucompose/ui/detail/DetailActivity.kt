@@ -36,7 +36,6 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -142,7 +141,7 @@ class DetailActivity : BaseActivity() {
 
                 when (mContentType) {
                     ContentType.WORK.value -> {
-                        detailViewModel.workDetails.observeAsState().value?.let { work ->
+                        detailViewModel.workDetails?.let { work ->
                             title = work.product.title
 
                             detailContents = remember(work) {
@@ -180,7 +179,7 @@ class DetailActivity : BaseActivity() {
                     }
 
                     ContentType.ARTICLE.value -> {
-                        detailViewModel.articleDetails.observeAsState().value?.let { article ->
+                        detailViewModel.articleDetails?.let { article ->
                             title = article.articledata.title
 
                             detailContents = remember(article) {

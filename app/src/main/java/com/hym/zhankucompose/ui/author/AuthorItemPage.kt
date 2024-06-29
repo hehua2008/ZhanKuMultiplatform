@@ -7,16 +7,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hym.zhankucompose.compose.COMMON_PADDING
@@ -45,14 +42,10 @@ fun AuthorItemPage(
 
     val context = LocalContext.current
     val lazyPagingItems = pageViewModel.pagingFlow.collectAsLazyPagingItems()
-    val lifecycleOwner = LocalLifecycleOwner.current
 
-    DisposableEffect(lazyPagingItems, lifecycleOwner) {
-        val observer = Observer<Unit> { lazyPagingItems.refresh() }
-        pageViewModel.mediatorLiveData.observe(lifecycleOwner, observer)
-
-        onDispose {
-            pageViewModel.mediatorLiveData.removeObserver(observer)
+    LaunchedEffect(pageViewModel, lazyPagingItems) {
+        pageViewModel.page.collect {
+            lazyPagingItems.refresh()
         }
     }
 
@@ -70,9 +63,9 @@ fun AuthorItemPage(
         ).toImmutableList()
     }
 
-    val activePage by pageViewModel.page.observeAsState(1)
-    val lastPage by pageViewModel.totalPages.observeAsState(1)
-    val pageSizeIndex by pageViewModel.pageSizeIndex.observeAsState(0)
+    val activePage by pageViewModel.page.collectAsState(1)
+    val lastPage by pageViewModel.totalPages.collectAsState(1)
+    val pageSizeIndex by pageViewModel.pageSizeIndex.collectAsState(0)
 
     PreviewLayout(
         lazyPagingItems = lazyPagingItems,

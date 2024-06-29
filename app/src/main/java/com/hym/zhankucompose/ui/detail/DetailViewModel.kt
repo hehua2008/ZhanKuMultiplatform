@@ -5,8 +5,6 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LoadState
@@ -27,11 +25,11 @@ class DetailViewModel(private val networkService: NetworkService = GlobalCompone
         private val NotLoading = LoadState.NotLoading(false)
     }
 
-    private val _workDetails = MutableLiveData<WorkDetails?>()
-    val workDetails: LiveData<WorkDetails?> = _workDetails
+    var workDetails by mutableStateOf<WorkDetails?>(null)
+        private set
 
-    private val _articleDetails = MutableLiveData<ArticleDetails?>()
-    val articleDetails: LiveData<ArticleDetails?> = _articleDetails
+    var articleDetails by mutableStateOf<ArticleDetails?>(null)
+        private set
 
     val playerProvider = PlayerProvider()
 
@@ -54,7 +52,7 @@ class DetailViewModel(private val networkService: NetworkService = GlobalCompone
                                     Log.e(TAG, errorMsg)
                                     LoadState.Error(Exception(errorMsg))
                                 } else {
-                                    _workDetails.postValue(it)
+                                    workDetails = it
                                     NotLoading
                                 }
                             }
@@ -71,7 +69,7 @@ class DetailViewModel(private val networkService: NetworkService = GlobalCompone
                                     Log.e(TAG, errorMsg)
                                     LoadState.Error(Exception(errorMsg))
                                 } else {
-                                    _articleDetails.postValue(it)
+                                    articleDetails = it
                                     NotLoading
                                 }
                             }
@@ -80,7 +78,7 @@ class DetailViewModel(private val networkService: NetworkService = GlobalCompone
                 }
             } catch (t: Throwable) {
                 Log.e(TAG, "setDetailTypeAndId $type $id failed", t)
-                _workDetails.postValue(null)
+                workDetails = null
                 loadState = LoadState.Error(t)
             }
         }

@@ -2,13 +2,15 @@ package com.hym.zhankucompose
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.hym.zhankucompose.di.GlobalComponent
 import com.hym.zhankucompose.model.TopCate
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -19,15 +21,15 @@ class MyAppViewModel(private val app: Application) : AndroidViewModel(app) {
         private const val TAG = "MyAppViewModel"
     }
 
-    private val _categoryItems = MutableLiveData<ImmutableList<TopCate>>()
-    val categoryItems: LiveData<ImmutableList<TopCate>> = _categoryItems
+    var categoryItems by mutableStateOf<ImmutableList<TopCate>>(persistentListOf())
+        private set
 
     fun getCategoryItemsFromNetworkAsync(): Deferred<Unit> = viewModelScope.async(Dispatchers.IO) {
         try {
             GlobalComponent.Instance.networkService.getAllCategoryListContainArticle().run {
                 dataContent.also {
                     if (it == null) Log.e(TAG, "getCategoryItemList failed: $msg")
-                    else _categoryItems.postValue(it.toImmutableList())
+                    else categoryItems = it.toImmutableList()
                 }
             }
         } catch (t: Throwable) {

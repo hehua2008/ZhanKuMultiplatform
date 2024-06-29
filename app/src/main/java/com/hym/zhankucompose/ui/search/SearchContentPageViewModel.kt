@@ -1,8 +1,5 @@
 package com.hym.zhankucompose.ui.search
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -10,6 +7,8 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.hym.zhankucompose.di.GlobalComponent
+import com.hym.zhankucompose.flow.MutableSharedData
+import com.hym.zhankucompose.flow.SharedData
 import com.hym.zhankucompose.model.Content
 import com.hym.zhankucompose.model.ContentType
 import com.hym.zhankucompose.model.RecommendLevel
@@ -31,17 +30,17 @@ class SearchContentPageViewModel(private val networkService: NetworkService = Gl
 
     lateinit var contentType: ContentType
 
-    private val _topCate = MutableLiveData<TopCate>(TopCate.All)
-    val topCate: LiveData<TopCate> = _topCate
+    private val _topCate = MutableSharedData<TopCate>(TopCate.All)
+    val topCate: SharedData<TopCate> = _topCate
 
-    private val _page = MutableLiveData<Int>(1)
-    val page: LiveData<Int> = _page
+    private val _page = MutableSharedData<Int>(1)
+    val page: SharedData<Int> = _page
 
-    private val _pageSizeIndex = MutableLiveData<Int>(0)
-    val pageSizeIndex: LiveData<Int> = _pageSizeIndex
+    private val _pageSizeIndex = MutableSharedData<Int>(0)
+    val pageSizeIndex: SharedData<Int> = _pageSizeIndex
 
-    private val _totalPages = MutableLiveData<Int>(2)
-    val totalPages: LiveData<Int> = _totalPages
+    private val _totalPages = MutableSharedData<Int>(2)
+    val totalPages: SharedData<Int> = _totalPages
 
     private val totalPagesCallback = object : TotalPagesCallback() {
         override fun onUpdate(totalPages: Int) {
@@ -55,14 +54,9 @@ class SearchContentPageViewModel(private val networkService: NetworkService = Gl
 
     private var sortOrder = SortOrder.BEST_MATCH
 
-    private val _mediatorLiveData = MediatorLiveData<Unit>().apply {
-        addSource(page) { value = Unit }
-    }
-    val mediatorLiveData: LiveData<Unit> = _mediatorLiveData
-
     fun setPage(page: Int) {
         if (page < 1 || _page.value == page) return
-        _page.value = page.coerceAtMost(totalPages.value ?: page)
+        _page.value = page.coerceAtMost(totalPages.value)
     }
 
     /**
@@ -108,16 +102,16 @@ class SearchContentPageViewModel(private val networkService: NetworkService = Gl
     val pagingFlow: Flow<PagingData<Content>> = Pager(
         // Configure how data is loaded by passing additional properties to
         // PagingConfig, such as prefetchDistance.
-        config = PagingConfig(pageSize = PageSizeList[pageSizeIndex.value ?: 0]),
+        config = PagingConfig(pageSize = PageSizeList[pageSizeIndex.value]),
         initialKey = LoadParamsHolder.INITIAL,
         pagingSourceFactory = {
             SearchContentPagingSource(
                 networkService = networkService,
-                initialPage = page.value ?: 1,
-                pageSize = PageSizeList[pageSizeIndex.value ?: 0],
+                initialPage = page.value,
+                pageSize = PageSizeList[pageSizeIndex.value],
                 word = word,
                 contentType = contentType,
-                topCate = topCate.value ?: TopCate.All,
+                topCate = topCate.value,
                 recommendLevel = recommendLevel,
                 sortOrder = sortOrder,
                 totalPagesCallback = totalPagesCallback
