@@ -8,8 +8,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
-import com.hym.zhankucompose.ui.FastScroller
 import java.lang.reflect.Method
 
 private val generateDefaultLayoutParamsMethod: Method =
@@ -46,10 +44,4 @@ fun View.copyText(): Boolean {
     clipboard.setPrimaryClip(clipData)
     Toast.makeText(context, "Copied: $text", Toast.LENGTH_SHORT).show()
     return true
-}
-
-fun RecyclerView.getFastScroller(): FastScroller? {
-    return (0 until itemDecorationCount).firstNotNullOfOrNull {
-        getItemDecorationAt(it) as? FastScroller
-    }
 }
