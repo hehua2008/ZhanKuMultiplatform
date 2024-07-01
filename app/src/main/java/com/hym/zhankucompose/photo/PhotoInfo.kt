@@ -1,18 +1,13 @@
 package com.hym.zhankucompose.photo
 
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import android.net.Uri
-import android.os.Parcelable
-import androidx.annotation.DrawableRes
-import androidx.annotation.RawRes
-import kotlinx.parcelize.Parcelize
-import java.io.File
+import androidx.compose.ui.graphics.ImageBitmap
+import kotlinx.serialization.Serializable
 
 /**
  * @author hehua2008
  * @date 2022/3/8
  */
+@Serializable
 sealed interface PhotoInfo<T : Any> {
     val original: T
 
@@ -27,57 +22,31 @@ sealed interface PhotoInfo<T : Any> {
     fun hasThumb() = original != thumb
 }
 
-@Parcelize
+@Serializable
 data class UrlPhotoInfo(
     override val original: String,
     override val thumb: String = original,
     override val description: String = original,
     override val width: Int = -1,
     override val height: Int = -1
-) : PhotoInfo<String>, Parcelable
+) : PhotoInfo<String>
 
-@Parcelize
-data class UriPhotoInfo(
-    override val original: Uri,
-    override val thumb: Uri = original,
-    override val description: String = original.toString(),
-    override val width: Int = -1,
-    override val height: Int = -1
-) : PhotoInfo<Uri>, Parcelable
-
-@Parcelize
+@Serializable
 data class FilePhotoInfo(
-    override val original: File,
-    override val thumb: File = original,
-    override val description: String = original.toString(),
+    override val original: String,
+    override val thumb: String = original,
+    override val description: String = original,
     override val width: Int = -1,
     override val height: Int = -1
-) : PhotoInfo<File>, Parcelable
-
-@Parcelize
-data class ResPhotoInfo(
-    @RawRes @DrawableRes override val original: Int,
-    override val thumb: Int = original,
-    override val description: String = original.toString(),
-    override val width: Int = -1,
-    override val height: Int = -1
-) : PhotoInfo<Int>, Parcelable
+) : PhotoInfo<String>
 
 data class BitmapPhotoInfo(
-    override val original: Bitmap,
-    override val thumb: Bitmap = original,
-    override val description: String = "Bitmap(byteCount=${original.byteCount}, ${original.width}x${original.height})",
+    override val original: ImageBitmap,
+    override val thumb: ImageBitmap = original,
+    override val description: String = "Bitmap(${original.width}x${original.height})",
     override val width: Int = -1,
     override val height: Int = -1
-) : PhotoInfo<Bitmap>
-
-data class DrawablePhotoInfo(
-    override val original: Drawable,
-    override val thumb: Drawable = original,
-    override val description: String = "${original.javaClass.simpleName}(${original.intrinsicWidth}x${original.intrinsicHeight})",
-    override val width: Int = -1,
-    override val height: Int = -1
-) : PhotoInfo<Drawable>
+) : PhotoInfo<ImageBitmap>
 
 data class ByteArrayPhotoInfo(
     override val original: ByteArray,
@@ -87,8 +56,9 @@ data class ByteArrayPhotoInfo(
     override val height: Int = -1
 ) : PhotoInfo<ByteArray> {
     override fun equals(other: Any?): Boolean {
+        other ?: return false
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+        if (this::class != other::class) return false
 
         other as ByteArrayPhotoInfo
 
