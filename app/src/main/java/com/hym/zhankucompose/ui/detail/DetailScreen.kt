@@ -26,6 +26,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -323,8 +324,13 @@ fun DetailScreen(
             }
         }
 
-        LaunchedEffect(detailViewModel) {
-            snapshotFlow { detailViewModel.position }
+        val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+        val currentIndexState = remember(savedStateHandle) {
+            savedStateHandle?.getStateFlow<Int?>("PHOTO_INDEX", null)
+        }?.collectAsState(initial = null)
+
+        LaunchedEffect(currentIndexState) {
+            snapshotFlow { currentIndexState?.value }
                 .collectLatest {
                     val position = it ?: return@collectLatest
                     lazyListState.scrollToItem(if (headerContent == null) position else position + 1)

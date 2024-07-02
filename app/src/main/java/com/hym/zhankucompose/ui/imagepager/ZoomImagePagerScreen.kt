@@ -121,6 +121,9 @@ fun ZoomImagePagerScreen(
                             contentDescription = null,
                             modifier = Modifier
                                 .clickable {
+                                    navController.previousBackStackEntry?.savedStateHandle?.apply {
+                                        set("PHOTO_INDEX", currentIndex)
+                                    }
                                     navController.popBackStack()
                                 }
                                 .fillMaxHeight()

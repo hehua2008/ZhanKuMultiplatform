@@ -38,8 +38,6 @@ class DetailViewModel(private val networkService: NetworkService = GlobalCompone
     var loadState by mutableStateOf<LoadState>(NotLoading)
         private set
 
-    var position by mutableStateOf<Int?>(null)
-
     fun setDetailTypeAndId(type: ContentType, id: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
