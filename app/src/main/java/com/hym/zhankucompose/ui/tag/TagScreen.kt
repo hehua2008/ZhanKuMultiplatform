@@ -46,7 +46,8 @@ fun TagScreen(
     topCate: TopCate?,
     subCate: SubCate?,
     onNavigateToDetails: (contentType: ContentType, contentId: String) -> Unit,
-    onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit
+    onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
+    onNavigateToWebView: (url: String, title: String) -> Unit
 ) {
     ComposeTheme {
         val navController = LocalNavController.current
@@ -98,6 +99,7 @@ fun TagScreen(
                     author = author,
                     onNavigateToDetails = onNavigateToDetails,
                     onNavigateToTagList = onNavigateToTagList,
+                    onNavigateToWebView = onNavigateToWebView,
                     modifier = Modifier.zIndex(-1f)
                 )
             } else {
@@ -105,6 +107,7 @@ fun TagScreen(
                     topCate = topCate!!,
                     onNavigateToDetails = onNavigateToDetails,
                     onNavigateToTagList = onNavigateToTagList,
+                    onNavigateToWebView = onNavigateToWebView,
                     initialSubCate = subCate,
                     modifier = Modifier.zIndex(-1f)
                 )

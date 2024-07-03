@@ -38,6 +38,7 @@ fun PreviewItemPage(
     topCate: TopCate,
     onNavigateToDetails: (contentType: ContentType, contentId: String) -> Unit,
     onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
+    onNavigateToWebView: (url: String, title: String) -> Unit,
     modifier: Modifier = Modifier,
     initialSubCate: SubCate? = null,
     pageViewModel: PreviewPageViewModel = viewModel(key = topCate.name)
@@ -104,12 +105,7 @@ fun PreviewItemPage(
                 link = categoryLink,
                 modifier = Modifier.padding(top = COMMON_PADDING)
             ) {
-                /* TODO
-                val intent = Intent(context, WebViewActivity::class.java)
-                    .putExtra(WebViewActivity.WEB_URL, it)
-                    .putExtra(WebViewActivity.WEB_TITLE, (subCate ?: topCate).name)
-                context.startActivity(intent)
-                */
+                onNavigateToWebView(it, (subCate ?: topCate).name)
             }
 
             LabelFlowLayout(

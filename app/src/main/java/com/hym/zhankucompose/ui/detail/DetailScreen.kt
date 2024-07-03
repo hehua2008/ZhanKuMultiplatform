@@ -76,7 +76,8 @@ fun DetailScreen(
     contentType: ContentType,
     contentId: String,
     onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
-    onNavigateToImagePager: (photoInfos: ImmutableList<UrlPhotoInfo>, currentPosition: Int) -> Unit
+    onNavigateToImagePager: (photoInfos: ImmutableList<UrlPhotoInfo>, currentPosition: Int) -> Unit,
+    onNavigateToWebView: (url: String, title: String) -> Unit
 ) {
     ComposeTheme {
         val navController = LocalNavController.current
@@ -137,6 +138,7 @@ fun DetailScreen(
                             favoriteCountStr = "${work.product.favoriteCount}",
                             shareWordsStr = work.sharewords,
                             onNavigateToTagList = onNavigateToTagList,
+                            onNavigateToWebView = onNavigateToWebView,
                             modifier = modifier
                         ) {
                             /* TODO
@@ -174,6 +176,7 @@ fun DetailScreen(
                             favoriteCountStr = "${article.articledata.favoriteCount}",
                             shareWordsStr = article.sharewords,
                             onNavigateToTagList = onNavigateToTagList,
+                            onNavigateToWebView = onNavigateToWebView,
                             modifier = modifier
                         )
                     }
@@ -290,13 +293,7 @@ fun DetailScreen(
                     },
                     playerProvider = detailViewModel.playerProvider,
                     onVideoPlayFailed = { detailVideo ->
-                        /* TODO
-                        this.startActivity(
-                            Intent(this, WebViewActivity::class.java)
-                                .putExtra(WebViewActivity.WEB_URL, detailVideo.data.url)
-                                .putExtra(WebViewActivity.WEB_TITLE, detailVideo.data.name)
-                        )
-                        */
+                        onNavigateToWebView(detailVideo.data.url, detailVideo.data.name)
                     }
                 ) {
                     headerContent?.invoke(

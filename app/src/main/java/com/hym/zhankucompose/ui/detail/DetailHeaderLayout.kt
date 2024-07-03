@@ -76,6 +76,7 @@ fun DetailHeaderLayout(
     shareWordsStr: String = "",
     categories: ImmutableList<Cate> = persistentListOf(),
     onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
+    onNavigateToWebView: (url: String, title: String) -> Unit,
     modifier: Modifier = Modifier,
     onDownloadAllClick: (() -> Unit)? = null
 ) {
@@ -240,11 +241,7 @@ fun DetailHeaderLayout(
                     .wrapContentWidth()
                     .padding(top = COMMON_PADDING)
             ) {
-                /* TODO
-                val intent = Intent(context, WebViewActivity::class.java)
-                    .putExtra(WebViewActivity.WEB_URL, it)
-                context.startActivity(intent)
-                */
+                onNavigateToWebView(it, "")
             }
 
             Text(
@@ -350,6 +347,7 @@ private fun PreviewDetailHeaderLayout() {
         favoriteCountStr = "${workDetails.product.favoriteCount}",
         shareWordsStr = workDetails.sharewords,
         onNavigateToTagList = { _, _, _ -> },
+        onNavigateToWebView = { _, _ -> },
         modifier = Modifier.background(Color.White)
     )
 }

@@ -35,4 +35,7 @@ class MainViewModel : ViewModel() {
 
     var photoInfos: ImmutableList<UrlPhotoInfo> = persistentListOf()
     var currentPosition: Int = 0
+
+    var webUrl: String = ""
+    var webTitle: String = ""
 }

@@ -35,6 +35,7 @@ fun AuthorItemPage(
     author: CreatorObj,
     onNavigateToDetails: (contentType: ContentType, contentId: String) -> Unit,
     onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
+    onNavigateToWebView: (url: String, title: String) -> Unit,
     modifier: Modifier = Modifier,
     pageViewModel: AuthorPageViewModel = viewModel(key = author.username)
 ) {
@@ -83,12 +84,7 @@ fun AuthorItemPage(
                 link = "https://www.zcool.com.cn/u/${author.id}",
                 modifier = Modifier.padding(top = COMMON_PADDING)
             ) {
-                /* TODO
-                val intent = Intent(context, WebViewActivity::class.java)
-                    .putExtra(WebViewActivity.WEB_URL, it)
-                    .putExtra(WebViewActivity.WEB_TITLE, author.username)
-                context.startActivity(intent)
-                */
+                onNavigateToWebView(it, author.username)
             }
 
             SimpleRadioGroup(

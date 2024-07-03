@@ -8,5 +8,6 @@ enum class Route(val path: String) {
     Home("Home"),
     Details("Details"),
     TagList("TagList"),
-    ImagePager("ImagePager")
+    ImagePager("ImagePager"),
+    WebView("WebView")
 }

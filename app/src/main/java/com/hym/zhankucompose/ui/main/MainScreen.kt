@@ -11,6 +11,7 @@ import com.hym.zhankucompose.navigation.Route
 import com.hym.zhankucompose.ui.detail.DetailScreen
 import com.hym.zhankucompose.ui.imagepager.ZoomImagePagerScreen
 import com.hym.zhankucompose.ui.tag.TagScreen
+import com.hym.zhankucompose.ui.webview.WebScreen
 
 /**
  * @author hehua2008
@@ -35,6 +36,11 @@ fun MainScreen() {
                         mainViewModel.topCate = topCate
                         mainViewModel.subCate = subCate
                         navController.navigate(route = Route.TagList.path)
+                    },
+                    onNavigateToWebView = { url, title ->
+                        mainViewModel.webUrl = url
+                        mainViewModel.webTitle = title
+                        navController.navigate(route = Route.WebView.path)
                     }
                 )
             }
@@ -53,6 +59,11 @@ fun MainScreen() {
                         mainViewModel.photoInfos = photoInfos
                         mainViewModel.currentPosition = currentPosition
                         navController.navigate(route = Route.ImagePager.path)
+                    },
+                    onNavigateToWebView = { url, title ->
+                        mainViewModel.webUrl = url
+                        mainViewModel.webTitle = title
+                        navController.navigate(route = Route.WebView.path)
                     }
                 )
             }
@@ -72,6 +83,11 @@ fun MainScreen() {
                         mainViewModel.topCate = topCate
                         mainViewModel.subCate = subCate
                         navController.navigate(route = Route.TagList.path)
+                    },
+                    onNavigateToWebView = { url, title ->
+                        mainViewModel.webUrl = url
+                        mainViewModel.webTitle = title
+                        navController.navigate(route = Route.WebView.path)
                     }
                 )
             }
@@ -80,6 +96,13 @@ fun MainScreen() {
                 ZoomImagePagerScreen(
                     photoInfoList = mainViewModel.photoInfos,
                     initialIndex = mainViewModel.currentPosition
+                )
+            }
+
+            composable(route = Route.WebView.path) { backStackEntry ->
+                WebScreen(
+                    initialUrl = mainViewModel.webUrl,
+                    initialTitle = mainViewModel.webTitle
                 )
             }
         }

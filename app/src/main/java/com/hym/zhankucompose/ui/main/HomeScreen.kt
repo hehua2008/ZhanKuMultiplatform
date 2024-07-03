@@ -39,7 +39,8 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun HomeScreen(
     onNavigateToDetails: (contentType: ContentType, contentId: String) -> Unit,
-    onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit
+    onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
+    onNavigateToWebView: (url: String, title: String) -> Unit
 ) {
     ComposeTheme {
         val mainViewModel = viewModel<MainViewModel>()
@@ -107,7 +108,8 @@ fun HomeScreen(
                     else -> PreviewItemPage(
                         topCate = categoryItems[page - 1],
                         onNavigateToDetails = onNavigateToDetails,
-                        onNavigateToTagList = onNavigateToTagList
+                        onNavigateToTagList = onNavigateToTagList,
+                        onNavigateToWebView = onNavigateToWebView
                     )
                 }
             }
