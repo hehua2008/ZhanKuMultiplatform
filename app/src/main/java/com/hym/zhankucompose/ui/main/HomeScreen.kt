@@ -96,7 +96,7 @@ fun HomeScreen(
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.zIndex(-1f), // Fix PullToRefresh overlap issue
-                beyondBoundsPageCount = 1 + categoryItems.size
+                beyondBoundsPageCount = 1
             ) { page ->
                 when (page) {
                     0 -> SearchPage(
