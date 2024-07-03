@@ -1,6 +1,5 @@
 package com.hym.zhankucompose.ui.author
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -13,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hym.zhankucompose.compose.COMMON_PADDING
@@ -26,7 +24,6 @@ import com.hym.zhankucompose.model.SubCate
 import com.hym.zhankucompose.model.TopCate
 import com.hym.zhankucompose.ui.PagedLayout
 import com.hym.zhankucompose.ui.main.PreviewLayout
-import com.hym.zhankucompose.ui.webview.WebViewActivity
 import kotlinx.collections.immutable.toImmutableList
 
 /**
@@ -45,7 +42,6 @@ fun AuthorItemPage(
         pageViewModel.authorUid = author.id
     }
 
-    val context = LocalContext.current
     val lazyPagingItems = pageViewModel.pagingFlow.collectAsLazyPagingItems()
 
     LaunchedEffect(pageViewModel, lazyPagingItems) {
@@ -87,10 +83,12 @@ fun AuthorItemPage(
                 link = "https://www.zcool.com.cn/u/${author.id}",
                 modifier = Modifier.padding(top = COMMON_PADDING)
             ) {
+                /* TODO
                 val intent = Intent(context, WebViewActivity::class.java)
                     .putExtra(WebViewActivity.WEB_URL, it)
                     .putExtra(WebViewActivity.WEB_TITLE, author.username)
                 context.startActivity(intent)
+                */
             }
 
             SimpleRadioGroup(

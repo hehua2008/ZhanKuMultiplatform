@@ -1,6 +1,5 @@
 package com.hym.zhankucompose.ui.detail
 
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -29,7 +28,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
@@ -57,7 +55,6 @@ import com.hym.zhankucompose.model.CreatorObj
 import com.hym.zhankucompose.model.SubCate
 import com.hym.zhankucompose.model.TopCate
 import com.hym.zhankucompose.model.WorkDetails
-import com.hym.zhankucompose.ui.webview.WebViewActivity
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -82,7 +79,6 @@ fun DetailHeaderLayout(
     modifier: Modifier = Modifier,
     onDownloadAllClick: (() -> Unit)? = null
 ) {
-    val context = LocalContext.current
     val density = LocalDensity.current
     val onSurfaceColor = MaterialTheme.colorScheme.onSurface
     val titleTextStyle = MaterialTheme.typography.titleLarge.let {
@@ -244,9 +240,11 @@ fun DetailHeaderLayout(
                     .wrapContentWidth()
                     .padding(top = COMMON_PADDING)
             ) {
+                /* TODO
                 val intent = Intent(context, WebViewActivity::class.java)
                     .putExtra(WebViewActivity.WEB_URL, it)
                 context.startActivity(intent)
+                */
             }
 
             Text(
