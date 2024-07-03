@@ -29,9 +29,7 @@ import com.hym.zhankucompose.R
 import com.hym.zhankucompose.compose.COMMON_PADDING
 import com.hym.zhankucompose.model.Content
 import com.hym.zhankucompose.model.ContentType
-import com.hym.zhankucompose.model.CreatorObj
-import com.hym.zhankucompose.model.SubCate
-import com.hym.zhankucompose.model.TopCate
+import com.hym.zhankucompose.navigation.LocalNavListener
 import com.hym.zhankucompose.ui.NetworkStateLayout
 
 /**
@@ -46,14 +44,13 @@ private val VerticalArrangement = Arrangement.spacedBy(COMMON_PADDING)
 @Composable
 fun PreviewItemGrid(
     lazyPagingItems: LazyPagingItems<Content>,
-    onNavigateToDetails: (contentType: ContentType, contentId: String) -> Unit,
-    onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
     modifier: Modifier = Modifier,
     columnSize: Int = 1,
     lazyGridState: LazyGridState = rememberLazyGridState(),
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
     headerContent: @Composable ((headerModifier: Modifier) -> Unit)? = null
 ) {
+    val navListener = LocalNavListener.current
     val surfaceContainerColor = MaterialTheme.colorScheme.surfaceContainer
     val horizontalArrangement = remember(columnSize) {
         object : Arrangement.Horizontal by Arrangement.SpaceEvenly {
@@ -107,10 +104,10 @@ fun PreviewItemGrid(
                         val contentType = ContentType.entries.firstOrNull { type ->
                             type.value == previewItem.objectType
                         } ?: ContentType.WORK
-                        onNavigateToDetails(contentType, previewItem.contentId)
+                        navListener.onNavigateToDetails(contentType, previewItem.contentId)
                     },
                     onAuthorClick = {
-                        onNavigateToTagList(previewItem.creatorObj, null, null)
+                        navListener.onNavigateToTagList(previewItem.creatorObj, null, null)
                     }
                 )
             }

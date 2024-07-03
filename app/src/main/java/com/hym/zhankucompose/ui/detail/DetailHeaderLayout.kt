@@ -55,6 +55,7 @@ import com.hym.zhankucompose.model.CreatorObj
 import com.hym.zhankucompose.model.SubCate
 import com.hym.zhankucompose.model.TopCate
 import com.hym.zhankucompose.model.WorkDetails
+import com.hym.zhankucompose.navigation.LocalNavListener
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -75,11 +76,10 @@ fun DetailHeaderLayout(
     favoriteCountStr: String,
     shareWordsStr: String = "",
     categories: ImmutableList<Cate> = persistentListOf(),
-    onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
-    onNavigateToWebView: (url: String, title: String) -> Unit,
     modifier: Modifier = Modifier,
     onDownloadAllClick: (() -> Unit)? = null
 ) {
+    val navListener = LocalNavListener.current
     val density = LocalDensity.current
     val onSurfaceColor = MaterialTheme.colorScheme.onSurface
     val titleTextStyle = MaterialTheme.typography.titleLarge.let {
@@ -162,12 +162,12 @@ fun DetailHeaderLayout(
             ) {
                 when (val tagCate = categories[it]) {
                     is TopCate -> {
-                        onNavigateToTagList(null, tagCate, null)
+                        navListener.onNavigateToTagList(null, tagCate, null)
                     }
 
                     is SubCate -> {
                         val topCate = Cate.getCategory<TopCate>(tagCate.parent)
-                        onNavigateToTagList(null, topCate, tagCate)
+                        navListener.onNavigateToTagList(null, topCate, tagCate)
                     }
                 }
             }
@@ -184,7 +184,7 @@ fun DetailHeaderLayout(
                     .padding(top = COMMON_PADDING)
             ) {
                 val onAuthorClick = {
-                    onNavigateToTagList(creatorObj, null, null)
+                    navListener.onNavigateToTagList(creatorObj, null, null)
                 }
 
                 AsyncImage(
@@ -241,7 +241,7 @@ fun DetailHeaderLayout(
                     .wrapContentWidth()
                     .padding(top = COMMON_PADDING)
             ) {
-                onNavigateToWebView(it, "")
+                navListener.onNavigateToWebView(it, "")
             }
 
             Text(
@@ -346,8 +346,6 @@ private fun PreviewDetailHeaderLayout() {
         commentCountStr = workDetails.product.commentCountStr,
         favoriteCountStr = "${workDetails.product.favoriteCount}",
         shareWordsStr = workDetails.sharewords,
-        onNavigateToTagList = { _, _, _ -> },
-        onNavigateToWebView = { _, _ -> },
         modifier = Modifier.background(Color.White)
     )
 }

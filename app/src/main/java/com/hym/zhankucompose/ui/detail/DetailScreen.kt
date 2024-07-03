@@ -52,11 +52,8 @@ import com.hym.zhankucompose.R
 import com.hym.zhankucompose.compose.COMMON_PADDING
 import com.hym.zhankucompose.compose.rememberMutableState
 import com.hym.zhankucompose.model.ContentType
-import com.hym.zhankucompose.model.CreatorObj
-import com.hym.zhankucompose.model.SubCate
-import com.hym.zhankucompose.model.TopCate
 import com.hym.zhankucompose.navigation.LocalNavController
-import com.hym.zhankucompose.photo.UrlPhotoInfo
+import com.hym.zhankucompose.navigation.LocalNavListener
 import com.hym.zhankucompose.ui.ThemeColorRetriever
 import com.hym.zhankucompose.ui.theme.ComposeTheme
 import kotlinx.collections.immutable.ImmutableList
@@ -72,15 +69,10 @@ import kotlin.math.roundToInt
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(
-    contentType: ContentType,
-    contentId: String,
-    onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
-    onNavigateToImagePager: (photoInfos: ImmutableList<UrlPhotoInfo>, currentPosition: Int) -> Unit,
-    onNavigateToWebView: (url: String, title: String) -> Unit
-) {
+fun DetailScreen(contentType: ContentType, contentId: String) {
     ComposeTheme {
         val navController = LocalNavController.current
+        val navListener = LocalNavListener.current
         val detailViewModel = viewModel<DetailViewModel>(key = contentId)
         var title by remember { mutableStateOf("") }
         val pullRefreshState = rememberPullToRefreshState()
@@ -137,8 +129,6 @@ fun DetailScreen(
                             commentCountStr = work.product.commentCountStr,
                             favoriteCountStr = "${work.product.favoriteCount}",
                             shareWordsStr = work.sharewords,
-                            onNavigateToTagList = onNavigateToTagList,
-                            onNavigateToWebView = onNavigateToWebView,
                             modifier = modifier
                         ) {
                             /* TODO
@@ -175,8 +165,6 @@ fun DetailScreen(
                             commentCountStr = article.articledata.commentCountStr,
                             favoriteCountStr = "${article.articledata.favoriteCount}",
                             shareWordsStr = article.sharewords,
-                            onNavigateToTagList = onNavigateToTagList,
-                            onNavigateToWebView = onNavigateToWebView,
                             modifier = modifier
                         )
                     }
@@ -289,11 +277,14 @@ fun DetailScreen(
                     detailContents = detailContents ?: persistentListOf(),
                     lazyListState = lazyListState,
                     onImageClick = { list, index ->
-                        onNavigateToImagePager(list, index)
+                        navListener.onNavigateToImagePager(list, index)
                     },
                     playerProvider = detailViewModel.playerProvider,
                     onVideoPlayFailed = { detailVideo ->
-                        onNavigateToWebView(detailVideo.data.url, detailVideo.data.name)
+                        navListener.onNavigateToWebView(
+                            detailVideo.data.url,
+                            detailVideo.data.name
+                        )
                     }
                 ) {
                     headerContent?.invoke(

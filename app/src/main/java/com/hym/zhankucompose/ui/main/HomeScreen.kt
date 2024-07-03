@@ -23,10 +23,6 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hym.zhankucompose.MyAppViewModel
 import com.hym.zhankucompose.getAppViewModel
-import com.hym.zhankucompose.model.ContentType
-import com.hym.zhankucompose.model.CreatorObj
-import com.hym.zhankucompose.model.SubCate
-import com.hym.zhankucompose.model.TopCate
 import com.hym.zhankucompose.ui.search.SearchPage
 import com.hym.zhankucompose.ui.theme.ComposeTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -37,11 +33,7 @@ import kotlinx.coroutines.flow.collectLatest
  */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
-    onNavigateToDetails: (contentType: ContentType, contentId: String) -> Unit,
-    onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
-    onNavigateToWebView: (url: String, title: String) -> Unit
-) {
+fun HomeScreen() {
     ComposeTheme {
         val mainViewModel = viewModel<MainViewModel>()
         val density = LocalDensity.current
@@ -100,17 +92,9 @@ fun HomeScreen(
                 beyondBoundsPageCount = 1
             ) { page ->
                 when (page) {
-                    0 -> SearchPage(
-                        onNavigateToDetails = onNavigateToDetails,
-                        onNavigateToTagList = onNavigateToTagList
-                    )
+                    0 -> SearchPage()
 
-                    else -> PreviewItemPage(
-                        topCate = categoryItems[page - 1],
-                        onNavigateToDetails = onNavigateToDetails,
-                        onNavigateToTagList = onNavigateToTagList,
-                        onNavigateToWebView = onNavigateToWebView
-                    )
+                    else -> PreviewItemPage(topCate = categoryItems[page - 1])
                 }
             }
         }

@@ -45,10 +45,6 @@ import com.hym.zhankucompose.compose.listenableFlingBehavior
 import com.hym.zhankucompose.compose.plus
 import com.hym.zhankucompose.compose.rememberMutableFloatState
 import com.hym.zhankucompose.model.Content
-import com.hym.zhankucompose.model.ContentType
-import com.hym.zhankucompose.model.CreatorObj
-import com.hym.zhankucompose.model.SubCate
-import com.hym.zhankucompose.model.TopCate
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -63,8 +59,6 @@ private const val TAG = "PreviewLayout"
 @Composable
 fun PreviewLayout(
     lazyPagingItems: LazyPagingItems<Content>,
-    onNavigateToDetails: (contentType: ContentType, contentId: String) -> Unit,
-    onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
     modifier: Modifier = Modifier,
     setOnScrollToTopAction: ((onScrollToTopAction: () -> Unit) -> Unit)? = null,
     headerContent: @Composable ((headerModifier: Modifier) -> Unit)? = null
@@ -183,8 +177,6 @@ fun PreviewLayout(
     Box(modifier = modifier.nestedScroll(combinedNestedScrollConnection)) {
         PreviewItemGrid(
             lazyPagingItems = lazyPagingItems,
-            onNavigateToDetails = onNavigateToDetails,
-            onNavigateToTagList = onNavigateToTagList,
             modifier = Modifier.fillMaxSize(),
             columnSize = 2,
             lazyGridState = lazyGridState,

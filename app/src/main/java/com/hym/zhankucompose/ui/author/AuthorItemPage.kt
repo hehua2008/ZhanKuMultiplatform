@@ -17,11 +17,9 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.hym.zhankucompose.compose.COMMON_PADDING
 import com.hym.zhankucompose.compose.SimpleLinkText
 import com.hym.zhankucompose.compose.SimpleRadioGroup
-import com.hym.zhankucompose.model.ContentType
 import com.hym.zhankucompose.model.CreatorObj
 import com.hym.zhankucompose.model.SortOrder
-import com.hym.zhankucompose.model.SubCate
-import com.hym.zhankucompose.model.TopCate
+import com.hym.zhankucompose.navigation.LocalNavListener
 import com.hym.zhankucompose.ui.PagedLayout
 import com.hym.zhankucompose.ui.main.PreviewLayout
 import kotlinx.collections.immutable.toImmutableList
@@ -33,12 +31,11 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 fun AuthorItemPage(
     author: CreatorObj,
-    onNavigateToDetails: (contentType: ContentType, contentId: String) -> Unit,
-    onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
-    onNavigateToWebView: (url: String, title: String) -> Unit,
     modifier: Modifier = Modifier,
     pageViewModel: AuthorPageViewModel = viewModel(key = author.username)
 ) {
+    val navListener = LocalNavListener.current
+
     LaunchedEffect(pageViewModel, author) {
         pageViewModel.authorUid = author.id
     }
@@ -71,8 +68,6 @@ fun AuthorItemPage(
 
     PreviewLayout(
         lazyPagingItems = lazyPagingItems,
-        onNavigateToDetails = onNavigateToDetails,
-        onNavigateToTagList = onNavigateToTagList,
         modifier = modifier
     ) { headerModifier ->
         Column(
@@ -84,7 +79,7 @@ fun AuthorItemPage(
                 link = "https://www.zcool.com.cn/u/${author.id}",
                 modifier = Modifier.padding(top = COMMON_PADDING)
             ) {
-                onNavigateToWebView(it, author.username)
+                navListener.onNavigateToWebView(it, author.username)
             }
 
             SimpleRadioGroup(

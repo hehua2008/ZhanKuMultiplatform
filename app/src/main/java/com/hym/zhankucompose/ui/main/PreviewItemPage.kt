@@ -21,11 +21,10 @@ import com.hym.zhankucompose.compose.SMALL_PADDING_VALUES
 import com.hym.zhankucompose.compose.SimpleLinkText
 import com.hym.zhankucompose.compose.SimpleRadioGroup
 import com.hym.zhankucompose.model.Cate
-import com.hym.zhankucompose.model.ContentType
-import com.hym.zhankucompose.model.CreatorObj
 import com.hym.zhankucompose.model.RecommendLevel
 import com.hym.zhankucompose.model.SubCate
 import com.hym.zhankucompose.model.TopCate
+import com.hym.zhankucompose.navigation.LocalNavListener
 import com.hym.zhankucompose.ui.PagedLayout
 import kotlinx.collections.immutable.toImmutableList
 
@@ -36,13 +35,12 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 fun PreviewItemPage(
     topCate: TopCate,
-    onNavigateToDetails: (contentType: ContentType, contentId: String) -> Unit,
-    onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
-    onNavigateToWebView: (url: String, title: String) -> Unit,
     modifier: Modifier = Modifier,
     initialSubCate: SubCate? = null,
     pageViewModel: PreviewPageViewModel = viewModel(key = topCate.name)
 ) {
+    val navListener = LocalNavListener.current
+
     LaunchedEffect(pageViewModel, topCate, initialSubCate) {
         pageViewModel.topCate = topCate
         pageViewModel.setSubCate(initialSubCate)
@@ -92,8 +90,6 @@ fun PreviewItemPage(
 
     PreviewLayout(
         lazyPagingItems = lazyPagingItems,
-        onNavigateToDetails = onNavigateToDetails,
-        onNavigateToTagList = onNavigateToTagList,
         modifier = modifier
     ) { headerModifier ->
         Column(
@@ -105,7 +101,7 @@ fun PreviewItemPage(
                 link = categoryLink,
                 modifier = Modifier.padding(top = COMMON_PADDING)
             ) {
-                onNavigateToWebView(it, (subCate ?: topCate).name)
+                navListener.onNavigateToWebView(it, (subCate ?: topCate).name)
             }
 
             LabelFlowLayout(

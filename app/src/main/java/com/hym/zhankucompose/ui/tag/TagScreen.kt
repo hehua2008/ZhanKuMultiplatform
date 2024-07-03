@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import com.hym.zhankucompose.R
-import com.hym.zhankucompose.model.ContentType
 import com.hym.zhankucompose.model.CreatorObj
 import com.hym.zhankucompose.model.SubCate
 import com.hym.zhankucompose.model.TopCate
@@ -41,14 +40,7 @@ import com.hym.zhankucompose.ui.theme.ComposeTheme
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TagScreen(
-    author: CreatorObj?,
-    topCate: TopCate?,
-    subCate: SubCate?,
-    onNavigateToDetails: (contentType: ContentType, contentId: String) -> Unit,
-    onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
-    onNavigateToWebView: (url: String, title: String) -> Unit
-) {
+fun TagScreen(author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) {
     ComposeTheme {
         val navController = LocalNavController.current
         val density = LocalDensity.current
@@ -97,17 +89,11 @@ fun TagScreen(
             if (author != null) {
                 AuthorItemPage(
                     author = author,
-                    onNavigateToDetails = onNavigateToDetails,
-                    onNavigateToTagList = onNavigateToTagList,
-                    onNavigateToWebView = onNavigateToWebView,
                     modifier = Modifier.zIndex(-1f)
                 )
             } else {
                 PreviewItemPage(
                     topCate = topCate!!,
-                    onNavigateToDetails = onNavigateToDetails,
-                    onNavigateToTagList = onNavigateToTagList,
-                    onNavigateToWebView = onNavigateToWebView,
                     initialSubCate = subCate,
                     modifier = Modifier.zIndex(-1f)
                 )

@@ -10,3 +10,7 @@ import androidx.navigation.NavController
 val LocalNavController = staticCompositionLocalOf<NavController> {
     error("LocalNavController not present")
 }
+
+val LocalNavListener = staticCompositionLocalOf<NavListener> {
+    error("LocalNavListener not present")
+}

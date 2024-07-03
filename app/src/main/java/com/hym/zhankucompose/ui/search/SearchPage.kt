@@ -21,9 +21,6 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hym.zhankucompose.compose.COMMON_PADDING
 import com.hym.zhankucompose.model.ContentType
-import com.hym.zhankucompose.model.CreatorObj
-import com.hym.zhankucompose.model.SubCate
-import com.hym.zhankucompose.model.TopCate
 import com.hym.zhankucompose.ui.main.MainViewModel
 import kotlinx.coroutines.flow.collectLatest
 
@@ -34,8 +31,6 @@ import kotlinx.coroutines.flow.collectLatest
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchPage(
-    onNavigateToDetails: (contentType: ContentType, contentId: String) -> Unit,
-    onNavigateToTagList: (author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) -> Unit,
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel = viewModel()
 ) {
@@ -78,15 +73,11 @@ fun SearchPage(
             when (page) {
                 0 -> SearchContentPage(
                     contentType = ContentType.WORK,
-                    onNavigateToDetails = onNavigateToDetails,
-                    onNavigateToTagList = onNavigateToTagList,
                     mainViewModel = mainViewModel
                 )
 
                 1 -> SearchContentPage(
                     contentType = ContentType.ARTICLE,
-                    onNavigateToDetails = onNavigateToDetails,
-                    onNavigateToTagList = onNavigateToTagList,
                     mainViewModel = mainViewModel
                 )
             }
