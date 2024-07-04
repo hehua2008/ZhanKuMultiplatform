@@ -137,15 +137,49 @@ class WeakMap<K : Any, V : Any?> : MutableMap<K, V> {
     override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
         get() = EntrySet()
 
-    override val keys: MutableSet<K>
-        get() {
-            val keySet = mutableSetOf<K>()
-            iterateInternalMap { key, value ->
-                val ignore = keySet.add(key)
-                true
-            }
-            return keySet
+    private inner class KeySet : AbstractMutableSet<K>() {
+        override val size: Int
+            get() = this@WeakMap.size
+
+        override fun add(element: K): Boolean {
+            throw UnsupportedOperationException()
         }
+
+        override fun clear() {
+            internalMap.clear()
+        }
+
+        override fun iterator(): MutableIterator<K> {
+            return KeyIterator()
+        }
+
+        override fun contains(element: K): Boolean {
+            return this@WeakMap.containsKey(element)
+        }
+
+        override fun remove(element: K): Boolean {
+            var result = false
+            var continueAction = true
+            val iterator = internalMap.iterator()
+            while (iterator.hasNext()) {
+                val next = iterator.next()
+                val key = next.key.get()
+                if (key == null) {
+                    iterator.remove()
+                } else if (continueAction && key == element) {
+                    result = true
+                    iterator.remove()
+                    continueAction = false
+                } else {
+                    // Keep iterating
+                }
+            }
+            return result
+        }
+    }
+
+    override val keys: MutableSet<K>
+        get() = KeySet()
 
     override val values: MutableCollection<V>
         get() {
