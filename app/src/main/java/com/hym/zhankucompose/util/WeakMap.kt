@@ -82,16 +82,60 @@ class WeakMap<K : Any, V : Any?> : MutableMap<K, V> {
         }
     }
 
-    override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
-        get() {
-            val result = mutableSetOf<MutableMap.MutableEntry<K, V>>()
-            val weakEntries = internalMap.entries
-            for (weakEntry in weakEntries) {
-                val key = weakEntry.key.get() ?: continue
-                result.add(MutableEntry(key, weakEntry))
+    private inner class EntrySet : AbstractMutableSet<MutableMap.MutableEntry<K, V>>() {
+        override val size: Int
+            get() = this@WeakMap.size
+
+        override fun add(element: MutableMap.MutableEntry<K, V>): Boolean {
+            throw UnsupportedOperationException()
+        }
+
+        override fun clear() {
+            internalMap.clear()
+        }
+
+        override fun iterator(): MutableIterator<MutableMap.MutableEntry<K, V>> {
+            return EntryIterator()
+        }
+
+        override fun contains(element: MutableMap.MutableEntry<K, V>): Boolean {
+            var result = false
+            iterateInternalMap { key, value ->
+                if (key == element.key) {
+                    result = (value == element.value)
+                    false
+                } else {
+                    true
+                }
             }
             return result
         }
+
+        override fun remove(element: MutableMap.MutableEntry<K, V>): Boolean {
+            var result = false
+            var continueAction = true
+            val iterator = internalMap.iterator()
+            while (iterator.hasNext()) {
+                val next = iterator.next()
+                val key = next.key.get()
+                if (key == null) {
+                    iterator.remove()
+                } else if (continueAction && key == element.key) {
+                    if (next.value == element.value) {
+                        result = true
+                        iterator.remove()
+                    }
+                    continueAction = false
+                } else {
+                    // Keep iterating
+                }
+            }
+            return result
+        }
+    }
+
+    override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+        get() = EntrySet()
 
     override val keys: MutableSet<K>
         get() {
