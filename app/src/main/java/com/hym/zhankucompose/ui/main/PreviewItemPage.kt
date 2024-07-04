@@ -25,6 +25,7 @@ import com.hym.zhankucompose.model.RecommendLevel
 import com.hym.zhankucompose.model.SubCate
 import com.hym.zhankucompose.model.TopCate
 import com.hym.zhankucompose.navigation.LocalNavListener
+import com.hym.zhankucompose.navigation.WebViewArgs
 import com.hym.zhankucompose.ui.PagedLayout
 import kotlinx.collections.immutable.toImmutableList
 
@@ -101,7 +102,7 @@ fun PreviewItemPage(
                 link = categoryLink,
                 modifier = Modifier.padding(top = COMMON_PADDING)
             ) {
-                navListener.onNavigateToWebView(it, (subCate ?: topCate).name)
+                navListener.onNavigateToWebView(WebViewArgs(it, (subCate ?: topCate).name))
             }
 
             LabelFlowLayout(

@@ -56,6 +56,8 @@ import com.hym.zhankucompose.model.SubCate
 import com.hym.zhankucompose.model.TopCate
 import com.hym.zhankucompose.model.WorkDetails
 import com.hym.zhankucompose.navigation.LocalNavListener
+import com.hym.zhankucompose.navigation.TagListArgs
+import com.hym.zhankucompose.navigation.WebViewArgs
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -162,12 +164,12 @@ fun DetailHeaderLayout(
             ) {
                 when (val tagCate = categories[it]) {
                     is TopCate -> {
-                        navListener.onNavigateToTagList(null, tagCate, null)
+                        navListener.onNavigateToTagList(TagListArgs(null, tagCate, null))
                     }
 
                     is SubCate -> {
                         val topCate = Cate.getCategory<TopCate>(tagCate.parent)
-                        navListener.onNavigateToTagList(null, topCate, tagCate)
+                        navListener.onNavigateToTagList(TagListArgs(null, topCate, tagCate))
                     }
                 }
             }
@@ -184,7 +186,7 @@ fun DetailHeaderLayout(
                     .padding(top = COMMON_PADDING)
             ) {
                 val onAuthorClick = {
-                    navListener.onNavigateToTagList(creatorObj, null, null)
+                    navListener.onNavigateToTagList(TagListArgs(creatorObj, null, null))
                 }
 
                 AsyncImage(
@@ -241,7 +243,7 @@ fun DetailHeaderLayout(
                     .wrapContentWidth()
                     .padding(top = COMMON_PADDING)
             ) {
-                navListener.onNavigateToWebView(it, "")
+                navListener.onNavigateToWebView(WebViewArgs(it, ""))
             }
 
             Text(

@@ -20,6 +20,7 @@ import com.hym.zhankucompose.compose.SimpleRadioGroup
 import com.hym.zhankucompose.model.CreatorObj
 import com.hym.zhankucompose.model.SortOrder
 import com.hym.zhankucompose.navigation.LocalNavListener
+import com.hym.zhankucompose.navigation.WebViewArgs
 import com.hym.zhankucompose.ui.PagedLayout
 import com.hym.zhankucompose.ui.main.PreviewLayout
 import kotlinx.collections.immutable.toImmutableList
@@ -79,7 +80,7 @@ fun AuthorItemPage(
                 link = "https://www.zcool.com.cn/u/${author.id}",
                 modifier = Modifier.padding(top = COMMON_PADDING)
             ) {
-                navListener.onNavigateToWebView(it, author.username)
+                navListener.onNavigateToWebView(WebViewArgs(it, author.username))
             }
 
             SimpleRadioGroup(

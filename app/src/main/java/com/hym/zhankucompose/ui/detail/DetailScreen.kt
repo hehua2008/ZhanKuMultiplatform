@@ -52,8 +52,10 @@ import com.hym.zhankucompose.R
 import com.hym.zhankucompose.compose.COMMON_PADDING
 import com.hym.zhankucompose.compose.rememberMutableState
 import com.hym.zhankucompose.model.ContentType
+import com.hym.zhankucompose.navigation.ImagePagerArgs
 import com.hym.zhankucompose.navigation.LocalNavController
 import com.hym.zhankucompose.navigation.LocalNavListener
+import com.hym.zhankucompose.navigation.WebViewArgs
 import com.hym.zhankucompose.ui.ThemeColorRetriever
 import com.hym.zhankucompose.ui.theme.ComposeTheme
 import kotlinx.collections.immutable.ImmutableList
@@ -277,13 +279,12 @@ fun DetailScreen(contentType: ContentType, contentId: String) {
                     detailContents = detailContents ?: persistentListOf(),
                     lazyListState = lazyListState,
                     onImageClick = { list, index ->
-                        navListener.onNavigateToImagePager(list, index)
+                        navListener.onNavigateToImagePager(ImagePagerArgs(list, index))
                     },
                     playerProvider = detailViewModel.playerProvider,
                     onVideoPlayFailed = { detailVideo ->
                         navListener.onNavigateToWebView(
-                            detailVideo.data.url,
-                            detailVideo.data.name
+                            WebViewArgs(detailVideo.data.url, detailVideo.data.name)
                         )
                     }
                 ) {

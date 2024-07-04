@@ -6,13 +6,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.hym.zhankucompose.flow.MutableSharedData
 import com.hym.zhankucompose.flow.SharedData
-import com.hym.zhankucompose.model.ContentType
-import com.hym.zhankucompose.model.CreatorObj
-import com.hym.zhankucompose.model.SubCate
-import com.hym.zhankucompose.model.TopCate
-import com.hym.zhankucompose.photo.UrlPhotoInfo
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
+import com.hym.zhankucompose.navigation.DetailsArgs
+import com.hym.zhankucompose.navigation.ImagePagerArgs
+import com.hym.zhankucompose.navigation.NavArgs
+import com.hym.zhankucompose.navigation.TagListArgs
+import com.hym.zhankucompose.navigation.WebViewArgs
+import com.hym.zhankucompose.util.WeakMap
 
 class MainViewModel : ViewModel() {
     var selectedPage by mutableIntStateOf(0)
@@ -26,16 +25,13 @@ class MainViewModel : ViewModel() {
         _word.value = trim
     }
 
-    var contentType: ContentType = ContentType.WORK
-    var contentId: String = ""
+    var argumentsMap = WeakMap<String, NavArgs>()
 
-    var author: CreatorObj? = null
-    var topCate: TopCate? = null
-    var subCate: SubCate? = null
+    var detailsArguments: DetailsArgs? = null
 
-    var photoInfos: ImmutableList<UrlPhotoInfo> = persistentListOf()
-    var currentPosition: Int = 0
+    var tagListArguments: TagListArgs? = null
 
-    var webUrl: String = ""
-    var webTitle: String = ""
+    var imagePagerArguments: ImagePagerArgs? = null
+
+    var webViewArguments: WebViewArgs? = null
 }

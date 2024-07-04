@@ -29,7 +29,9 @@ import com.hym.zhankucompose.R
 import com.hym.zhankucompose.compose.COMMON_PADDING
 import com.hym.zhankucompose.model.Content
 import com.hym.zhankucompose.model.ContentType
+import com.hym.zhankucompose.navigation.DetailsArgs
 import com.hym.zhankucompose.navigation.LocalNavListener
+import com.hym.zhankucompose.navigation.TagListArgs
 import com.hym.zhankucompose.ui.NetworkStateLayout
 
 /**
@@ -104,10 +106,14 @@ fun PreviewItemGrid(
                         val contentType = ContentType.entries.firstOrNull { type ->
                             type.value == previewItem.objectType
                         } ?: ContentType.WORK
-                        navListener.onNavigateToDetails(contentType, previewItem.contentId)
+                        navListener.onNavigateToDetails(
+                            DetailsArgs(contentType, previewItem.contentId)
+                        )
                     },
                     onAuthorClick = {
-                        navListener.onNavigateToTagList(previewItem.creatorObj, null, null)
+                        navListener.onNavigateToTagList(
+                            TagListArgs(previewItem.creatorObj, null, null)
+                        )
                     }
                 )
             }
