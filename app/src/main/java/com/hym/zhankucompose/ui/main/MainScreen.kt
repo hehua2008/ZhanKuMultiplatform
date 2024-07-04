@@ -11,10 +11,12 @@ import com.hym.zhankucompose.navigation.DetailsArgs
 import com.hym.zhankucompose.navigation.ImagePagerArgs
 import com.hym.zhankucompose.navigation.LocalNavController
 import com.hym.zhankucompose.navigation.LocalNavListener
+import com.hym.zhankucompose.navigation.NavArgsViewModel
 import com.hym.zhankucompose.navigation.NavListener
 import com.hym.zhankucompose.navigation.Route
 import com.hym.zhankucompose.navigation.TagListArgs
 import com.hym.zhankucompose.navigation.WebViewArgs
+import com.hym.zhankucompose.navigation.getArgs
 import com.hym.zhankucompose.ui.detail.DetailScreen
 import com.hym.zhankucompose.ui.imagepager.ZoomImagePagerScreen
 import com.hym.zhankucompose.ui.tag.TagScreen
@@ -26,27 +28,27 @@ import com.hym.zhankucompose.ui.webview.WebScreen
  */
 @Composable
 fun MainScreen() {
-    val mainViewModel = viewModel<MainViewModel>()
+    val navArgsViewModel = viewModel<NavArgsViewModel>()
     val navController = rememberNavController()
-    val navListener = remember(mainViewModel, navController) {
+    val navListener = remember(navArgsViewModel, navController) {
         object : NavListener {
             override fun onNavigateToDetails(arguments: DetailsArgs) {
-                mainViewModel.detailsArguments = arguments
+                navArgsViewModel.putArgs(arguments)
                 navController.navigate(route = Route.Details.path)
             }
 
             override fun onNavigateToTagList(arguments: TagListArgs) {
-                mainViewModel.tagListArguments = arguments
+                navArgsViewModel.putArgs(arguments)
                 navController.navigate(route = Route.TagList.path)
             }
 
             override fun onNavigateToImagePager(arguments: ImagePagerArgs) {
-                mainViewModel.imagePagerArguments = arguments
+                navArgsViewModel.putArgs(arguments)
                 navController.navigate(route = Route.ImagePager.path)
             }
 
             override fun onNavigateToWebView(arguments: WebViewArgs) {
-                mainViewModel.webViewArguments = arguments
+                navArgsViewModel.putArgs(arguments)
                 navController.navigate(route = Route.WebView.path)
             }
         }
@@ -62,15 +64,7 @@ fun MainScreen() {
             }
 
             composable(route = Route.Details.path) { backStackEntry ->
-                val arguments = remember(mainViewModel, backStackEntry.id) {
-                    var args =
-                        mainViewModel.argumentsMap[backStackEntry.id] as DetailsArgs?
-                    if (args == null) {
-                        args = mainViewModel.detailsArguments!!
-                        mainViewModel.argumentsMap[backStackEntry.id] = args
-                    }
-                    args
-                }
+                val arguments: DetailsArgs = navArgsViewModel.getArgs(backStackEntry.id)
                 DetailScreen(
                     contentType = arguments.contentType,
                     contentId = arguments.contentId
@@ -78,15 +72,7 @@ fun MainScreen() {
             }
 
             composable(route = Route.TagList.path) { backStackEntry ->
-                val arguments = remember(mainViewModel, backStackEntry.id) {
-                    var args =
-                        mainViewModel.argumentsMap[backStackEntry.id] as TagListArgs?
-                    if (args == null) {
-                        args = mainViewModel.tagListArguments!!
-                        mainViewModel.argumentsMap[backStackEntry.id] = args
-                    }
-                    args
-                }
+                val arguments: TagListArgs = navArgsViewModel.getArgs(backStackEntry.id)
                 TagScreen(
                     author = arguments.author,
                     topCate = arguments.topCate,
@@ -95,15 +81,7 @@ fun MainScreen() {
             }
 
             composable(route = Route.ImagePager.path) { backStackEntry ->
-                val arguments = remember(mainViewModel, backStackEntry.id) {
-                    var args =
-                        mainViewModel.argumentsMap[backStackEntry.id] as ImagePagerArgs?
-                    if (args == null) {
-                        args = mainViewModel.imagePagerArguments!!
-                        mainViewModel.argumentsMap[backStackEntry.id] = args
-                    }
-                    args
-                }
+                val arguments: ImagePagerArgs = navArgsViewModel.getArgs(backStackEntry.id)
                 ZoomImagePagerScreen(
                     photoInfoList = arguments.photoInfos,
                     initialIndex = arguments.currentPosition
@@ -111,15 +89,7 @@ fun MainScreen() {
             }
 
             composable(route = Route.WebView.path) { backStackEntry ->
-                val arguments = remember(mainViewModel, backStackEntry.id) {
-                    var args =
-                        mainViewModel.argumentsMap[backStackEntry.id] as WebViewArgs?
-                    if (args == null) {
-                        args = mainViewModel.webViewArguments!!
-                        mainViewModel.argumentsMap[backStackEntry.id] = args
-                    }
-                    args
-                }
+                val arguments: WebViewArgs = navArgsViewModel.getArgs(backStackEntry.id)
                 WebScreen(
                     initialUrl = arguments.url,
                     initialTitle = arguments.title
