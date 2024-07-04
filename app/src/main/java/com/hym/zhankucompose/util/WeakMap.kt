@@ -7,6 +7,10 @@ import java.lang.ref.WeakReference
  * @date 2024/7/4
  */
 class WeakMap<K : Any, V : Any?> : MutableMap<K, V> {
+    companion object {
+        private val NULL = Any()
+    }
+
     private val internalMap = mutableMapOf<WeakReference<K>, V>()
 
     private inner class MutableEntry(
@@ -158,23 +162,8 @@ class WeakMap<K : Any, V : Any?> : MutableMap<K, V> {
         }
 
         override fun remove(element: K): Boolean {
-            var result = false
-            var continueAction = true
-            val iterator = internalMap.iterator()
-            while (iterator.hasNext()) {
-                val next = iterator.next()
-                val key = next.key.get()
-                if (key == null) {
-                    iterator.remove()
-                } else if (continueAction && key == element) {
-                    result = true
-                    iterator.remove()
-                    continueAction = false
-                } else {
-                    // Keep iterating
-                }
-            }
-            return result
+            val value = this@WeakMap.removeImpl(element)
+            return value !== NULL
         }
     }
 
@@ -243,16 +232,21 @@ class WeakMap<K : Any, V : Any?> : MutableMap<K, V> {
     }
 
     override fun putAll(from: Map<out K, V>) {
-        val mutableFrom = from.toMutableMap()
+        val mutableFrom = mutableMapOf<K, Any>()
+        from.mapValuesTo(mutableFrom) { (key, value) ->
+            value ?: NULL
+        }
         iterateInternalMap { entry ->
             val newValue = mutableFrom.remove(entry.key)
-            if (newValue != null || /* not mutableFrom! */from.containsKey(entry.key)) {
+            if (newValue === NULL) {
+                entry.setValue(null as V)
+            } else if (newValue != null) {
                 entry.setValue(newValue as V)
             }
             true
         }
         for ((key, value) in mutableFrom.entries) {
-            internalMap[WeakReference(key)] = value
+            internalMap[WeakReference(key)] = (if (value === NULL) null else value) as V
         }
     }
 
@@ -295,8 +289,8 @@ class WeakMap<K : Any, V : Any?> : MutableMap<K, V> {
         return result
     }
 
-    override fun remove(key: K): V? {
-        var result: V? = null
+    private fun removeImpl(key: K): Any? {
+        var result: Any? = NULL
         var continueAction = true
         val iterator = internalMap.iterator()
         while (iterator.hasNext()) {
@@ -313,6 +307,11 @@ class WeakMap<K : Any, V : Any?> : MutableMap<K, V> {
             }
         }
         return result
+    }
+
+    override fun remove(key: K): V? {
+        val value = removeImpl(key)
+        return (if (value === NULL) null else value) as V?
     }
 
     private fun iterateInternalMap(action: (key: K, value: V) -> Boolean) {
