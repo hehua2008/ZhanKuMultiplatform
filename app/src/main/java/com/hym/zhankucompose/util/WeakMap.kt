@@ -21,6 +21,67 @@ class WeakMap<K : Any, V : Any?> : MutableMap<K, V> {
         }
     }
 
+    private abstract inner class BaseIterator<E> : MutableIterator<E> {
+        private val innerIterator = internalMap.entries.iterator()
+
+        var holdKey: K? = null
+        var holdNext: MutableMap.MutableEntry<WeakReference<K>, V>? = null
+
+        override fun hasNext(): Boolean {
+            holdKey = null
+            holdNext = null
+            while (true) {
+                if (!innerIterator.hasNext()) {
+                    return false
+                } else {
+                    val innerNext = innerIterator.next()
+                    val key = innerNext.key.get()
+                    if (key == null) {
+                        innerIterator.remove()
+                        continue
+                    } else {
+                        holdKey = key
+                        holdNext = innerNext
+                        return true
+                    }
+                }
+            }
+        }
+
+        override fun remove() {
+            holdKey = null
+            holdNext = null
+            innerIterator.remove()
+        }
+    }
+
+    private inner class EntryIterator : BaseIterator<MutableMap.MutableEntry<K, V>>() {
+        override fun next(): MutableMap.MutableEntry<K, V> {
+            return MutableEntry(holdKey!!, holdNext!!).also {
+                holdKey = null
+                holdNext = null
+            }
+        }
+    }
+
+    private inner class KeyIterator : BaseIterator<K>() {
+        override fun next(): K {
+            return holdKey!!.also {
+                holdKey = null
+                holdNext = null
+            }
+        }
+    }
+
+    private inner class ValueIterator : BaseIterator<V>() {
+        override fun next(): V {
+            return holdNext!!.value.also {
+                holdKey = null
+                holdNext = null
+            }
+        }
+    }
+
     override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
         get() {
             val result = mutableSetOf<MutableMap.MutableEntry<K, V>>()
