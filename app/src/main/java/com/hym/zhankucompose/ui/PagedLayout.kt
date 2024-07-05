@@ -17,6 +17,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -45,7 +46,6 @@ import com.hym.zhankucompose.compose.ReadOnlyOutlinedTextField
 import com.hym.zhankucompose.compose.RemoveAccessibilityExtraSpace
 import com.hym.zhankucompose.compose.SMALL_BUTTON_CONTENT_PADDING
 import com.hym.zhankucompose.compose.SimpleExposedDropdownMenuBox
-import com.hym.zhankucompose.compose.SmallButton
 import com.hym.zhankucompose.compose.rememberMutableState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -54,7 +54,7 @@ import kotlinx.collections.immutable.toImmutableList
  * @author hehua2008
  * @date 2021/12/10
  */
-private val HorizontalPadding = 8.dp
+private val HorizontalPadding = 4.dp
 private val TextFieldContentPadding = PaddingValues(horizontal = HorizontalPadding)
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -82,14 +82,14 @@ fun PagedLayout(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            SmallButton(
+            TextButton(
                 onClick = onPreClick,
                 modifier = Modifier.padding(horizontal = HorizontalPadding),
                 enabled = activePage > 1,
                 shape = ShapeDefaults.ExtraSmall,
                 contentPadding = SMALL_BUTTON_CONTENT_PADDING
             ) {
-                Text(text = "上页")
+                Text(text = "上页", style = textStyle)
             }
 
             Text(
@@ -98,14 +98,14 @@ fun PagedLayout(
                 fontFamily = numberFont
             )
 
-            SmallButton(
+            TextButton(
                 onClick = onNextClick,
                 enabled = activePage != lastPage,
                 modifier = Modifier.padding(horizontal = HorizontalPadding),
                 shape = ShapeDefaults.ExtraSmall,
                 contentPadding = SMALL_BUTTON_CONTENT_PADDING
             ) {
-                Text(text = "下页")
+                Text(text = "下页", style = textStyle)
             }
 
             val focusManager = LocalFocusManager.current
@@ -158,13 +158,13 @@ fun PagedLayout(
                 contentPadding = TextFieldContentPadding
             )
 
-            SmallButton(
+            TextButton(
                 onClick = onJumpClick,
                 modifier = Modifier.padding(horizontal = HorizontalPadding),
                 shape = ShapeDefaults.ExtraSmall,
                 contentPadding = SMALL_BUTTON_CONTENT_PADDING
             ) {
-                Text(text = "跳转")
+                Text(text = "跳转", style = textStyle)
             }
 
             Text(text = "每页", color = MaterialTheme.colorScheme.onSurface)

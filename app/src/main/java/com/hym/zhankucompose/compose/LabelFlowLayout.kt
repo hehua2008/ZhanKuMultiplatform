@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,7 +39,6 @@ fun LabelFlowLayout(
     defaultLabelIndex: Int = 0,
     allSelected: Boolean = false,
     itemPadding: PaddingValues = ZeroPaddingValues,
-    contentPadding: PaddingValues = ZeroPaddingValues,
     onLabelSelected: (index: Int) -> Unit
 ) {
     var selectedIndex by rememberSaveable(labels, defaultLabelIndex, stateSaver = autoSaver()) {
@@ -52,7 +52,7 @@ fun LabelFlowLayout(
     ) {
         RemoveAccessibilityExtraSpace {
             labels.forEachIndexed { index, label ->
-                SmallFilterChip(
+                FilterChip(
                     selected = if (allSelected) true else (index == selectedIndex),
                     onClick = {
                         selectedIndex = index
@@ -65,9 +65,7 @@ fun LabelFlowLayout(
                         )
                     },
                     modifier = Modifier.padding(itemPadding),
-                    shape = ShapeDefaults.ExtraSmall,
-                    minHeight = 0.dp,
-                    paddingValues = contentPadding
+                    shape = ShapeDefaults.ExtraSmall
                 )
             }
         }
