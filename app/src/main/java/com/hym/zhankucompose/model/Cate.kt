@@ -1,7 +1,5 @@
 package com.hym.zhankucompose.model
 
-import android.os.Parcel
-import android.os.Parcelable
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 
@@ -26,7 +24,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 @Immutable
-sealed class Cate : Parcelable {
+sealed class Cate {
     abstract val backgroundImage: String
 
     abstract val commonOrderNo: Int
@@ -59,12 +57,6 @@ sealed class Cate : Parcelable {
 
     final override fun hashCode(): Int = id
 
-    final override fun describeContents(): Int = 0
-
-    final override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeInt(id)
-    }
-
     companion object {
         private val CATE_MAP: MutableMap<Int, Cate> = mutableMapOf()
 
@@ -80,7 +72,7 @@ sealed class Cate : Parcelable {
         }
     }
 
-    abstract class CateCreator<T : Cate> : Parcelable.Creator<T> {
+    abstract class CateCreator<T : Cate> {
         abstract fun create(
             backgroundImage: String,
             commonOrderNo: Int,
@@ -98,14 +90,5 @@ sealed class Cate : Parcelable {
             type: Int,
             subCateList: List<SubCate>
         ): T
-
-        override fun createFromParcel(source: Parcel): T {
-            val id = source.readInt()
-            return getCategory(id)!!
-        }
-
-        override fun newArray(size: Int): Array<T?> {
-            return Array<Any?>(size) { null } as Array<T?>
-        }
     }
 }

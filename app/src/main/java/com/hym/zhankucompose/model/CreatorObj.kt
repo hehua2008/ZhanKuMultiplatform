@@ -1,8 +1,6 @@
 package com.hym.zhankucompose.model
 
-import android.os.Parcelable
 import androidx.compose.runtime.Immutable
-import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
 /**
@@ -17,7 +15,6 @@ import kotlinx.serialization.Serializable
 "username": "画画的淘米"
 }
  */
-@Parcelize
 @Serializable
 @Immutable
 data class CreatorObj(
@@ -29,7 +26,7 @@ data class CreatorObj(
     val pageUrl: String,
     val status: Int,
     val username: String
-) : Parcelable {
+) {
     val city: Int = 0
     val cityName: String = ""
     val contentCount: Int = 0
