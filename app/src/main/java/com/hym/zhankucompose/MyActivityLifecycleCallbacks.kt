@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.FragmentActivity
 
 /**
  * @author hehua2008
@@ -15,8 +14,6 @@ object MyActivityLifecycleCallbacks : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         Log.d(TAG, "onActivityCreated: $activity")
-        (activity as? FragmentActivity)?.supportFragmentManager
-            ?.registerFragmentLifecycleCallbacks(MyFragmentLifecycleCallbacks, true)
     }
 
     override fun onActivityStarted(activity: Activity) {
