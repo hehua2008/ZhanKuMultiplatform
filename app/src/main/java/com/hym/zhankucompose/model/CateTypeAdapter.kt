@@ -10,12 +10,13 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
+import kotlin.reflect.KClass
 
-abstract class CateTypeAdapter<T : Cate>(private val clazz: Class<T>) : KSerializer<T> {
+abstract class CateTypeAdapter<T : Cate>(private val clazz: KClass<T>) : KSerializer<T> {
     abstract val cateCreator: Cate.CateCreator<T>
 
     override val descriptor: SerialDescriptor
-        get() = buildClassSerialDescriptor(clazz.simpleName) {
+        get() = buildClassSerialDescriptor(clazz.simpleName!!) {
             element<String>("backgroundImage")
             element<Int>("commonOrderNo")
             element<String>("description")
@@ -30,7 +31,7 @@ abstract class CateTypeAdapter<T : Cate>(private val clazz: Class<T>) : KSeriali
             element<Int>("parent")
             element<Int>("statusId")
             element<Int>("type")
-            if (clazz != SubCate::class.java) {
+            if (clazz != SubCate::class) {
                 element<List<SubCate>>("subCateList")
             }
         }
@@ -69,7 +70,7 @@ abstract class CateTypeAdapter<T : Cate>(private val clazz: Class<T>) : KSeriali
                     11 -> parent = decodeIntElement(descriptor, 11)
                     12 -> statusId = decodeIntElement(descriptor, 12)
                     13 -> type = decodeIntElement(descriptor, 13)
-                    14 -> subCateList = if (clazz != SubCate::class.java) {
+                    14 -> subCateList = if (clazz != SubCate::class) {
                         decodeSerializableElement(
                             descriptor, 14, ListSerializer(SubCate.SubCateTypeAdapter)
                         )
@@ -120,7 +121,7 @@ abstract class CateTypeAdapter<T : Cate>(private val clazz: Class<T>) : KSeriali
             encodeIntElement(descriptor, 11, value.parent)
             encodeIntElement(descriptor, 12, value.statusId)
             encodeIntElement(descriptor, 13, value.type)
-            if (clazz != SubCate::class.java) {
+            if (clazz != SubCate::class) {
                 encodeSerializableElement(
                     descriptor, 14, ListSerializer(SubCate.SubCateTypeAdapter), value.subCateList
                 )

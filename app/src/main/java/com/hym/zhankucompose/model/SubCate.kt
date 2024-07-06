@@ -46,7 +46,7 @@ data class SubCate(
         cache()
     }
 
-    companion object SubCateTypeAdapter : CateTypeAdapter<SubCate>(SubCate::class.java) {
+    companion object SubCateTypeAdapter : CateTypeAdapter<SubCate>(SubCate::class) {
         override val cateCreator get() = CREATOR
 
         @JvmField

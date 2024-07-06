@@ -45,7 +45,7 @@ data class TopCate(
         cache()
     }
 
-    companion object TopCateTypeAdapter : CateTypeAdapter<TopCate>(TopCate::class.java) {
+    companion object TopCateTypeAdapter : CateTypeAdapter<TopCate>(TopCate::class) {
         override val cateCreator get() = CREATOR
 
         @JvmField
