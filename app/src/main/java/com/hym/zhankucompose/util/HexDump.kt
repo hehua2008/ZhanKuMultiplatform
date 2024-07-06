@@ -6,8 +6,6 @@ object HexDump {
     private val HEX_LOWER_CASE_DIGITS =
         charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f')
 
-    @JvmOverloads
-    @JvmStatic
     fun dumpHexString(array: ByteArray, offset: Int = 0, length: Int = array.size): String {
         val result = StringBuilder()
         val line = ByteArray(16)
@@ -53,18 +51,14 @@ object HexDump {
         return result.toString()
     }
 
-    @JvmStatic
     fun toHexString(b: Byte): String {
         return toHexString(toByteArray(b))
     }
 
-    @JvmStatic
     fun toHexString(array: ByteArray, upperCase: Boolean): String {
         return toHexString(array, 0, array.size, upperCase)
     }
 
-    @JvmOverloads
-    @JvmStatic
     fun toHexString(
         array: ByteArray,
         offset: Int = 0,
@@ -82,19 +76,16 @@ object HexDump {
         return String(buf)
     }
 
-    @JvmStatic
     fun toHexString(i: Int): String {
         return toHexString(toByteArray(i))
     }
 
-    @JvmStatic
     fun toByteArray(b: Byte): ByteArray {
         val array = ByteArray(1)
         array[0] = b
         return array
     }
 
-    @JvmStatic
     fun toByteArray(i: Int): ByteArray {
         val array = ByteArray(4)
         array[3] = (i and 0xFF).toByte()
@@ -104,7 +95,6 @@ object HexDump {
         return array
     }
 
-    @JvmStatic
     private fun toByte(c: Char): Int {
         //if (c >= '0' && c <= '9') return c - '0'
         if (c in '0'..'9') return c - '0'
@@ -115,7 +105,6 @@ object HexDump {
         throw RuntimeException("Invalid hex char '$c'")
     }
 
-    @JvmStatic
     fun hexStringToByteArray(hexString: String): ByteArray {
         val length = hexString.length
         val buffer = ByteArray(length / 2)
@@ -129,7 +118,6 @@ object HexDump {
         return buffer
     }
 
-    @JvmStatic
     fun appendByteAsHex(sb: StringBuilder, b: Byte, upperCase: Boolean): StringBuilder {
         val digits = if (upperCase) HEX_DIGITS else HEX_LOWER_CASE_DIGITS
         sb.append(digits[b.toInt() shr 4 and 0xf])

@@ -49,7 +49,6 @@ data class SubCate(
     companion object SubCateTypeAdapter : CateTypeAdapter<SubCate>(SubCate::class) {
         override val cateCreator get() = CREATOR
 
-        @JvmField
         val CREATOR = object : CateCreator<SubCate>() {
             override fun create(
                 backgroundImage: String,

@@ -21,8 +21,6 @@ object StringUtils {
         }
     }
 
-    @JvmOverloads
-    @JvmStatic
     fun newStringFromBytes(
         data: ByteArray, offset: Int = 0, byteCount: Int = data.size,
         charset: Charset = StandardCharsets.UTF_8
@@ -112,12 +110,15 @@ object StringUtils {
                         0xe0 -> {
                             lowerBound = 0xa0
                         }
+
                         0xed -> {
                             upperBound = 0x9f
                         }
+
                         0xf0 -> {
                             lowerBound = 0x90
                         }
+
                         0xf4 -> {
                             upperBound = 0x8f
                         }
@@ -189,7 +190,6 @@ object StringUtils {
         return tmpSb.toString()
     }
 
-    @JvmStatic
     fun generateMD5(input: String): String {
         val md5Digest: MessageDigest = MessageDigest.getInstance("MD5")
         val hash: ByteArray = md5Digest.digest(input.toByteArray())

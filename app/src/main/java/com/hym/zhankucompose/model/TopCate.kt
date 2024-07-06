@@ -48,7 +48,6 @@ data class TopCate(
     companion object TopCateTypeAdapter : CateTypeAdapter<TopCate>(TopCate::class) {
         override val cateCreator get() = CREATOR
 
-        @JvmField
         val CREATOR = object : CateCreator<TopCate>() {
             override fun create(
                 backgroundImage: String,
