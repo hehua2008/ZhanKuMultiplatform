@@ -10,19 +10,15 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hym.zhankumultiplatform.compose.COMMON_PADDING
 import com.hym.zhankumultiplatform.model.ContentType
 import com.hym.zhankumultiplatform.ui.main.MainViewModel
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 /**
  * @author hehua2008
@@ -46,20 +42,17 @@ fun SearchPage(
 
         val titles = remember { listOf(ContentType.WORK.text, ContentType.ARTICLE.text) }
         val pagerState = rememberPagerState(0) { titles.size }
-        var selectedIndex by remember { mutableIntStateOf(0) }
-
-        LaunchedEffect(pagerState) {
-            snapshotFlow { selectedIndex }
-                .collectLatest {
-                    pagerState.animateScrollToPage(it)
-                }
-        }
+        val scope = rememberCoroutineScope()
 
         TabRow(selectedTabIndex = pagerState.currentPage) {
             titles.forEachIndexed { index, title ->
                 Tab(
                     selected = (pagerState.currentPage == index),
-                    onClick = { selectedIndex = index },
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
+                    },
                     text = { Text(text = title) }
                 )
             }
