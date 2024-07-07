@@ -24,7 +24,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hym.zhankumultiplatform.MyAppViewModel
 import com.hym.zhankumultiplatform.getAppViewModel
 import com.hym.zhankumultiplatform.ui.search.SearchPage
-import com.hym.zhankumultiplatform.ui.theme.ComposeTheme
 import kotlinx.coroutines.flow.collectLatest
 
 /**
@@ -34,68 +33,66 @@ import kotlinx.coroutines.flow.collectLatest
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
-    ComposeTheme {
-        val mainViewModel = viewModel<MainViewModel> { MainViewModel() }
-        val density = LocalDensity.current
-        val systemBarsTop = WindowInsets.systemBars.getTop(density)
-        val paddingTop = remember(density, systemBarsTop) {
-            with(density) { systemBarsTop.toDp() }
+    val mainViewModel = viewModel<MainViewModel> { MainViewModel() }
+    val density = LocalDensity.current
+    val systemBarsTop = WindowInsets.systemBars.getTop(density)
+    val paddingTop = remember(density, systemBarsTop) {
+        with(density) { systemBarsTop.toDp() }
+    }
+
+    Column(modifier = modifier) {
+        val categoryItems = getAppViewModel<MyAppViewModel>().categoryItems
+        val pagerState = rememberPagerState(mainViewModel.selectedPage) {
+            1 + categoryItems.size
         }
 
-        Column(modifier = modifier) {
-            val categoryItems = getAppViewModel<MyAppViewModel>().categoryItems
-            val pagerState = rememberPagerState(mainViewModel.selectedPage) {
-                1 + categoryItems.size
-            }
+        LaunchedEffect(mainViewModel, pagerState) {
+            snapshotFlow { mainViewModel.selectedPage }
+                .collectLatest {
+                    pagerState.animateScrollToPage(it)
+                }
+        }
 
-            LaunchedEffect(mainViewModel, pagerState) {
-                snapshotFlow { mainViewModel.selectedPage }
-                    .collectLatest {
-                        pagerState.animateScrollToPage(it)
-                    }
-            }
+        SecondaryScrollableTabRow(selectedTabIndex = pagerState.currentPage) {
+            val tabTextStyle = MaterialTheme.typography.titleMedium
 
-            SecondaryScrollableTabRow(selectedTabIndex = pagerState.currentPage) {
-                val tabTextStyle = MaterialTheme.typography.titleMedium
-
+            Tab(
+                selected = (pagerState.currentPage == 0),
+                onClick = { mainViewModel.selectedPage = 0 },
+                modifier = Modifier.padding(top = paddingTop),
+                text = {
+                    Text(
+                        text = "🔍",
+                        fontWeight = if (pagerState.currentPage == 0) FontWeight.Bold else FontWeight.Normal,
+                        style = tabTextStyle
+                    )
+                }
+            )
+            categoryItems.forEachIndexed { index, topCate ->
                 Tab(
-                    selected = (pagerState.currentPage == 0),
-                    onClick = { mainViewModel.selectedPage = 0 },
+                    selected = (pagerState.currentPage == 1 + index),
+                    onClick = { mainViewModel.selectedPage = 1 + index },
                     modifier = Modifier.padding(top = paddingTop),
                     text = {
                         Text(
-                            text = "🔍",
-                            fontWeight = if (pagerState.currentPage == 0) FontWeight.Bold else FontWeight.Normal,
+                            text = topCate.name,
+                            fontWeight = if (pagerState.currentPage == 1 + index) FontWeight.Bold else FontWeight.Normal,
                             style = tabTextStyle
                         )
                     }
                 )
-                categoryItems.forEachIndexed { index, topCate ->
-                    Tab(
-                        selected = (pagerState.currentPage == 1 + index),
-                        onClick = { mainViewModel.selectedPage = 1 + index },
-                        modifier = Modifier.padding(top = paddingTop),
-                        text = {
-                            Text(
-                                text = topCate.name,
-                                fontWeight = if (pagerState.currentPage == 1 + index) FontWeight.Bold else FontWeight.Normal,
-                                style = tabTextStyle
-                            )
-                        }
-                    )
-                }
             }
+        }
 
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier.zIndex(-1f), // Fix PullToRefresh overlap issue
-                beyondBoundsPageCount = 1
-            ) { page ->
-                when (page) {
-                    0 -> SearchPage()
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.zIndex(-1f), // Fix PullToRefresh overlap issue
+            beyondBoundsPageCount = 1
+        ) { page ->
+            when (page) {
+                0 -> SearchPage()
 
-                    else -> PreviewItemPage(topCate = categoryItems[page - 1])
-                }
+                else -> PreviewItemPage(topCate = categoryItems[page - 1])
             }
         }
     }

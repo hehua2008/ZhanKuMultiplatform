@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import com.hym.compose.utils.detectTapWithoutConsume
 import com.hym.zhankumultiplatform.navigation.LocalNavController
 import com.hym.zhankumultiplatform.photo.UrlPhotoInfo
-import com.hym.zhankumultiplatform.ui.theme.ComposeTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.resources.vectorResource
@@ -55,88 +54,86 @@ fun ZoomImagePagerScreen(
     initialIndex: Int,
     modifier: Modifier = Modifier
 ) {
-    ComposeTheme {
-        val navController = LocalNavController.current
-        val density = LocalDensity.current
-        val systemBarsTop = WindowInsets.systemBars.getTop(density)
-        val topAppBarHeight = remember(density, systemBarsTop) {
-            with(density) { systemBarsTop.toDp() } + 36.dp
-        }
-        val pagerState = rememberPagerState(initialPage = initialIndex) {
-            photoInfoList.size
-        }
-        var currentIndex by remember { mutableIntStateOf(initialIndex) }
-        var showAppBar by remember { mutableStateOf(true) }
+    val navController = LocalNavController.current
+    val density = LocalDensity.current
+    val systemBarsTop = WindowInsets.systemBars.getTop(density)
+    val topAppBarHeight = remember(density, systemBarsTop) {
+        with(density) { systemBarsTop.toDp() } + 36.dp
+    }
+    val pagerState = rememberPagerState(initialPage = initialIndex) {
+        photoInfoList.size
+    }
+    var currentIndex by remember { mutableIntStateOf(initialIndex) }
+    var showAppBar by remember { mutableStateOf(true) }
 
-        LaunchedEffect(pagerState) {
-            snapshotFlow { pagerState.currentPage }
-                .collectLatest {
-                    currentIndex = it
-                }
-        }
-
-        LaunchedEffect(null) {
-            snapshotFlow { showAppBar }
-                .collectLatest {
-                    // TODO: showSystemBars(it)
-                }
-        }
-
-        Box(modifier = modifier) {
-            ImageHorizontalPager(
-                photoInfoList = photoInfoList,
-                initialIndex = initialIndex,
-                pagerState = pagerState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .pointerInput(null) {
-                        detectTapWithoutConsume {
-                            showAppBar = !showAppBar
-                        }
-                    }
-            )
-
-            AnimatedVisibility(
-                visible = showAppBar,
-                modifier = Modifier.height(topAppBarHeight),
-                enter = remember { fadeIn() },
-                exit = remember { fadeOut() }
-            ) {
-                TopAppBar(
-                    modifier = Modifier.fillMaxHeight(),
-                    title = {
-                        Row(
-                            modifier = Modifier.fillMaxHeight(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "${pagerState.currentPage + 1} / ${pagerState.pageCount}",
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1
-                            )
-                        }
-                    },
-                    navigationIcon = {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.vector_arrow_back),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .clickable {
-                                    navController.previousBackStackEntry?.savedStateHandle?.apply {
-                                        set("PHOTO_INDEX", currentIndex)
-                                    }
-                                    navController.popBackStack()
-                                }
-                                .fillMaxHeight()
-                                .padding(horizontal = 12.dp)
-                        )
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Transparent,
-                        scrolledContainerColor = Color.Transparent
-                    )
-                )
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }
+            .collectLatest {
+                currentIndex = it
             }
+    }
+
+    LaunchedEffect(null) {
+        snapshotFlow { showAppBar }
+            .collectLatest {
+                // TODO: showSystemBars(it)
+            }
+    }
+
+    Box(modifier = modifier) {
+        ImageHorizontalPager(
+            photoInfoList = photoInfoList,
+            initialIndex = initialIndex,
+            pagerState = pagerState,
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(null) {
+                    detectTapWithoutConsume {
+                        showAppBar = !showAppBar
+                    }
+                }
+        )
+
+        AnimatedVisibility(
+            visible = showAppBar,
+            modifier = Modifier.height(topAppBarHeight),
+            enter = remember { fadeIn() },
+            exit = remember { fadeOut() }
+        ) {
+            TopAppBar(
+                modifier = Modifier.fillMaxHeight(),
+                title = {
+                    Row(
+                        modifier = Modifier.fillMaxHeight(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "${pagerState.currentPage + 1} / ${pagerState.pageCount}",
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    }
+                },
+                navigationIcon = {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.vector_arrow_back),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .clickable {
+                                navController.previousBackStackEntry?.savedStateHandle?.apply {
+                                    set("PHOTO_INDEX", currentIndex)
+                                }
+                                navController.popBackStack()
+                            }
+                            .fillMaxHeight()
+                            .padding(horizontal = 12.dp)
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent,
+                    scrolledContainerColor = Color.Transparent
+                )
+            )
         }
     }
 }
