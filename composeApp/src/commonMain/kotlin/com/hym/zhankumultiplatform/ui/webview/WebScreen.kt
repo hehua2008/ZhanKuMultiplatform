@@ -34,7 +34,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.hym.zhankumultiplatform.compose.EMPTY_BLOCK
 import com.hym.zhankumultiplatform.navigation.LocalNavController
-import com.hym.zhankumultiplatform.ui.theme.ComposeTheme
 import org.jetbrains.compose.resources.vectorResource
 import zhankumultiplatform.composeapp.generated.resources.Res
 import zhankumultiplatform.composeapp.generated.resources.vector_arrow_back
@@ -46,107 +45,105 @@ import zhankumultiplatform.composeapp.generated.resources.vector_arrow_back
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WebScreen(initialUrl: String, initialTitle: String = "", modifier: Modifier = Modifier) {
-    ComposeTheme {
-        val navController = LocalNavController.current
-        val density = LocalDensity.current
-        val systemBarsTop = WindowInsets.systemBars.getTop(density)
-        val topAppBarHeight = remember(density, systemBarsTop) {
-            with(density) { systemBarsTop.toDp() } + 36.dp
-        }
-        var barTitle by remember { mutableStateOf(initialTitle) }
-        var onBackClick: () -> Boolean by remember { mutableStateOf({ false }) }
+    val navController = LocalNavController.current
+    val density = LocalDensity.current
+    val systemBarsTop = WindowInsets.systemBars.getTop(density)
+    val topAppBarHeight = remember(density, systemBarsTop) {
+        with(density) { systemBarsTop.toDp() } + 36.dp
+    }
+    var barTitle by remember { mutableStateOf(initialTitle) }
+    var onBackClick: () -> Boolean by remember { mutableStateOf({ false }) }
 
-        Scaffold(
-            modifier = modifier,
-            topBar = {
-                TopAppBar(
-                    modifier = Modifier.height(topAppBarHeight),
-                    title = {
-                        Box(modifier = Modifier.fillMaxHeight()) {
-                            Text(
-                                text = barTitle,
-                                modifier = Modifier.align(Alignment.CenterStart),
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1
-                            )
-                        }
-                    },
-                    navigationIcon = {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.vector_arrow_back),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .clickable {
-                                    if (!onBackClick()) {
-                                        navController.popBackStack()
-                                    }
-                                }
-                                .fillMaxHeight()
-                                .padding(horizontal = 12.dp)
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            TopAppBar(
+                modifier = Modifier.height(topAppBarHeight),
+                title = {
+                    Box(modifier = Modifier.fillMaxHeight()) {
+                        Text(
+                            text = barTitle,
+                            modifier = Modifier.align(Alignment.CenterStart),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
                         )
                     }
-                )
-            }
-        ) { innerPadding ->
-            var isStatusVisible by remember { mutableStateOf(false) }
-            var progress by remember { mutableIntStateOf(0) }
-            val pullRefreshState = rememberPullToRefreshState()
-            var refresh: () -> Unit by remember { mutableStateOf(EMPTY_BLOCK) }
-
-            LaunchedEffect(pullRefreshState) {
-                snapshotFlow { pullRefreshState.isRefreshing }
-                    .collect {
-                        if (it) {
-                            refresh()
-                        }
-                    }
-            }
-
-            if (!isStatusVisible) {
-                pullRefreshState.endRefresh()
-            }
-
-            // innerPadding contains inset information for you to use and apply
-            Box(
-                modifier = Modifier
-                    // consume insets as scaffold doesn't do it by default
-                    .padding(innerPadding)
-                    .nestedScroll(pullRefreshState.nestedScrollConnection)
-            ) {
-                WebContent(
-                    initialUrl = initialUrl,
-                    updateStatusVisibility = {
-                        isStatusVisible = it
-                    },
-                    updateTitle = {
-                        barTitle = it
-                    },
-                    updateProgress = {
-                        progress = it
-                    },
-                    setOnBackClick = {
-                        onBackClick = it
-                    },
-                    setOnRefreshing = {
-                        refresh = it
-                    },
-                    modifier = Modifier.fillMaxSize()
-                )
-
-                if (isStatusVisible) {
-                    LinearProgressIndicator(
-                        progress = { progress / 100f },
+                },
+                navigationIcon = {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.vector_arrow_back),
+                        contentDescription = null,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
+                            .clickable {
+                                if (!onBackClick()) {
+                                    navController.popBackStack()
+                                }
+                            }
+                            .fillMaxHeight()
+                            .padding(horizontal = 12.dp)
                     )
                 }
+            )
+        }
+    ) { innerPadding ->
+        var isStatusVisible by remember { mutableStateOf(false) }
+        var progress by remember { mutableIntStateOf(0) }
+        val pullRefreshState = rememberPullToRefreshState()
+        var refresh: () -> Unit by remember { mutableStateOf(EMPTY_BLOCK) }
 
-                PullToRefreshContainer(
-                    state = pullRefreshState,
-                    modifier = Modifier.align(Alignment.TopCenter)
+        LaunchedEffect(pullRefreshState) {
+            snapshotFlow { pullRefreshState.isRefreshing }
+                .collect {
+                    if (it) {
+                        refresh()
+                    }
+                }
+        }
+
+        if (!isStatusVisible) {
+            pullRefreshState.endRefresh()
+        }
+
+        // innerPadding contains inset information for you to use and apply
+        Box(
+            modifier = Modifier
+                // consume insets as scaffold doesn't do it by default
+                .padding(innerPadding)
+                .nestedScroll(pullRefreshState.nestedScrollConnection)
+        ) {
+            WebContent(
+                initialUrl = initialUrl,
+                updateStatusVisibility = {
+                    isStatusVisible = it
+                },
+                updateTitle = {
+                    barTitle = it
+                },
+                updateProgress = {
+                    progress = it
+                },
+                setOnBackClick = {
+                    onBackClick = it
+                },
+                setOnRefreshing = {
+                    refresh = it
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+
+            if (isStatusVisible) {
+                LinearProgressIndicator(
+                    progress = { progress / 100f },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
                 )
             }
+
+            PullToRefreshContainer(
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }

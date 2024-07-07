@@ -1,8 +1,11 @@
 package com.hym.zhankumultiplatform.ui.main
 
+import androidx.compose.foundation.background
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,6 +23,7 @@ import com.hym.zhankumultiplatform.navigation.getArgs
 import com.hym.zhankumultiplatform.ui.detail.DetailScreen
 import com.hym.zhankumultiplatform.ui.imagepager.ZoomImagePagerScreen
 import com.hym.zhankumultiplatform.ui.tag.TagScreen
+import com.hym.zhankumultiplatform.ui.theme.ComposeTheme
 import com.hym.zhankumultiplatform.ui.webview.WebScreen
 
 /**
@@ -58,42 +62,46 @@ fun MainScreen() {
         LocalNavController provides navController,
         LocalNavListener provides navListener
     ) {
-        NavHost(navController, startDestination = Route.Home.path) {
-            composable(route = Route.Home.path) { backStackEntry ->
-                HomeScreen()
-            }
+        ComposeTheme {
+            NavHost(navController, startDestination = Route.Home.path) {
+                composable(route = Route.Home.path) { backStackEntry ->
+                    HomeScreen(modifier = Modifier.background(MaterialTheme.colorScheme.surface))
+                }
 
-            composable(route = Route.Details.path) { backStackEntry ->
-                val arguments: DetailsArgs = navArgsViewModel.getArgs(backStackEntry.id)
-                DetailScreen(
-                    contentType = arguments.contentType,
-                    contentId = arguments.contentId
-                )
-            }
+                composable(route = Route.Details.path) { backStackEntry ->
+                    val arguments: DetailsArgs = navArgsViewModel.getArgs(backStackEntry.id)
+                    DetailScreen(
+                        contentType = arguments.contentType,
+                        contentId = arguments.contentId,
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                    )
+                }
 
-            composable(route = Route.TagList.path) { backStackEntry ->
-                val arguments: TagListArgs = navArgsViewModel.getArgs(backStackEntry.id)
-                TagScreen(
-                    author = arguments.author,
-                    topCate = arguments.topCate,
-                    subCate = arguments.subCate
-                )
-            }
+                composable(route = Route.TagList.path) { backStackEntry ->
+                    val arguments: TagListArgs = navArgsViewModel.getArgs(backStackEntry.id)
+                    TagScreen(
+                        author = arguments.author,
+                        topCate = arguments.topCate,
+                        subCate = arguments.subCate,
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                    )
+                }
 
-            composable(route = Route.ImagePager.path) { backStackEntry ->
-                val arguments: ImagePagerArgs = navArgsViewModel.getArgs(backStackEntry.id)
-                ZoomImagePagerScreen(
-                    photoInfoList = arguments.photoInfos,
-                    initialIndex = arguments.currentPosition
-                )
-            }
+                composable(route = Route.ImagePager.path) { backStackEntry ->
+                    val arguments: ImagePagerArgs = navArgsViewModel.getArgs(backStackEntry.id)
+                    ZoomImagePagerScreen(
+                        photoInfoList = arguments.photoInfos,
+                        initialIndex = arguments.currentPosition
+                    )
+                }
 
-            composable(route = Route.WebView.path) { backStackEntry ->
-                val arguments: WebViewArgs = navArgsViewModel.getArgs(backStackEntry.id)
-                WebScreen(
-                    initialUrl = arguments.url,
-                    initialTitle = arguments.title
-                )
+                composable(route = Route.WebView.path) { backStackEntry ->
+                    val arguments: WebViewArgs = navArgsViewModel.getArgs(backStackEntry.id)
+                    WebScreen(
+                        initialUrl = arguments.url,
+                        initialTitle = arguments.title
+                    )
+                }
             }
         }
     }

@@ -54,7 +54,6 @@ import com.hym.zhankumultiplatform.navigation.LocalNavController
 import com.hym.zhankumultiplatform.navigation.LocalNavListener
 import com.hym.zhankumultiplatform.navigation.WebViewArgs
 import com.hym.zhankumultiplatform.ui.ThemeColorRetriever
-import com.hym.zhankumultiplatform.ui.theme.ComposeTheme
 import com.hym.zhankumultiplatform.ui.theme.updateStatusBarColor
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -74,263 +73,261 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(contentType: ContentType, contentId: String, modifier: Modifier = Modifier) {
-    ComposeTheme {
-        val navController = LocalNavController.current
-        val navListener = LocalNavListener.current
-        val detailViewModel = viewModel<DetailViewModel>(key = contentId) { DetailViewModel() }
-        var title by remember { mutableStateOf("") }
-        val pullRefreshState = rememberPullToRefreshState()
+    val navController = LocalNavController.current
+    val navListener = LocalNavListener.current
+    val detailViewModel = viewModel<DetailViewModel>(key = contentId) { DetailViewModel() }
+    var title by remember { mutableStateOf("") }
+    val pullRefreshState = rememberPullToRefreshState()
 
-        LaunchedEffect(detailViewModel) {
-            detailViewModel.setDetailTypeAndId(contentType, contentId)
-        }
+    LaunchedEffect(detailViewModel) {
+        detailViewModel.setDetailTypeAndId(contentType, contentId)
+    }
 
-        LaunchedEffect(detailViewModel, pullRefreshState) {
-            snapshotFlow { pullRefreshState.isRefreshing }
-                .collect {
-                    if (it) {
-                        detailViewModel.setDetailTypeAndId(contentType, contentId)
-                    }
-                }
-        }
-
-        when (detailViewModel.loadState) {
-            is LoadState.NotLoading -> pullRefreshState.endRefresh()
-            is LoadState.Error -> pullRefreshState.endRefresh()
-            //is LoadState.Loading -> pullRefreshState.startRefresh()
-            else -> {}
-        }
-
-        var detailContents: ImmutableList<DetailContent<*>>? = null
-        var headerContent: @Composable ((modifier: Modifier) -> Unit)? = null
-
-        when (contentType) {
-            ContentType.WORK -> {
-                detailViewModel.workDetails?.let { work ->
-                    title = work.product.title
-
-                    detailContents = remember(work) {
-                        (work.product.productVideos.map { video ->
-                            DetailVideo(video)
-                        } + work.product.productImages.map { image ->
-                            DetailImage(image)
-                        }).toImmutableList()
-                    }
-
-                    headerContent = { modifier ->
-                        val categories = remember(work) {
-                            listOf(work.product.fieldCateObj, work.product.subCateObj)
-                                .toImmutableList()
-                        }
-
-                        DetailHeaderLayout(
-                            titleStr = work.product.title,
-                            categories = categories,
-                            creatorObj = work.product.creatorObj,
-                            linkUrl = work.product.pageUrl,
-                            timeStr = work.product.updateTimeStr,
-                            viewCountStr = work.product.viewCountStr,
-                            commentCountStr = work.product.commentCountStr,
-                            favoriteCountStr = "${work.product.favoriteCount}",
-                            shareWordsStr = work.sharewords,
-                            modifier = modifier
-                        ) {
-                            /* TODO
-                            DownloadWorker.enqueue(
-                                this, work.product.productImages.map { it.oriUrl }
-                            )
-                            */
-                        }
-                    }
+    LaunchedEffect(detailViewModel, pullRefreshState) {
+        snapshotFlow { pullRefreshState.isRefreshing }
+            .collect {
+                if (it) {
+                    detailViewModel.setDetailTypeAndId(contentType, contentId)
                 }
             }
+    }
 
-            ContentType.ARTICLE -> {
-                detailViewModel.articleDetails?.let { article ->
-                    title = article.articledata.title
+    when (detailViewModel.loadState) {
+        is LoadState.NotLoading -> pullRefreshState.endRefresh()
+        is LoadState.Error -> pullRefreshState.endRefresh()
+        //is LoadState.Loading -> pullRefreshState.startRefresh()
+        else -> {}
+    }
 
-                    detailContents = remember(article) {
-                        article.toDetailContent()
+    var detailContents: ImmutableList<DetailContent<*>>? = null
+    var headerContent: @Composable ((modifier: Modifier) -> Unit)? = null
+
+    when (contentType) {
+        ContentType.WORK -> {
+            detailViewModel.workDetails?.let { work ->
+                title = work.product.title
+
+                detailContents = remember(work) {
+                    (work.product.productVideos.map { video ->
+                        DetailVideo(video)
+                    } + work.product.productImages.map { image ->
+                        DetailImage(image)
+                    }).toImmutableList()
+                }
+
+                headerContent = { modifier ->
+                    val categories = remember(work) {
+                        listOf(work.product.fieldCateObj, work.product.subCateObj)
                             .toImmutableList()
                     }
 
-                    headerContent = { modifier ->
-                        val categories = remember(article) {
-                            article.articledata.articleCates.toImmutableList()
-                        }
-
-                        DetailHeaderLayout(
-                            titleStr = article.articledata.title,
-                            categories = categories,
-                            creatorObj = article.articledata.creatorObj,
-                            linkUrl = article.articledata.pageUrl,
-                            timeStr = article.articledata.updateTimeStr,
-                            viewCountStr = article.articledata.viewCountStr,
-                            commentCountStr = article.articledata.commentCountStr,
-                            favoriteCountStr = "${article.articledata.favoriteCount}",
-                            shareWordsStr = article.sharewords,
-                            modifier = modifier
+                    DetailHeaderLayout(
+                        titleStr = work.product.title,
+                        categories = categories,
+                        creatorObj = work.product.creatorObj,
+                        linkUrl = work.product.pageUrl,
+                        timeStr = work.product.updateTimeStr,
+                        viewCountStr = work.product.viewCountStr,
+                        commentCountStr = work.product.commentCountStr,
+                        favoriteCountStr = "${work.product.favoriteCount}",
+                        shareWordsStr = work.sharewords,
+                        modifier = modifier
+                    ) {
+                        /* TODO
+                        DownloadWorker.enqueue(
+                            this, work.product.productImages.map { it.oriUrl }
                         )
+                        */
                     }
                 }
             }
         }
 
-        val lazyListState = rememberLazyListState()
-        val density = LocalDensity.current
-        val systemBarsTop = WindowInsets.systemBars.getTop(density)
-        val topAppBarHeight = remember(density, systemBarsTop) {
-            with(density) { systemBarsTop.toDp() } + 36.dp
-        }
-        val topAppBarColors = remember(detailViewModel.themeColor) {
-            detailViewModel.themeColor?.let {
-                val containerColor = Color(it.color)
-                val titleContentColor = Color(it.titleTextColor)
-                TopAppBarColors(
-                    containerColor = containerColor,
-                    scrolledContainerColor = containerColor,
-                    navigationIconContentColor = titleContentColor,
-                    titleContentColor = titleContentColor,
-                    actionIconContentColor = titleContentColor
-                )
-            }
-        }
-        val composeScope = rememberCoroutineScope()
-        var fabPosition by rememberMutableState { FabPosition.Center }
+        ContentType.ARTICLE -> {
+            detailViewModel.articleDetails?.let { article ->
+                title = article.articledata.title
 
-        Scaffold(
-            modifier = modifier,
-            topBar = {
-                TopAppBar(
-                    modifier = Modifier.height(topAppBarHeight),
-                    title = {
-                        Box(modifier = Modifier.fillMaxHeight()) {
-                            Text(
-                                text = title,
-                                modifier = Modifier.align(Alignment.CenterStart),
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1
-                            )
-                        }
-                    },
-                    navigationIcon = {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.vector_arrow_back),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .clickable {
-                                    navController.popBackStack()
-                                }
-                                .fillMaxHeight()
-                                .padding(horizontal = 12.dp)
-                        )
-                    },
-                    colors = topAppBarColors ?: TopAppBarDefaults.topAppBarColors()
-                )
-            },
-            floatingActionButton = {
-                var centerPositionX by rememberMutableState { 0f }
-                var parentWidth by rememberMutableState<Int?> { null }
-                var offsetX by remember { mutableFloatStateOf(0f) }
-
-                FloatingActionButton(
-                    onClick = {
-                        composeScope.launch {
-                            lazyListState.animateScrollToItem(0)
-                        }
-                    },
-                    modifier = Modifier
-                        .onGloballyPositioned {
-                            centerPositionX = it.positionInParent().x + (it.size.width / 2f)
-                            parentWidth = it.parentLayoutCoordinates?.size?.width
-                        }
-                        .offset {
-                            IntOffset(offsetX.roundToInt(), 0)
-                        }
-                        .draggable(
-                            state = rememberDraggableState { delta ->
-                                offsetX += delta
-                            },
-                            orientation = Orientation.Horizontal,
-                            onDragStopped = {
-                                parentWidth?.let {
-                                    val newCenterPositionX = centerPositionX + offsetX
-                                    fabPosition = when {
-                                        newCenterPositionX < it / 3f -> FabPosition.Start
-                                        newCenterPositionX > it * 2 / 3f -> FabPosition.End
-                                        else -> FabPosition.Center
-                                    }
-                                }
-                                offsetX = 0f
-                            }
-                        ),
-                    shape = CircleShape
-                ) {
-                    Icon(vectorResource(Res.drawable.vector_rocket), "")
+                detailContents = remember(article) {
+                    article.toDetailContent()
+                        .toImmutableList()
                 }
-            },
-            floatingActionButtonPosition = fabPosition
-        ) { innerPadding ->
-            // innerPadding contains inset information for you to use and apply
-            Box(
-                modifier = Modifier
-                    // consume insets as scaffold doesn't do it by default
-                    .padding(innerPadding)
-                    .nestedScroll(pullRefreshState.nestedScrollConnection)
-            ) {
-                DetailContentLayout(
-                    detailContents = detailContents ?: persistentListOf(),
-                    lazyListState = lazyListState,
-                    onImageClick = { list, index ->
-                        navListener.onNavigateToImagePager(ImagePagerArgs(list, index))
-                    },
-                    playerProvider = detailViewModel.playerProvider,
-                    onVideoPlayFailed = { detailVideo ->
-                        navListener.onNavigateToWebView(
-                            WebViewArgs(detailVideo.data.url, detailVideo.data.name)
-                        )
+
+                headerContent = { modifier ->
+                    val categories = remember(article) {
+                        article.articledata.articleCates.toImmutableList()
                     }
-                ) {
-                    headerContent?.invoke(
-                        it.padding(
-                            top = COMMON_PADDING,
-                            start = COMMON_PADDING,
-                            end = COMMON_PADDING
-                        )
+
+                    DetailHeaderLayout(
+                        titleStr = article.articledata.title,
+                        categories = categories,
+                        creatorObj = article.articledata.creatorObj,
+                        linkUrl = article.articledata.pageUrl,
+                        timeStr = article.articledata.updateTimeStr,
+                        viewCountStr = article.articledata.viewCountStr,
+                        commentCountStr = article.articledata.commentCountStr,
+                        favoriteCountStr = "${article.articledata.favoriteCount}",
+                        shareWordsStr = article.sharewords,
+                        modifier = modifier
                     )
                 }
+            }
+        }
+    }
 
-                PullToRefreshContainer(
-                    state = pullRefreshState,
-                    modifier = Modifier.align(Alignment.TopCenter)
+    val lazyListState = rememberLazyListState()
+    val density = LocalDensity.current
+    val systemBarsTop = WindowInsets.systemBars.getTop(density)
+    val topAppBarHeight = remember(density, systemBarsTop) {
+        with(density) { systemBarsTop.toDp() } + 36.dp
+    }
+    val topAppBarColors = remember(detailViewModel.themeColor) {
+        detailViewModel.themeColor?.let {
+            val containerColor = Color(it.color)
+            val titleContentColor = Color(it.titleTextColor)
+            TopAppBarColors(
+                containerColor = containerColor,
+                scrolledContainerColor = containerColor,
+                navigationIconContentColor = titleContentColor,
+                titleContentColor = titleContentColor,
+                actionIconContentColor = titleContentColor
+            )
+        }
+    }
+    val composeScope = rememberCoroutineScope()
+    var fabPosition by rememberMutableState { FabPosition.Center }
+
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            TopAppBar(
+                modifier = Modifier.height(topAppBarHeight),
+                title = {
+                    Box(modifier = Modifier.fillMaxHeight()) {
+                        Text(
+                            text = title,
+                            modifier = Modifier.align(Alignment.CenterStart),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    }
+                },
+                navigationIcon = {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.vector_arrow_back),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .clickable {
+                                navController.popBackStack()
+                            }
+                            .fillMaxHeight()
+                            .padding(horizontal = 12.dp)
+                    )
+                },
+                colors = topAppBarColors ?: TopAppBarDefaults.topAppBarColors()
+            )
+        },
+        floatingActionButton = {
+            var centerPositionX by rememberMutableState { 0f }
+            var parentWidth by rememberMutableState<Int?> { null }
+            var offsetX by remember { mutableFloatStateOf(0f) }
+
+            FloatingActionButton(
+                onClick = {
+                    composeScope.launch {
+                        lazyListState.animateScrollToItem(0)
+                    }
+                },
+                modifier = Modifier
+                    .onGloballyPositioned {
+                        centerPositionX = it.positionInParent().x + (it.size.width / 2f)
+                        parentWidth = it.parentLayoutCoordinates?.size?.width
+                    }
+                    .offset {
+                        IntOffset(offsetX.roundToInt(), 0)
+                    }
+                    .draggable(
+                        state = rememberDraggableState { delta ->
+                            offsetX += delta
+                        },
+                        orientation = Orientation.Horizontal,
+                        onDragStopped = {
+                            parentWidth?.let {
+                                val newCenterPositionX = centerPositionX + offsetX
+                                fabPosition = when {
+                                    newCenterPositionX < it / 3f -> FabPosition.Start
+                                    newCenterPositionX > it * 2 / 3f -> FabPosition.End
+                                    else -> FabPosition.Center
+                                }
+                            }
+                            offsetX = 0f
+                        }
+                    ),
+                shape = CircleShape
+            ) {
+                Icon(vectorResource(Res.drawable.vector_rocket), "")
+            }
+        },
+        floatingActionButtonPosition = fabPosition
+    ) { innerPadding ->
+        // innerPadding contains inset information for you to use and apply
+        Box(
+            modifier = Modifier
+                // consume insets as scaffold doesn't do it by default
+                .padding(innerPadding)
+                .nestedScroll(pullRefreshState.nestedScrollConnection)
+        ) {
+            DetailContentLayout(
+                detailContents = detailContents ?: persistentListOf(),
+                lazyListState = lazyListState,
+                onImageClick = { list, index ->
+                    navListener.onNavigateToImagePager(ImagePagerArgs(list, index))
+                },
+                playerProvider = detailViewModel.playerProvider,
+                onVideoPlayFailed = { detailVideo ->
+                    navListener.onNavigateToWebView(
+                        WebViewArgs(detailVideo.data.url, detailVideo.data.name)
+                    )
+                }
+            ) {
+                headerContent?.invoke(
+                    it.padding(
+                        top = COMMON_PADDING,
+                        start = COMMON_PADDING,
+                        end = COMMON_PADDING
+                    )
                 )
             }
-        }
 
-        LaunchedEffect(detailViewModel, detailContents) {
-            if (detailViewModel.themeColor != null) return@LaunchedEffect
-            val firstImage = detailContents?.filterIsInstance<DetailImage>()?.firstOrNull()
-                ?: return@LaunchedEffect
-            ThemeColorRetriever.getMainThemeColor(firstImage.data.urlSmall)?.let {
-                detailViewModel.themeColor = it
+            PullToRefreshContainer(
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
+        }
+    }
+
+    LaunchedEffect(detailViewModel, detailContents) {
+        if (detailViewModel.themeColor != null) return@LaunchedEffect
+        val firstImage = detailContents?.filterIsInstance<DetailImage>()?.firstOrNull()
+            ?: return@LaunchedEffect
+        ThemeColorRetriever.getMainThemeColor(firstImage.data.urlSmall)?.let {
+            detailViewModel.themeColor = it
+        }
+    }
+
+    detailViewModel.themeColor?.let {
+        updateStatusBarColor(darkTheme = !it.isDarkText, isInit = false)
+    }
+
+    val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+    val currentIndexState = remember(savedStateHandle) {
+        savedStateHandle?.getStateFlow<Int?>("PHOTO_INDEX", null)
+    }?.collectAsState(initial = null)
+
+    LaunchedEffect(currentIndexState) {
+        snapshotFlow { currentIndexState?.value }
+            .collectLatest {
+                val position = it ?: return@collectLatest
+                lazyListState.scrollToItem(if (headerContent == null) position else position + 1)
             }
-        }
-
-        detailViewModel.themeColor?.let {
-            updateStatusBarColor(darkTheme = !it.isDarkText, isInit = false)
-        }
-
-        val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
-        val currentIndexState = remember(savedStateHandle) {
-            savedStateHandle?.getStateFlow<Int?>("PHOTO_INDEX", null)
-        }?.collectAsState(initial = null)
-
-        LaunchedEffect(currentIndexState) {
-            snapshotFlow { currentIndexState?.value }
-                .collectLatest {
-                    val position = it ?: return@collectLatest
-                    lazyListState.scrollToItem(if (headerContent == null) position else position + 1)
-                }
-        }
     }
 }

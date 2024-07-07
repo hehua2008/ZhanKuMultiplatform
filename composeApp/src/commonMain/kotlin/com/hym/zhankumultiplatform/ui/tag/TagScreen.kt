@@ -29,7 +29,6 @@ import com.hym.zhankumultiplatform.model.TopCate
 import com.hym.zhankumultiplatform.navigation.LocalNavController
 import com.hym.zhankumultiplatform.ui.author.AuthorItemPage
 import com.hym.zhankumultiplatform.ui.main.PreviewItemPage
-import com.hym.zhankumultiplatform.ui.theme.ComposeTheme
 import org.jetbrains.compose.resources.vectorResource
 import zhankumultiplatform.composeapp.generated.resources.Res
 import zhankumultiplatform.composeapp.generated.resources.vector_arrow_back
@@ -46,63 +45,61 @@ fun TagScreen(
     subCate: SubCate?,
     modifier: Modifier = Modifier
 ) {
-    ComposeTheme {
-        val navController = LocalNavController.current
-        val density = LocalDensity.current
-        val systemBarsTop = WindowInsets.systemBars.getTop(density)
-        val topAppBarHeight = remember(density, systemBarsTop) {
-            with(density) { systemBarsTop.toDp() } + 36.dp
-        }
-        val title = remember { author?.username ?: topCate?.name ?: subCate?.name ?: "" }
+    val navController = LocalNavController.current
+    val density = LocalDensity.current
+    val systemBarsTop = WindowInsets.systemBars.getTop(density)
+    val topAppBarHeight = remember(density, systemBarsTop) {
+        with(density) { systemBarsTop.toDp() } + 36.dp
+    }
+    val title = remember { author?.username ?: topCate?.name ?: subCate?.name ?: "" }
 
-        Column(modifier = modifier) {
-            TopAppBar(
-                modifier = Modifier.height(topAppBarHeight),
-                title = {
-                    Row(
-                        modifier = Modifier.fillMaxHeight(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        if (author != null) {
-                            AsyncImage(
-                                model = author.avatar1x,
-                                contentDescription = author.username,
-                                modifier = Modifier.clip(CircleShape)
-                            )
-                        }
-                        Text(
-                            text = title,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
+    Column(modifier = modifier) {
+        TopAppBar(
+            modifier = Modifier.height(topAppBarHeight),
+            title = {
+                Row(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (author != null) {
+                        AsyncImage(
+                            model = author.avatar1x,
+                            contentDescription = author.username,
+                            modifier = Modifier.clip(CircleShape)
                         )
                     }
-                },
-                navigationIcon = {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.vector_arrow_back),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .clickable {
-                                navController.popBackStack()
-                            }
-                            .fillMaxHeight()
-                            .padding(horizontal = 12.dp)
+                    Text(
+                        text = title,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
                     )
                 }
-            )
-
-            if (author != null) {
-                AuthorItemPage(
-                    author = author,
-                    modifier = Modifier.zIndex(-1f)
-                )
-            } else {
-                PreviewItemPage(
-                    topCate = topCate!!,
-                    initialSubCate = subCate,
-                    modifier = Modifier.zIndex(-1f)
+            },
+            navigationIcon = {
+                Icon(
+                    imageVector = vectorResource(Res.drawable.vector_arrow_back),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clickable {
+                            navController.popBackStack()
+                        }
+                        .fillMaxHeight()
+                        .padding(horizontal = 12.dp)
                 )
             }
+        )
+
+        if (author != null) {
+            AuthorItemPage(
+                author = author,
+                modifier = Modifier.zIndex(-1f)
+            )
+        } else {
+            PreviewItemPage(
+                topCate = topCate!!,
+                initialSubCate = subCate,
+                modifier = Modifier.zIndex(-1f)
+            )
         }
     }
 }
