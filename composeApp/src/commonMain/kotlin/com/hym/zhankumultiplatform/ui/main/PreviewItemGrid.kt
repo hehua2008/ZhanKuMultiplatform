@@ -13,6 +13,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -47,6 +49,7 @@ private val VerticalArrangement = Arrangement.spacedBy(COMMON_PADDING)
 @Composable
 fun PreviewItemGrid(
     lazyPagingItems: LazyPagingItems<Content>,
+    showSnackbar: suspend (message: String, actionLabel: String?, withDismiss: Boolean, duration: SnackbarDuration) -> SnackbarResult,
     modifier: Modifier = Modifier,
     columnSize: Int = 1,
     lazyGridState: LazyGridState = rememberLazyGridState(),
@@ -93,6 +96,7 @@ fun PreviewItemGrid(
             Surface(color = surfaceContainerColor, shape = ShapeDefaults.Small) {
                 PreviewItem(
                     content = previewItem,
+                    showSnackbar = showSnackbar,
                     modifier = Modifier
                         .animateItemPlacement()
                         .fillMaxWidth()

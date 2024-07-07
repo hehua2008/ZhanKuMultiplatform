@@ -22,8 +22,6 @@ val NUMBER_REGEX = Regex("\\d*")
 val NON_NUMBER_REGEX = Regex("\\D+")
 val MULTIPLE_SPACE = Regex("\\s{2,}")
 
-expect fun CharSequence.copyToClipboard()
-
 expect fun String.htmlToPlainString(): String
 
 expect fun String.htmlToAnnotatedString(density: Density): AnnotatedString

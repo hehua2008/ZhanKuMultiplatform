@@ -12,15 +12,20 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
 import androidx.constraintlayout.compose.ChainStyle
@@ -32,8 +37,8 @@ import com.hym.zhankumultiplatform.compose.COMMON_PADDING
 import com.hym.zhankumultiplatform.compose.EMPTY_BLOCK
 import com.hym.zhankumultiplatform.compose.RemoveAccessibilityExtraSpace
 import com.hym.zhankumultiplatform.compose.SingleLineTextWithDrawable
-import com.hym.zhankumultiplatform.compose.copyToClipboard
 import com.hym.zhankumultiplatform.model.Content
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /**
@@ -47,12 +52,16 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun PreviewItem(
     content: Content,
+    showSnackbar: suspend (message: String, actionLabel: String?, withDismiss: Boolean, duration: SnackbarDuration) -> SnackbarResult,
     modifier: Modifier = Modifier,
     viewsPainter: Painter? = null,
     commentPainter: Painter? = null,
     onImageClick: () -> Unit = EMPTY_BLOCK,
     onAuthorClick: () -> Unit = EMPTY_BLOCK
 ) {
+    val clipboardManager = LocalClipboardManager.current
+    val scope = rememberCoroutineScope()
+
     val titleTextStyle = MaterialTheme.typography.titleSmall.let {
         remember(it) {
             it.copy(fontWeight = FontWeight.Bold)
@@ -159,7 +168,17 @@ fun PreviewItem(
                 }
                 .padding(top = COMMON_PADDING)
                 .combinedClickable(
-                    onLongClick = { content.formatTitle.copyToClipboard() },
+                    onLongClick = {
+                        scope.launch {
+                            clipboardManager.setText(AnnotatedString(content.formatTitle))
+                            showSnackbar(
+                                "Copied: ${content.formatTitle}",
+                                null,
+                                true,
+                                SnackbarDuration.Short
+                            )
+                        }
+                    },
                     onClick = EMPTY_BLOCK
                 ),
             style = titleTextStyle,
@@ -218,5 +237,9 @@ fun PreviewItem(
 @Preview
 @Composable
 private fun PreviewPreviewItem() {
-    PreviewItem(Content.Demo, Modifier.background(Color.White))
+    PreviewItem(
+        Content.Demo,
+        { _, _, _, _ -> SnackbarResult.Dismissed },
+        Modifier.background(Color.White)
+    )
 }

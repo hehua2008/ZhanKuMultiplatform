@@ -15,10 +15,6 @@ import platform.UIKit.create
 
 private const val TAG = "ComposeUtils"
 
-actual fun CharSequence.copyToClipboard() {
-    // TODO
-}
-
 @OptIn(ExperimentalForeignApi::class)
 actual fun String.htmlToPlainString(): String {
     try {
