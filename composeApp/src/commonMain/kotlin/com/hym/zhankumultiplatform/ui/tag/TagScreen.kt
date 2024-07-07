@@ -40,7 +40,12 @@ import zhankumultiplatform.composeapp.generated.resources.vector_arrow_back
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TagScreen(author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) {
+fun TagScreen(
+    author: CreatorObj?,
+    topCate: TopCate?,
+    subCate: SubCate?,
+    modifier: Modifier = Modifier
+) {
     ComposeTheme {
         val navController = LocalNavController.current
         val density = LocalDensity.current
@@ -50,7 +55,7 @@ fun TagScreen(author: CreatorObj?, topCate: TopCate?, subCate: SubCate?) {
         }
         val title = remember { author?.username ?: topCate?.name ?: subCate?.name ?: "" }
 
-        Column {
+        Column(modifier = modifier) {
             TopAppBar(
                 modifier = Modifier.height(topAppBarHeight),
                 title = {
