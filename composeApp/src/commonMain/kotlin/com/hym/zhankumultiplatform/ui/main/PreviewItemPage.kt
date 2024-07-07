@@ -38,14 +38,11 @@ fun PreviewItemPage(
     topCate: TopCate,
     modifier: Modifier = Modifier,
     initialSubCate: SubCate? = null,
-    pageViewModel: PreviewPageViewModel = viewModel(key = topCate.name) { PreviewPageViewModel() }
+    pageViewModel: PreviewPageViewModel = viewModel(key = topCate.name) {
+        PreviewPageViewModel(topCate = topCate, initialSubCate = initialSubCate)
+    }
 ) {
     val navListener = LocalNavListener.current
-
-    LaunchedEffect(pageViewModel, topCate, initialSubCate) {
-        pageViewModel.topCate = topCate
-        pageViewModel.setSubCate(initialSubCate)
-    }
 
     val lazyPagingItems = pageViewModel.pagingFlow.collectAsLazyPagingItems()
 

@@ -19,14 +19,15 @@ import com.hym.zhankumultiplatform.paging.TotalPagesCallback
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 
-class PreviewPageViewModel(private val networkService: NetworkService = GlobalComponent.Instance.networkService) :
-    ViewModel() {
+class PreviewPageViewModel(
+    val topCate: TopCate,
+    initialSubCate: SubCate?,
+    private val networkService: NetworkService = GlobalComponent.Instance.networkService
+) : ViewModel() {
     companion object {
         private const val TAG = "PreviewPageViewModel"
         val PageSizeList = listOf(10, 25, 50, 100, 200, 400).toImmutableList()
     }
-
-    var topCate: TopCate? = null
 
     private val _page = MutableSharedData<Int>(1)
     val page: SharedData<Int> = _page
@@ -43,7 +44,7 @@ class PreviewPageViewModel(private val networkService: NetworkService = GlobalCo
         }
     }
 
-    private val _subCate = MutableSharedData<SubCate?>(null)
+    private val _subCate = MutableSharedData<SubCate?>(initialSubCate)
     val subCate: SharedData<SubCate?> = _subCate
 
     private var recommendLevel = RecommendLevel.EDITOR_CHOICE
