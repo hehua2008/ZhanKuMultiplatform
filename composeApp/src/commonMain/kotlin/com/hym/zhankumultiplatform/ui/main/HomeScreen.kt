@@ -13,9 +13,8 @@ import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
@@ -24,7 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hym.zhankumultiplatform.MyAppViewModel
 import com.hym.zhankumultiplatform.getAppViewModel
 import com.hym.zhankumultiplatform.ui.search.SearchPage
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 /**
  * @author hehua2008
@@ -42,23 +41,21 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
     Column(modifier = modifier) {
         val categoryItems = getAppViewModel<MyAppViewModel>().categoryItems
-        val pagerState = rememberPagerState(mainViewModel.selectedPage) {
+        val pagerState = rememberPagerState(if (categoryItems.isEmpty()) 0 else 1) {
             1 + categoryItems.size
         }
-
-        LaunchedEffect(mainViewModel, pagerState) {
-            snapshotFlow { mainViewModel.selectedPage }
-                .collectLatest {
-                    pagerState.animateScrollToPage(it)
-                }
-        }
+        val scope = rememberCoroutineScope()
 
         SecondaryScrollableTabRow(selectedTabIndex = pagerState.currentPage) {
             val tabTextStyle = MaterialTheme.typography.titleMedium
 
             Tab(
                 selected = (pagerState.currentPage == 0),
-                onClick = { mainViewModel.selectedPage = 0 },
+                onClick = {
+                    scope.launch {
+                        pagerState.animateScrollToPage(0)
+                    }
+                },
                 modifier = Modifier.padding(top = paddingTop),
                 text = {
                     Text(
@@ -71,7 +68,11 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             categoryItems.forEachIndexed { index, topCate ->
                 Tab(
                     selected = (pagerState.currentPage == 1 + index),
-                    onClick = { mainViewModel.selectedPage = 1 + index },
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(1 + index)
+                        }
+                    },
                     modifier = Modifier.padding(top = paddingTop),
                     text = {
                         Text(
