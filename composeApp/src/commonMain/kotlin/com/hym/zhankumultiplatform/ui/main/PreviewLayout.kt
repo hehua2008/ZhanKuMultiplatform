@@ -7,12 +7,17 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
@@ -169,44 +174,60 @@ fun PreviewLayout(
         }
     }
 
-    Box(modifier = modifier.nestedScroll(combinedNestedScrollConnection)) {
-        PreviewItemGrid(
-            lazyPagingItems = lazyPagingItems,
-            modifier = Modifier.fillMaxSize(),
-            columnSize = 2,
-            lazyGridState = lazyGridState,
-            flingBehavior = listenableFlingBehavior(flingVelocityListener),
-            headerContent = headerContent
-        )
+    val snackbarHostState = remember { SnackbarHostState() }
 
-        PullToRefreshContainer(
-            state = pullRefreshState,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
-
-        val fabOnClick: () -> Unit = remember {
-            {
-                composeScope.launch {
-                    lazyGridState.scrollToItem(0)
-                    showFab = false
-                }
+    val showSnackbar: suspend (message: String, actionLabel: String?, withDismiss: Boolean, duration: SnackbarDuration) -> SnackbarResult =
+        remember {
+            { message, actionLabel, withDismiss, duration ->
+                snackbarHostState.showSnackbar(message, actionLabel, withDismiss, duration)
             }
         }
 
-        AnimatedVisibility(
-            visible = showFab,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp),
-            enter = remember { scaleIn() + fadeIn() },
-            exit = remember { scaleOut() + fadeOut() }
-        ) {
-            FloatingActionButton(
-                onClick = fabOnClick,
-                shape = CircleShape
-            ) {
-                Icon(vectorResource(Res.drawable.vector_rocket), "")
+    Scaffold(
+        modifier = modifier,
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
+        floatingActionButton = {
+            val fabOnClick: () -> Unit = remember {
+                {
+                    composeScope.launch {
+                        lazyGridState.scrollToItem(0)
+                        showFab = false
+                    }
+                }
             }
+
+            AnimatedVisibility(
+                visible = showFab,
+                enter = remember { scaleIn() + fadeIn() },
+                exit = remember { scaleOut() + fadeOut() }
+            ) {
+                FloatingActionButton(
+                    onClick = fabOnClick,
+                    shape = CircleShape
+                ) {
+                    Icon(vectorResource(Res.drawable.vector_rocket), "")
+                }
+            }
+        },
+        floatingActionButtonPosition = FabPosition.Center
+    ) {
+        Box(modifier = Modifier.nestedScroll(combinedNestedScrollConnection)) {
+            PreviewItemGrid(
+                lazyPagingItems = lazyPagingItems,
+                showSnackbar = showSnackbar,
+                modifier = Modifier.fillMaxSize(),
+                columnSize = 2,
+                lazyGridState = lazyGridState,
+                flingBehavior = listenableFlingBehavior(flingVelocityListener),
+                headerContent = headerContent
+            )
+
+            PullToRefreshContainer(
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }
