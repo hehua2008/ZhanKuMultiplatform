@@ -45,7 +45,7 @@ import zhankumultiplatform.composeapp.generated.resources.vector_arrow_back
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WebScreen(initialUrl: String, initialTitle: String = "") {
+fun WebScreen(initialUrl: String, initialTitle: String = "", modifier: Modifier = Modifier) {
     ComposeTheme {
         val navController = LocalNavController.current
         val density = LocalDensity.current
@@ -57,6 +57,7 @@ fun WebScreen(initialUrl: String, initialTitle: String = "") {
         var onBackClick: () -> Boolean by remember { mutableStateOf({ false }) }
 
         Scaffold(
+            modifier = modifier,
             topBar = {
                 TopAppBar(
                     modifier = Modifier.height(topAppBarHeight),

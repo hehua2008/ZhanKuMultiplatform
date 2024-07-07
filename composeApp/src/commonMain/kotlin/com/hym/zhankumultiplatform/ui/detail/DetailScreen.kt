@@ -73,7 +73,7 @@ import kotlin.math.roundToInt
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(contentType: ContentType, contentId: String) {
+fun DetailScreen(contentType: ContentType, contentId: String, modifier: Modifier = Modifier) {
     ComposeTheme {
         val navController = LocalNavController.current
         val navListener = LocalNavListener.current
@@ -199,6 +199,7 @@ fun DetailScreen(contentType: ContentType, contentId: String) {
         var fabPosition by rememberMutableState { FabPosition.Center }
 
         Scaffold(
+            modifier = modifier,
             topBar = {
                 TopAppBar(
                     modifier = Modifier.height(topAppBarHeight),

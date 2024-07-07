@@ -52,7 +52,8 @@ import zhankumultiplatform.composeapp.generated.resources.vector_arrow_back
 @Composable
 fun ZoomImagePagerScreen(
     photoInfoList: ImmutableList<UrlPhotoInfo>,
-    initialIndex: Int
+    initialIndex: Int,
+    modifier: Modifier = Modifier
 ) {
     ComposeTheme {
         val navController = LocalNavController.current
@@ -81,7 +82,7 @@ fun ZoomImagePagerScreen(
                 }
         }
 
-        Box {
+        Box(modifier = modifier) {
             ImageHorizontalPager(
                 photoInfoList = photoInfoList,
                 initialIndex = initialIndex,

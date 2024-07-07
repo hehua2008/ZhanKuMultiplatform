@@ -33,7 +33,7 @@ import kotlinx.coroutines.flow.collectLatest
  */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(modifier: Modifier = Modifier) {
     ComposeTheme {
         val mainViewModel = viewModel<MainViewModel> { MainViewModel() }
         val density = LocalDensity.current
@@ -42,7 +42,7 @@ fun HomeScreen() {
             with(density) { systemBarsTop.toDp() }
         }
 
-        Column {
+        Column(modifier = modifier) {
             val categoryItems = getAppViewModel<MyAppViewModel>().categoryItems
             val pagerState = rememberPagerState(mainViewModel.selectedPage) {
                 1 + categoryItems.size
