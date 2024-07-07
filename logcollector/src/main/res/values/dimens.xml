@@ -1,7 +1,0 @@
-<resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="log_activity_horizontal_margin">8dp</dimen>
-    <dimen name="log_activity_vertical_margin">8dp</dimen>
-    <dimen name="log_common_margin">8dp</dimen>
-    <dimen name="log_button_height">30dp</dimen>
-</resources>
