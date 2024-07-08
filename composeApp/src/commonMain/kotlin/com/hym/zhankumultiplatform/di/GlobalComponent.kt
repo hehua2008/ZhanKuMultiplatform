@@ -1,5 +1,9 @@
 package com.hym.zhankumultiplatform.di
 
+import coil3.Uri
+import coil3.annotation.InternalCoilApi
+import coil3.network.ktor.KtorNetworkFetcherFactory
+import coil3.util.FetcherServiceLoaderTarget
 import com.hym.zhankumultiplatform.network.FileStorage
 import com.hym.zhankumultiplatform.network.NetworkConstants
 import com.hym.zhankumultiplatform.network.NetworkService
@@ -26,6 +30,7 @@ import okio.FileSystem
  * @author hehua2008
  * @date 2022/8/4
  */
+@OptIn(InternalCoilApi::class)
 @Component
 @ApplicationScope
 abstract class GlobalComponent {
@@ -36,6 +41,8 @@ abstract class GlobalComponent {
     abstract val httpClient: HttpClient
 
     abstract val networkService: NetworkService
+
+    abstract val ktorNetworkFetcherServiceLoaderTarget: FetcherServiceLoaderTarget<Uri>
 
     @ApplicationScope
     @Provides
@@ -99,6 +106,18 @@ abstract class GlobalComponent {
     @Provides
     fun provideNetworkService(httpClient: HttpClient): NetworkService {
         return NetworkService(httpClient)
+    }
+
+    @ApplicationScope
+    @Provides
+    fun ktorNetworkFetcherServiceLoaderTarget(httpClient: HttpClient): FetcherServiceLoaderTarget<Uri> {
+        return object : FetcherServiceLoaderTarget<Uri> {
+            override fun factory() = KtorNetworkFetcherFactory(httpClient = httpClient)
+            override fun type() = Uri::class
+
+            // This KtorNetworkFetcher takes precedence over inner KtorNetworkFetcher on iOS.
+            override fun priority(): Int = 1
+        }
     }
 }
 
