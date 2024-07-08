@@ -92,7 +92,7 @@ data class Content(
 ) {
     val contentId: String get() = pageUrl.split('/').last()
 
-    val formatTitle get() = title.htmlToPlainString()
+    val formatTitle by lazy { title.htmlToPlainString() }
 
     val updateTimeStr
         get() = (timeTitleStr.getDateTime() ?: publishTime).getRelativeOrActualDateString()
