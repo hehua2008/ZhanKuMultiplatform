@@ -32,7 +32,7 @@ okio = "3.9.0"
 okhttp = "4.12.0"
 
 # coil
-coil = "3.0.0-alpha06"
+coil = "3.0.0-alpha08"
 
 # ktor
 #ktor = "2.3.11" # Too much memory leak: https://youtrack.jetbrains.com/issue/KTOR-5049/Memory-leak-in-Darwin-engine

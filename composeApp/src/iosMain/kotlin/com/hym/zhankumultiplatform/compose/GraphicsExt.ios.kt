@@ -2,7 +2,9 @@ package com.hym.zhankumultiplatform.compose
 
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asComposeImageBitmap
+import coil3.Canvas
 import coil3.annotation.ExperimentalCoilApi
+import coil3.toBitmap
 import org.jetbrains.skia.impl.use
 
 /**
@@ -16,9 +18,9 @@ actual object EmptyCoilImage : coil3.Image {
     override val height: Int = 0
     override val shareable: Boolean = true
 
-    private val emptyBitmap = org.jetbrains.skia.Bitmap().apply { setImmutable() }
-
-    override fun toBitmap(): org.jetbrains.skia.Bitmap = emptyBitmap
+    override fun draw(canvas: Canvas) {
+        // draw nothing
+    }
 }
 
 actual fun ByteArray.decodeToImageBitmap(): ImageBitmap {
