@@ -135,7 +135,7 @@ ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serializatio
 compose-webview = { group = "io.github.kevinnzou", name = "compose-webview-multiplatform", version.ref = "composeWebview" }
 
 # others
-jsoup = { group = "org.jsoup", name = "jsoup", version = "1.17.1" }
+ksoup = { group = "com.fleeksoft.ksoup", name = "ksoup", version = "0.1.2" }
 compose-markdown = { group = "com.github.jeziellago", name = "compose-markdown", version = "0.4.1" }
 napier = { group = "io.github.aakira", name = "napier", version = "2.7.1" }
 

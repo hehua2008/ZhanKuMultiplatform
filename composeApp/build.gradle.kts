@@ -43,9 +43,6 @@ kotlin {
             implementation(libs.androidx.appcompat)
             implementation(libs.androidx.work.runtime.ktx)
 
-            // others
-            implementation(libs.jsoup)
-
             // androidx media3
             implementation(libs.androidx.media3.exoplayer)
             implementation(libs.androidx.media3.exoplayer.dash)
@@ -127,6 +124,7 @@ kotlin {
 
             // others
             implementation(libs.napier)
+            implementation(libs.ksoup)
 
             // local
             implementation(project(":subsamplingimage:library"))
