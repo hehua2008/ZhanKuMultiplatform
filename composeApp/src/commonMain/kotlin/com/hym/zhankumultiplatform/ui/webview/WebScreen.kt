@@ -19,13 +19,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -37,6 +35,7 @@ import com.hym.zhankumultiplatform.navigation.LocalNavController
 import org.jetbrains.compose.resources.vectorResource
 import zhankumultiplatform.composeapp.generated.resources.Res
 import zhankumultiplatform.composeapp.generated.resources.vector_arrow_back
+import zhankumultiplatform.composeapp.generated.resources.vector_refresh
 
 /**
  * @author hehua2008
@@ -53,6 +52,8 @@ fun WebScreen(initialUrl: String, initialTitle: String = "", modifier: Modifier 
     }
     var barTitle by remember { mutableStateOf(initialTitle) }
     var onBackClick: () -> Boolean by remember { mutableStateOf({ false }) }
+    val pullRefreshState = rememberPullToRefreshState()
+    var refresh: () -> Unit by remember { mutableStateOf(EMPTY_BLOCK) }
 
     Scaffold(
         modifier = modifier,
@@ -82,23 +83,25 @@ fun WebScreen(initialUrl: String, initialTitle: String = "", modifier: Modifier 
                             .fillMaxHeight()
                             .padding(horizontal = 12.dp)
                     )
+                },
+                actions = {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.vector_refresh),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .clickable {
+                                pullRefreshState.startRefresh()
+                                refresh()
+                            }
+                            .fillMaxHeight()
+                            .padding(horizontal = 12.dp)
+                    )
                 }
             )
         }
     ) { innerPadding ->
         var isStatusVisible by remember { mutableStateOf(false) }
         var progress by remember { mutableIntStateOf(0) }
-        val pullRefreshState = rememberPullToRefreshState()
-        var refresh: () -> Unit by remember { mutableStateOf(EMPTY_BLOCK) }
-
-        LaunchedEffect(pullRefreshState) {
-            snapshotFlow { pullRefreshState.isRefreshing }
-                .collect {
-                    if (it) {
-                        refresh()
-                    }
-                }
-        }
 
         if (!isStatusVisible) {
             pullRefreshState.endRefresh()
@@ -111,7 +114,7 @@ fun WebScreen(initialUrl: String, initialTitle: String = "", modifier: Modifier 
                 .padding(innerPadding)
                 .nestedScroll(pullRefreshState.nestedScrollConnection)
         ) {
-            WebContent(
+            WebViewContent(
                 initialUrl = initialUrl,
                 updateStatusVisibility = {
                     isStatusVisible = it

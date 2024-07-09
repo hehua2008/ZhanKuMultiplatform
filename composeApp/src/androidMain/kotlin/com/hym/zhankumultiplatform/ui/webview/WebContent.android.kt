@@ -23,7 +23,7 @@ import com.hym.zhankumultiplatform.ui.NestedWebView
  * @date 2024/7/3
  */
 @Composable
-actual fun WebContent(
+fun WebContent(
     initialUrl: String,
     updateStatusVisibility: (Boolean) -> Unit,
     updateTitle: (String) -> Unit,
