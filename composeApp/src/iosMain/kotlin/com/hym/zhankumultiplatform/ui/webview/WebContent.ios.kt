@@ -25,7 +25,7 @@ var createUIWebViewController: (
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
-actual fun WebContent(
+fun WebContent(
     initialUrl: String,
     updateStatusVisibility: (Boolean) -> Unit,
     updateTitle: (String) -> Unit,

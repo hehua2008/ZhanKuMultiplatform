@@ -121,6 +121,10 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
 
+            // webview
+            // use api since the desktop app need to access the Cef to initialize it.
+            api(libs.compose.webview)
+
             // others
             implementation(libs.napier)
 
