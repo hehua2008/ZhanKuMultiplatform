@@ -118,6 +118,9 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
 
+            // kaluga
+            implementation(libs.kaluga.resources)
+
             // webview
             // use api since the desktop app need to access the Cef to initialize it.
             api(libs.compose.webview)

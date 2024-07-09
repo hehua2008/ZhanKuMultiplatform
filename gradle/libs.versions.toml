@@ -39,6 +39,9 @@ coil = "3.0.0-alpha08"
 #ktor = "3.0.0-beta-1" # Could not find "io.ktor:ktor-utils-cinterop-threadUtils": https://youtrack.jetbrains.com/issue/KTOR-6995/Could-not-find-io.ktorktor-utils-cinterop-threadUtils-on-KMP-project
 ktor = "2.3.12"
 
+# kaluga
+kaluga = "1.4.0"
+
 # Kotlin Inject(https://github.com/evant/kotlin-inject)
 kotlinInject = "0.7.1"
 
@@ -130,6 +133,9 @@ ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version
 ktor-client-encoding = { group = "io.ktor", name = "ktor-client-encoding", version.ref = "ktor" }
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+
+# kaluga
+kaluga-resources = { group = "com.splendo.kaluga", name = "resources", version.ref = "kaluga" }
 
 # webview
 compose-webview = { group = "io.github.kevinnzou", name = "compose-webview-multiplatform", version.ref = "composeWebview" }
